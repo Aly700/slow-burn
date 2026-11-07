@@ -810,6 +810,7 @@ kbd {
   color: var(--muted);
 }
 .table-scroll {
+  position: relative;
   overflow-x: auto;
 }
 table {
@@ -2203,4 +2204,19 @@ tbody tr.selected td:first-child {
 tr {
   scroll-margin-top: 100px;
   scroll-margin-bottom: 25px;
+}
+
+.metric.metric-pending {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 36px;
+  letter-spacing: -1px;
+  min-height: 77px;
+  display: flex;
+  align-items: center;
+}
+@media (max-width: 560px) {
+  .metric.metric-pending {
+    font-size: 28px;
+    min-height: 59px;
+  }
 }

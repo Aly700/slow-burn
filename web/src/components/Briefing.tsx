@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Run, Score } from "../types";
 import { displayValue, list, number, percent, reasonLabel } from "../lib";
 import { Icon } from "./Icon";
+import { requestApproval } from "../approval";
 
 const stages = ["RECEIVED", "INVESTIGATING", "VERIFIED", "WAITING_APPROVAL"];
 const stageLabel = (state: string) => state.toLowerCase().replaceAll("_", " ");
@@ -67,16 +68,29 @@ export function Briefing({
     if (!currentRun || !pending || busy) return;
     setBusy(true);
     setNotice("");
-    const local = () => {
+    const local = (offline = false) => {
       const next = approved ? "TICKET_FILED" : "REJECTED";
       const updated = {
         ...currentRun,
         state: next,
         states_seen: [...list(currentRun.states_seen), next],
+        trace: [
+          ...list(currentRun.trace),
+          {
+            t_ms: currentRun.duration_ms ?? 0,
+            kind: "policy",
+            name: "local_decision_simulated",
+            input: { approved },
+            output_summary: `${approved ? "Approval" : "Rejection"} simulated locally. No service write confirmed.`,
+            duration_ms: 0,
+          },
+        ],
       };
-      const message = approved
-        ? "Simulated approval recorded locally. No ticket was created."
-        : "Simulated rejection recorded locally. No ticket was created.";
+      const message = offline
+        ? `Simulated ${approved ? "approval" : "rejection"} only. The service did not confirm a ticket.`
+        : approved
+          ? "Simulated approval recorded locally. No ticket was created."
+          : "Simulated rejection recorded locally. No ticket was created.";
       setCurrentRun(updated);
       setNotice(message);
       onUpdate(updated, message);
@@ -86,50 +100,18 @@ export function Briefing({
       setBusy(false);
       return;
     }
-    try {
-      const response = await fetch(
-        `http://localhost:8765/runs/${encodeURIComponent(currentRun.run_id)}/approval`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ approved }),
-          signal: AbortSignal.timeout(5000),
-        },
-      );
-      if (!response.ok) {
-        setNotice(
-          `Approval service returned ${response.status}. The run is unchanged; no local decision was substituted.`,
-        );
-        return;
-      }
-      const result = await response.json();
-      const updated = result.run ?? result;
-      if (
-        updated.state &&
-        ["TICKET_FILED", "REJECTED", "FAILED", "WAITING_APPROVAL"].includes(
-          updated.state,
-        )
-      ) {
-        const merged = { ...currentRun, ...updated };
-        const message = `Service response: ${stageLabel(updated.state)}.`;
-        setCurrentRun(merged);
-        setNotice(message);
-        onUpdate(merged, message);
-      } else {
-        setNotice(
-          "The service received the decision but did not return a final state. Refresh the recorded run to confirm.",
-        );
-      }
-    } catch (error) {
-      if (error instanceof TypeError) local();
-      else
-        setNotice(
-          "The service did not confirm the decision. Check the run before retrying; no local decision was substituted.",
-        );
-    } finally {
-      setBusy(false);
-    }
+    const result = await requestApproval(currentRun.run_id, approved);
+    if (result.kind === "confirmed") {
+      const merged = { ...currentRun, ...result.run };
+      const message = `Service response: ${stageLabel(result.run.state)}.`;
+      setCurrentRun(merged);
+      setNotice(message);
+      onUpdate(merged, message);
+    } else if (result.kind === "offline") local(true);
+    else setNotice(result.message);
+    setBusy(false);
   }
+
   return (
     <div className="drawer-layer">
       <div className="drawer-scrim" onClick={onClose} />
@@ -423,7 +405,9 @@ export function Briefing({
               <div className="approval-status">
                 <Icon name="shield" size={18} />
                 <strong>
-                  {pending ? "Human approval required" : stageLabel(state)}
+                  {pending
+                    ? "Human approval required"
+                    : `${notice.startsWith("Simulated") ? "Simulated: " : ""}${stageLabel(state)}`}
                 </strong>
                 {pending && <span>No ticket filed</span>}
               </div>

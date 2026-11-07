@@ -85,7 +85,11 @@ export function Hero({ data }: { data: Data }) {
           <div className="panel-label">
             <span>2025 BACKTEST</span>
             <span className="badge">
-              {seed ? "Preliminary findings" : "Historical validation"}
+              {!baseline.length && ours == null
+                ? "Awaiting results"
+                : seed
+                  ? "Preliminary findings"
+                  : "Historical validation"}
             </span>
           </div>
           <h2>
@@ -125,9 +129,11 @@ export function Hero({ data }: { data: Data }) {
             )}
           </div>
           <p className="caption">
-            {number(findings?.headline?.positives_2025)} later KEV entries among{" "}
-            {number(findings?.headline?.pool_2025)} eligible CVEs. Outcome
-            cutoff: 31 Dec 2025.
+            {findings?.headline?.positives_2025 != null &&
+            findings?.headline?.pool_2025 != null
+              ? `${number(findings.headline.positives_2025)} later KEV entries among ${number(findings.headline.pool_2025)} eligible CVEs.`
+              : "Cohort counts pending."}{" "}
+            Outcome cutoff: 31 Dec 2025.
           </p>
         </div>
       </div>
@@ -182,25 +188,32 @@ export function Timing({ findings }: { findings?: Findings | null }) {
         <div className="timing-chart">
           <div className="clock-numbers">
             <div>
-              <span className="metric accent">
+              <span
+                className={`metric accent ${fraction == null ? "metric-pending" : ""}`}
+              >
                 {fraction == null
                   ? "pending"
                   : `${Math.round(fraction * 100)}%`}
               </span>
               <strong>In the first month</strong>
               <span>
-                {number(first)} of {number(total)} KEV entries
+                {first != null && total != null
+                  ? `${number(first)} of ${number(total)} KEV entries`
+                  : "Cohort counts pending"}
               </span>
             </div>
             <div>
-              <span className="metric">
+              <span
+                className={`metric ${clock?.later_lag_days?.median == null ? "metric-pending" : ""}`}
+              >
                 {number(clock?.later_lag_days?.median)}
-                <small> days</small>
+                {clock?.later_lag_days?.median != null && <small> days</small>}
               </span>
               <strong>Median lag for later entries</strong>
               <span>
-                {number(later)} vulnerabilities · {percent(laterFraction, 0)} of
-                cases
+                {later != null
+                  ? `${number(later)} vulnerabilities · ${percent(laterFraction, 0)} of cases`
+                  : "Later-entry analysis pending"}
               </span>
             </div>
           </div>
