@@ -1,28 +1,965 @@
 {
-  "_status": "seed numbers from the first 2025 exploration; the model lane regenerates this file with the same keys",
   "headline": {
-    "ours_hits_top500_2025_backtest": null,
-    "baselines_2025_backtest": {"cvss_first": 5, "epss_first": 10, "exploit_then_epss": 18},
-    "benchmark_2026_reference": {"cvss_first": 7, "epss_first": 6, "exploit_then_epss": 8},
-    "pool_2025": 48040,
-    "positives_2025": 55
+    "ours_hits_top500_2025_backtest": 22,
+    "baselines_2025_backtest": {
+      "cvss_first": 5,
+      "epss_first": 10,
+      "exploit_then_epss": 19
+    },
+    "benchmark_2026_reference": {
+      "cvss_first": 7,
+      "epss_first": 6,
+      "exploit_then_epss": 8
+    },
+    "pool_2025": 48039,
+    "positives_2025": 55,
+    "ours_hits_equal_workload": 21,
+    "equal_workload_budget": 331,
+    "later_kev_with_public_signal": 24,
+    "later_kev_without_public_signal": 31,
+    "comparison_note": "2025 is a development backtest. The 2026 reference is organizer-supplied; our 2026 hit count is unknown."
   },
   "two_clocks": {
     "kev_2025_total": 165,
     "first_month": 110,
     "later": 55,
-    "later_lag_days": {"min": 2, "median": 45, "max": 322},
-    "lag_hist": []
+    "later_lag_days": {
+      "min": 2,
+      "median": 45.0,
+      "max": 322
+    },
+    "lag_hist": [
+      {
+        "bucket": "0-30 days",
+        "n": 14
+      },
+      {
+        "bucket": "31-60 days",
+        "n": 23
+      },
+      {
+        "bucket": "61-90 days",
+        "n": 5
+      },
+      {
+        "bucket": "91-180 days",
+        "n": 8
+      },
+      {
+        "bucket": "181-365 days",
+        "n": 5
+      },
+      {
+        "bucket": "366+ days",
+        "n": 0
+      }
+    ],
+    "lag_origin": "Publication date to KEV addition",
+    "after_snapshot_lag_days": {
+      "min": 1,
+      "median": 33.0,
+      "max": 297
+    },
+    "after_snapshot_lag_hist": [
+      {
+        "bucket": "0-30 days",
+        "n": 25
+      },
+      {
+        "bucket": "31-60 days",
+        "n": 17
+      },
+      {
+        "bucket": "61-90 days",
+        "n": 2
+      },
+      {
+        "bucket": "91-180 days",
+        "n": 6
+      },
+      {
+        "bucket": "181-365 days",
+        "n": 5
+      },
+      {
+        "bucket": "366+ days",
+        "n": 0
+      }
+    ],
+    "publication_to_kev_lag_days": {
+      "min": 2,
+      "median": 45.0,
+      "max": 322
+    },
+    "first_month_share": 0.6666666666666666,
+    "added_before_publication": 7,
+    "note": "These are catalog clocks, not first-attack timestamps. First-month entries are excluded from the ranking benchmark."
   },
   "signals": [
-    {"name": "Vendor says 'may have been exploited' / 'in the wild'", "n": 33, "hits": 5, "rate": 0.1515, "lift": 133, "leak_risk": "medium"},
-    {"name": "Unauthenticated remote code execution wording", "n": 1713, "hits": 13, "rate": 0.0076, "lift": 6.7, "leak_risk": "low"},
-    {"name": "Path traversal", "n": 1039, "hits": 6, "rate": 0.0058, "lift": 5.1, "leak_risk": "low"},
-    {"name": "Deserialization", "n": 624, "hits": 3, "rate": 0.0048, "lift": 4.2, "leak_risk": "low"},
-    {"name": "Edge device (VPN, firewall, gateway, router, file transfer)", "n": 866, "hits": 4, "rate": 0.0046, "lift": 4.1, "leak_risk": "low"}
+    {
+      "name": "any_exploit present at snapshot",
+      "n": 1084,
+      "hits": 24,
+      "rate": 0.02214022140221402,
+      "lift": 19.338074471653805,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.014922536117901487,
+        0.03273293136927679
+      ],
+      "note": ""
+    },
+    {
+      "name": "exploitdb present at snapshot",
+      "n": 69,
+      "hits": 2,
+      "rate": 0.028985507246376812,
+      "lift": 25.31699604743083,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.007985035233144928,
+        0.09966773461265746
+      ],
+      "note": ""
+    },
+    {
+      "name": "metasploit present at snapshot",
+      "n": 30,
+      "hits": 1,
+      "rate": 0.03333333333333333,
+      "lift": 29.114545454545453,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.0059084379948573795,
+        0.16670751396958874
+      ],
+      "note": ""
+    },
+    {
+      "name": "nuclei present at snapshot",
+      "n": 138,
+      "hits": 11,
+      "rate": 0.07971014492753623,
+      "lift": 69.62173913043478,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.0450894755777049,
+        0.1370968505776684
+      ],
+      "note": ""
+    },
+    {
+      "name": "poc_github present at snapshot",
+      "n": 959,
+      "hits": 21,
+      "rate": 0.021897810218978103,
+      "lift": 19.126343729263436,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.01436636979531386,
+        0.03324436908426924
+      ],
+      "note": ""
+    },
+    {
+      "name": "Vendor has earlier KEV entries (assigner identity)",
+      "n": 8503,
+      "hits": 14,
+      "rate": 0.001646477713748089,
+      "lift": 1.4380935071044445,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.0009810482471628145,
+        0.002762009575848725
+      ],
+      "note": "Only known vendor domains are matched; third-party assigning organizations are not treated as vendors."
+    },
+    {
+      "name": "CVE reserved before publication year",
+      "n": 9812,
+      "hits": 9,
+      "rate": 0.0009172441907867916,
+      "lift": 0.8011544305673942,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.00048264675042851294,
+        0.001742491030930958
+      ],
+      "note": ""
+    },
+    {
+      "name": "Current description mentions exploitation",
+      "n": 216,
+      "hits": 6,
+      "rate": 0.027777777777777776,
+      "lift": 24.262121212121208,
+      "leak_risk": "high",
+      "rate_95_wilson_interval": [
+        0.012791486920547279,
+        0.0592676683985552
+      ],
+      "note": "Excluded from production; text has no historical timestamp."
+    },
+    {
+      "name": "Remote code or command execution wording",
+      "n": 3703,
+      "hits": 19,
+      "rate": 0.005130974885228194,
+      "lift": 4.481580045663222,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.0032873015212365416,
+        0.008000367204613522
+      ],
+      "note": "Sanitized wording; current technical text may still differ from publication text."
+    },
+    {
+      "name": "Unauthenticated access wording",
+      "n": 3838,
+      "hits": 19,
+      "rate": 0.0049504950495049506,
+      "lift": 4.323942394239424,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.0031715914670145257,
+        0.007719435378027708
+      ],
+      "note": "Sanitized wording; current technical text may still differ from publication text."
+    },
+    {
+      "name": "Path traversal wording",
+      "n": 1035,
+      "hits": 6,
+      "rate": 0.005797101449275362,
+      "lift": 5.063399209486166,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.002659455221386011,
+        0.012589837837344024
+      ],
+      "note": "Sanitized wording; current technical text may still differ from publication text."
+    },
+    {
+      "name": "Deserialization wording",
+      "n": 624,
+      "hits": 3,
+      "rate": 0.004807692307692308,
+      "lift": 4.199213286713287,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.0016363383618479103,
+        0.014038952985523784
+      ],
+      "note": "Sanitized wording; current technical text may still differ from publication text."
+    },
+    {
+      "name": "Edge device wording",
+      "n": 1055,
+      "hits": 4,
+      "rate": 0.0037914691943127963,
+      "lift": 3.311607065919862,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.001475362372795384,
+        0.009708180094746504
+      ],
+      "note": "Sanitized wording; current technical text may still differ from publication text."
+    },
+    {
+      "name": "Privilege escalation wording",
+      "n": 1253,
+      "hits": 1,
+      "rate": 0.0007980845969672786,
+      "lift": 0.6970761082492926,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.0001408917984323096,
+        0.004506949266026409
+      ],
+      "note": "Sanitized wording; current technical text may still differ from publication text."
+    },
+    {
+      "name": "WordPress wording",
+      "n": 4261,
+      "hits": 0,
+      "rate": 0.0,
+      "lift": 0.0,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.0,
+        0.0009007603002184185
+      ],
+      "note": "Sanitized wording; current technical text may still differ from publication text."
+    },
+    {
+      "name": "Cross-site scripting wording",
+      "n": 8686,
+      "hits": 1,
+      "rate": 0.00011512779184895233,
+      "lift": 0.10055679986603311,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        2.0322648539358582e-05,
+        0.000651910548438593
+      ],
+      "note": "Sanitized wording; current technical text may still differ from publication text."
+    },
+    {
+      "name": "Current affected-product coverage (excluded audit feature)",
+      "n": 30078,
+      "hits": 55,
+      "rate": 0.0018285790278608951,
+      "lift": 1.597147416716537,
+      "leak_risk": "high",
+      "rate_95_wilson_interval": [
+        0.0014052288331673727,
+        0.0023791671328030088
+      ],
+      "note": "Current CPE availability has no historical timestamp. The association may reflect post-incident analysis; it cannot enter production."
+    }
   ],
+  "vendor_history_within_poc": {
+    "pool": 1084,
+    "positives": 24,
+    "base_rate": 0.02214022140221402,
+    "buckets": [
+      {
+        "identity": "vendor",
+        "earlier_kev_bucket": "0",
+        "n": 589,
+        "hits": 7,
+        "rate": 0.011884550084889643,
+        "lift_within_poc": 0.5367855121675156,
+        "rate_95_wilson_interval": [
+          0.005768476035691795,
+          0.02432657802259291
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "vendor",
+        "earlier_kev_bucket": "1-4",
+        "n": 294,
+        "hits": 9,
+        "rate": 0.030612244897959183,
+        "lift_within_poc": 1.3826530612244898,
+        "rate_95_wilson_interval": [
+          0.016187030644377706,
+          0.05714590874353856
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "vendor",
+        "earlier_kev_bucket": "5-19",
+        "n": 63,
+        "hits": 2,
+        "rate": 0.031746031746031744,
+        "lift_within_poc": 1.433862433862434,
+        "rate_95_wilson_interval": [
+          0.00874934404029698,
+          0.10856681834959193
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "vendor",
+        "earlier_kev_bucket": "20-49",
+        "n": 46,
+        "hits": 2,
+        "rate": 0.043478260869565216,
+        "lift_within_poc": 1.963768115942029,
+        "rate_95_wilson_interval": [
+          0.012005193588830829,
+          0.1453252291905342
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "vendor",
+        "earlier_kev_bucket": "50+",
+        "n": 92,
+        "hits": 4,
+        "rate": 0.043478260869565216,
+        "lift_within_poc": 1.963768115942029,
+        "rate_95_wilson_interval": [
+          0.01703544061158062,
+          0.10651842326381375
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "product",
+        "earlier_kev_bucket": "0",
+        "n": 854,
+        "hits": 12,
+        "rate": 0.01405152224824356,
+        "lift_within_poc": 0.6346604215456675,
+        "rate_95_wilson_interval": [
+          0.008055965481222565,
+          0.024399443536013248
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "product",
+        "earlier_kev_bucket": "1-4",
+        "n": 175,
+        "hits": 11,
+        "rate": 0.06285714285714286,
+        "lift_within_poc": 2.8390476190476193,
+        "rate_95_wilson_interval": [
+          0.03545718343843059,
+          0.10903716239609561
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "product",
+        "earlier_kev_bucket": "5-19",
+        "n": 20,
+        "hits": 0,
+        "rate": 0.0,
+        "lift_within_poc": 0.0,
+        "rate_95_wilson_interval": [
+          0.0,
+          0.16113012549493322
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "product",
+        "earlier_kev_bucket": "20-49",
+        "n": 8,
+        "hits": 0,
+        "rate": 0.0,
+        "lift_within_poc": 0.0,
+        "rate_95_wilson_interval": [
+          0.0,
+          0.3244156195108769
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "product",
+        "earlier_kev_bucket": "50+",
+        "n": 27,
+        "hits": 1,
+        "rate": 0.037037037037037035,
+        "lift_within_poc": 1.6728395061728396,
+        "rate_95_wilson_interval": [
+          0.006567976533097597,
+          0.1828385393415652
+        ],
+        "leak_risk": "medium"
+      }
+    ],
+    "enterprise_comparison": {
+      "groups": [
+        {
+          "group": "named_enterprise_vendors",
+          "n": 106,
+          "hits": 4,
+          "rate": 0.03773584905660377,
+          "rate_95_wilson_interval": [
+            0.014770608109942171,
+            0.09303554183689035
+          ]
+        },
+        {
+          "group": "other_or_unmapped",
+          "n": 978,
+          "hits": 20,
+          "rate": 0.02044989775051125,
+          "rate_95_wilson_interval": [
+            0.013276483471295359,
+            0.031375932967364406
+          ]
+        }
+      ],
+      "fisher_two_sided_p": 0.28340130215522885,
+      "rate_ratio": 1.8452830188679243,
+      "hypothesis_vendor_names": [
+        "apple",
+        "cisco",
+        "citrix",
+        "fortinet",
+        "google",
+        "ivanti",
+        "microsoft",
+        "oracle",
+        "sap",
+        "vmware"
+      ]
+    },
+    "high_history_vs_zero": {
+      "groups": [
+        {
+          "group": "no_matched_prior_kev",
+          "n": 589,
+          "hits": 7,
+          "rate": 0.011884550084889643,
+          "rate_95_wilson_interval": [
+            0.005768476035691795,
+            0.02432657802259291
+          ]
+        },
+        {
+          "group": "at_least_20_prior_kev",
+          "n": 138,
+          "hits": 6,
+          "rate": 0.043478260869565216,
+          "rate_95_wilson_interval": [
+            0.020076222874206656,
+            0.09160892450145745
+          ]
+        }
+      ],
+      "rate_ratio": 3.658385093167702,
+      "fisher_two_sided_p": 0.022480852289226118,
+      "note": "Exploratory contrast of displayed history buckets; low-count middle buckets are shown separately."
+    },
+    "identity_sources": {
+      "unmapped": 589,
+      "description_vendor": 251,
+      "vendor_psirt": 122,
+      "description_product": 122
+    },
+    "method": "Sanitized description vendor/product dictionary restricted to earlier KEV entries; vendor PSIRT takes precedence when identifiable.",
+    "interpretation": "Association with later catalog inclusion within the same public-tool tier, not a causal vendor effect or proof of federal scope. Current description revision remains a medium leak risk."
+  },
   "deprioritize": [
-    {"name": "WordPress plugins", "n": 4264, "hits": 0, "share_of_pool": 0.089}
+    {
+      "name": "WordPress descriptions in this KEV-ranking task",
+      "n": 4261,
+      "hits": 0,
+      "share_of_pool": 0.08869876558629447,
+      "rate_95_wilson_interval": [
+        0.0,
+        0.0009007603002184185
+      ],
+      "note": "Zero observed later additions is not zero exploitation risk. Do not defer exposed business-critical assets on this finding alone."
+    }
   ],
-  "base_rate_2025": 0.00114
+  "base_rate_2025": 0.0011449030995649369,
+  "leak_audit": {
+    "baseline": {
+      "logistic": {
+        "name": "logistic",
+        "pool": 48039,
+        "positives": 55,
+        "hits_at_500": 14,
+        "precision_at_500": 0.028,
+        "recall_at_500": 0.2545454545454545,
+        "scaled_budget": 331,
+        "hits_at_scaled_budget": 14,
+        "precision_at_scaled_budget": 0.04229607250755287,
+        "recall_at_scaled_budget": 0.2545454545454545,
+        "average_precision": 0.03588615536693217
+      },
+      "lightgbm": {
+        "name": "lightgbm",
+        "pool": 48039,
+        "positives": 55,
+        "hits_at_500": 0,
+        "precision_at_500": 0.0,
+        "recall_at_500": 0.0,
+        "scaled_budget": 331,
+        "hits_at_scaled_budget": 0,
+        "precision_at_scaled_budget": 0.0,
+        "recall_at_scaled_budget": 0.0,
+        "average_precision": 0.00275791317324736
+      }
+    },
+    "features": [
+      {
+        "name": "nvd_status",
+        "why": "Current analysis status reflects prioritization after exploitation; explicitly prohibited.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 5,
+            "delta_hits_at_scaled_budget": 1
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 7,
+            "delta_hits_at_scaled_budget": 2
+          }
+        ]
+      },
+      {
+        "name": "n_affected_cpes",
+        "why": "Current enrichment count reflects post-snapshot analysis; explicitly prohibited.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 2,
+            "delta_hits_at_scaled_budget": -2
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 8,
+            "delta_hits_at_scaled_budget": 4
+          }
+        ]
+      },
+      {
+        "name": "n_references",
+        "why": "Current reference count can increase after incidents; explicitly prohibited.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": -1
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 3,
+            "delta_hits_at_scaled_budget": 1
+          }
+        ]
+      },
+      {
+        "name": "blank_severity_scores",
+        "why": "Missingness reveals current analysis coverage; explicitly prohibited.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": 0
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": 0
+          }
+        ]
+      },
+      {
+        "name": "current_cvss_and_vectors",
+        "why": "NIST/CISA scores and vector components lack historical timestamps.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": -2,
+            "delta_hits_at_scaled_budget": -3
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 7,
+            "delta_hits_at_scaled_budget": 4
+          }
+        ]
+      },
+      {
+        "name": "vendor_supplied_cvss",
+        "why": "Vendor provenance is safer than NIST provenance but does not establish when this value was supplied; masking also reveals coverage.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": -2,
+            "delta_hits_at_scaled_budget": -3
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 2,
+            "delta_hits_at_scaled_budget": 2
+          }
+        ]
+      },
+      {
+        "name": "current_cwe",
+        "why": "Weakness assignments can be added during current NIST enrichment; no source/timestamp.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 3,
+            "delta_hits_at_scaled_budget": -2
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": 0
+          }
+        ]
+      },
+      {
+        "name": "raw_exploitation_wording",
+        "why": "Current descriptions can explicitly disclose later exploitation.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": 0
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": 0
+          }
+        ]
+      },
+      {
+        "name": "ransomware_annotations",
+        "why": "The frozen catalog dates inclusion, but does not date ransomware-flag updates.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": -2
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 3,
+            "delta_hits_at_scaled_budget": 2
+          }
+        ]
+      },
+      {
+        "name": "last_modified",
+        "why": "Current record modification time postdates the decision and is not a publication attribute.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 1,
+            "delta_hits_at_scaled_budget": -1
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 2,
+            "delta_hits_at_scaled_budget": 1
+          }
+        ]
+      },
+      {
+        "name": "first_observed_epss",
+        "why": "Historical monthly first observation is date-safe, but equivalent 2026 history is unavailable; no future backfill is allowed.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": 0
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": 0
+          }
+        ]
+      },
+      {
+        "name": "affected_products_coverage",
+        "why": "Whether a CPE exists reveals current analysis coverage.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": -1
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": 0
+          }
+        ]
+      },
+      {
+        "name": "affected_products_identity",
+        "why": "A correct product identity does not make its current CPE availability historical.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": 2,
+            "delta_hits_at_scaled_budget": 1
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 3,
+            "delta_hits_at_scaled_budget": 1
+          }
+        ]
+      },
+      {
+        "name": "news_threat_references",
+        "why": "Current news/research references may have been added after the incident; explicitly prohibited.",
+        "methods": [
+          {
+            "name": "logistic",
+            "delta_hits_at_500": -2,
+            "delta_hits_at_scaled_budget": -2
+          },
+          {
+            "name": "lightgbm",
+            "delta_hits_at_500": 0,
+            "delta_hits_at_scaled_budget": 0
+          }
+        ]
+      }
+    ],
+    "interpretation": "Signed deltas measure observed inflation or degradation, not causality. No positive gain does not establish temporal safety."
+  },
+  "censoring": {
+    "training_minimum_followup_days": 90,
+    "excluded_2025_immature": 12759,
+    "note": "Primary includes censored late rows for seed comparability; mature and fixed-90-day results are separate. December has zero follow-up."
+  },
+  "data_quality": {
+    "seed_pool": 48040,
+    "current_pool": 48039,
+    "snapshot_catalog_disagreements": [
+      {
+        "cve_id": "CVE-2025-4664",
+        "snapshot_month": "2025-05"
+      }
+    ],
+    "exploit_rule_hits_with_catalog_only_eligibility": 18,
+    "exploit_rule_hits_with_conservative_eligibility": 19,
+    "difference": "Exclude snapshot in_kev=1 even when the frozen catalog disagrees. This removes a high-ranked unlabelled row and changes the exploit-first top-500 cutoff."
+  },
+  "story": [
+    {
+      "title": "Two catalog clocks",
+      "sentence": "Of 165 KEV-listed vulnerabilities published in 2025, 110 were already listed by publication-month end, while the other 55 took a median 45 days from publication to listing\u2014a catalog delay, not a first-attack timestamp.",
+      "numbers": {
+        "kev_total": 165,
+        "already_listed_by_snapshot": 110,
+        "later_additions": 55,
+        "median_publication_to_listing_days": 45.0
+      }
+    },
+    {
+      "title": "Vendor history separates public-tool rows",
+      "sentence": "Within the public-tool tier, vendors with at least 20 prior KEV entries had 6 later additions among 138 rows (4.35%), versus 7 among 589 with no matched history (1.19%), an exploratory association subject to text-revision and matching risk.",
+      "numbers": {
+        "prior_kev_threshold": 20,
+        "high_history_rows": 138,
+        "high_history_hits": 6,
+        "high_history_rate": 0.043478260869565216,
+        "zero_history_rows": 589,
+        "zero_history_hits": 7,
+        "zero_history_rate": 0.011884550084889643,
+        "rate_ratio": 3.658385093167702
+      }
+    },
+    {
+      "title": "Learning to order the public-tool tier",
+      "sentence": "In the 2025 development backtest, the selected ranking found 22 of 55 later additions in its first 500 rows versus 19 for exploit-first, and 21 versus 17 at the equal-workload budget of 331; its 2026 outcome remains unknown.",
+      "numbers": {
+        "pool": 48039,
+        "positives": 55,
+        "literal_budget": 500,
+        "selected_hits": 22,
+        "rule_hits": 19,
+        "scaled_budget": 331,
+        "selected_scaled_hits": 21,
+        "rule_scaled_hits": 17
+      }
+    }
+  ],
+  "story_provenance": {
+    "script": "pipeline/findings.py",
+    "ranking_source": "pipeline/evaluate.py",
+    "history_source": "pipeline/features.py",
+    "label_source": "pipeline/data.py"
+  },
+  "top500_profile_2026": {
+    "vendors": {
+      "unmapped": 99,
+      "Apache": 78,
+      "Microsoft": 65,
+      "XWiki": 18,
+      "Android": 16,
+      "Google": 14,
+      "Red Hat": 12,
+      "VMware": 12,
+      "Apple": 10,
+      "Linux": 9,
+      "Citrix": 9,
+      "Git": 8,
+      "SAP": 7,
+      "Cisco": 7,
+      "Fortinet": 7,
+      "VMware Tanzu": 7,
+      "Adobe": 6,
+      "Mozilla": 6,
+      "Jenkins": 6,
+      "GitLab": 5
+    },
+    "assigners": {
+      "security-advisories@github.com": 97,
+      "disclosure@vulncheck.com": 86,
+      "security@apache.org": 73,
+      "secure@microsoft.com": 41,
+      "cve@mitre.org": 21,
+      "secalert@redhat.com": 12,
+      "chrome-cve-admin@google.com": 11,
+      "product-security@apple.com": 10,
+      "cret@cert.org": 9,
+      "psirt@cisco.com": 7,
+      "psirt@fortinet.com": 7,
+      "security@android.com": 7,
+      "416baaa9-dc9f-4396-8d5f-8c081fb06d67": 7,
+      "security@mozilla.org": 6,
+      "support@hackerone.com": 6
+    },
+    "cwe_current_display_only": {
+      "CWE-78": 35,
+      "CWE-502": 32,
+      "CWE-22": 25,
+      "CWE-94": 23,
+      "CWE-20": 16,
+      "CWE-306": 15,
+      "CWE-416": 12,
+      "CWE-863": 11,
+      "CWE-77": 10,
+      "CWE-122": 10,
+      "CWE-918": 10,
+      "CWE-89": 9,
+      "CWE-284": 7,
+      "CWE-434": 7,
+      "CWE-362": 7
+    },
+    "flags": {
+      "any_exploit": 500,
+      "exploitdb": 11,
+      "metasploit": 8,
+      "nuclei": 72,
+      "poc_github": 460
+    },
+    "snapshot_months": {
+      "2026-01": 18,
+      "2026-02": 18,
+      "2026-03": 29,
+      "2026-04": 37,
+      "2026-05": 33,
+      "2026-07": 182,
+      "2026-08": 103,
+      "2026-09": 80
+    },
+    "epss_median": 0.005535,
+    "note": "CWE and CVSS in the display CSV are current descriptive metadata and do not enter the strict model.",
+    "vendors_from_assigner": {
+      "unmapped": 255,
+      "apache": 73,
+      "microsoft": 41,
+      "google": 13,
+      "redhat": 12,
+      "apple": 10,
+      "cisco": 7,
+      "fortinet": 7,
+      "android": 7,
+      "mozilla": 6,
+      "f5": 5,
+      "ibm": 5,
+      "vmware": 5,
+      "samsung": 4,
+      "joomla": 4,
+      "gitlab": 3,
+      "paloaltonetworks": 3,
+      "oracle": 3,
+      "tenable": 3,
+      "adobe": 2
+    }
+  }
 }
