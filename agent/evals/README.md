@@ -1,6 +1,6 @@
 # Historical triage evaluation
 
-The fixed set has 30 CVEs published in 2025, observed outside KEV at September month-end: 15 subsequently admitted by December 31 and 15 not present in the supplied catalog by that date. These controls are right-censored, not proven unexploited. Selection uses a fixed hash order within each outcome group. Cases are held out from prompt development; this does not claim exclusion from pretrained weights.
+The fixed set has 30 CVEs published in 2025, observed outside KEV at September month-end: 15 subsequently admitted by December 31 and 15 not present in the supplied catalog by that date. These controls are right-censored, not proven unexploited. Selection uses a fixed hash order within each outcome group. Cases were held out from prompt development for the original arm; this revision reuses them. Exclusion from pretrained weights is not claimed.
 
 `heldout_2025.json` contains outcomes and is read only by the scorer. `heldout_scores_2025.csv` contains snapshot features, no outcomes, and reasons available to all three arms. The CSV retains schema-compatible EPSS and case-order placeholders, but the evaluation marker makes the MCP response return rank and score as unavailable. No historical model ranking is supplied. Zero contribution values mean no attribution model was fitted for this reliability evaluation.
 

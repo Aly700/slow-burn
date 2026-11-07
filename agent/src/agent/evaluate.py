@@ -130,7 +130,7 @@ async def evaluate():
                              'This is a revision comparison on the same frozen cases after the earlier results were known, not a fresh unseen confirmation set.',
                              'Current NVD descriptions, CVSS and CWE metadata are not historical snapshots.',
                              'The baseline reads reasons only; Granite can retrieve more context. Evidence breadth is not automatically decision quality.',
-                             'Cases were held out from prompt development, not guaranteed absent from model pretraining.',
+                             'Cases were held out for the original arm; this revision reuses them. Absence from model pretraining is not guaranteed.',
                              'Latency excludes model loading and index preparation; it includes MCP tools, verification, state persistence and the write probe.'],
               'case_results': [{'cve_id': r['cve_id'], 'run_id': r['run_id'], 'recording_path': f"artifacts/agent_runs/eval2025/policy_granite/{r['cve_id']}.json", 'observed_positive': r['expected_positive'], 'state': r['state'],
                                 'verdict': (r.get('briefing') or {}).get('verdict'), 'baseline_verdict': b['briefing']['verdict'], 'granite_decides_verdict': legacy_cases[r['cve_id']]['verdict'], 'duration_ms': r['duration_ms']} for r, b in zip(llm_rows, base_rows)]}

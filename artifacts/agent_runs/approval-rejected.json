@@ -1,12 +1,70 @@
 {
   "approval": {
     "approved": false,
-    "at": "2026-11-07T22:39:03.058475+00:00",
-    "briefing_hash": "1a0c33eb72997f252c4aea5ad80c616d377d67f548298eda8f48f299f4bbb926"
+    "at": "2026-11-07T23:05:16.405756+00:00",
+    "briefing_hash": "948a747dd0bace7b95bdacbd1bbd8dd86195c750c607e714b43bb98764187370"
   },
   "briefing": {
-    "action": "Confirm the affected product and installed version, then prioritize the vendor-supported fix through the emergency change process. If a fix cannot be applied, restrict reachable attack paths and verify the control with the service owner.",
+    "action": "Confirm the installed Dynamicweb version and apply the appropriate vendor fix described in the supplied record: “This is fixed in 9.5.9, 9.6.16, 9.7.8, 9.8.11, 9.9.8, 9.10.18, 9.12.8, and 9.13.0 (and later).” Use the emergency change process.",
+    "action_evidence": [
+      {
+        "call_id": "t1",
+        "field": "description",
+        "quote": "Dynamicweb",
+        "tool": "get_cve",
+        "value": "An issue was discovered in Dynamicweb before 9.12.8. An attacker can add a new administrator user without authentication. This flaw exists due to a logic issue when determining if the setup phases of the product can be run again. Once an attacker is authenticated as the new admin user they have added, it is possible to upload an executable file and achieve command execution. This is fixed in 9.5.9, 9.6.16, 9.7.8, 9.8.11, 9.9.8, 9.10.18, 9.12.8, and 9.13.0 (and later)."
+      },
+      {
+        "call_id": "t1",
+        "field": "description",
+        "quote": "This is fixed in 9.5.9, 9.6.16, 9.7.8, 9.8.11, 9.9.8, 9.10.18, 9.12.8, and 9.13.0 (and later).",
+        "tool": "get_cve",
+        "value": "An issue was discovered in Dynamicweb before 9.12.8. An attacker can add a new administrator user without authentication. This flaw exists due to a logic issue when determining if the setup phases of the product can be run again. Once an attacker is authenticated as the new admin user they have added, it is possible to upload an executable file and achieve command execution. This is fixed in 9.5.9, 9.6.16, 9.7.8, 9.8.11, 9.9.8, 9.10.18, 9.12.8, and 9.13.0 (and later)."
+      }
+    ],
     "claims": [
+      {
+        "evidence": [
+          {
+            "call_id": "t1",
+            "field": "description",
+            "quote": "Dynamicweb",
+            "tool": "get_cve",
+            "value": "An issue was discovered in Dynamicweb before 9.12.8. An attacker can add a new administrator user without authentication. This flaw exists due to a logic issue when determining if the setup phases of the product can be run again. Once an attacker is authenticated as the new admin user they have added, it is possible to upload an executable file and achieve command execution. This is fixed in 9.5.9, 9.6.16, 9.7.8, 9.8.11, 9.9.8, 9.10.18, 9.12.8, and 9.13.0 (and later)."
+          }
+        ],
+        "id": "f1",
+        "text": "Affected product or component named in the supplied description: Dynamicweb.",
+        "verified": true
+      },
+      {
+        "evidence": [
+          {
+            "call_id": "t1",
+            "field": "description",
+            "quote": "An attacker can add a new administrator user without authentication. This flaw exists due to a logic issue when determining if the setup phases of the product can be run again. Once an attacker is authenticated as the new admin user they have added, it is possible to upload an executable file and achieve command execution.",
+            "tool": "get_cve",
+            "value": "An issue was discovered in Dynamicweb before 9.12.8. An attacker can add a new administrator user without authentication. This flaw exists due to a logic issue when determining if the setup phases of the product can be run again. Once an attacker is authenticated as the new admin user they have added, it is possible to upload an executable file and achieve command execution. This is fixed in 9.5.9, 9.6.16, 9.7.8, 9.8.11, 9.9.8, 9.10.18, 9.12.8, and 9.13.0 (and later)."
+          }
+        ],
+        "id": "f2",
+        "text": "The supplied description states the attacker capability or prerequisite: “An attacker can add a new administrator user without authentication. This flaw exists due to a logic issue when determining if the setup phases of the product can be run again. Once an attacker is authenticated as the new admin user they have added, it is possible to upload an executable file and achieve command execution.”",
+        "verified": true
+      },
+      {
+        "evidence": [
+          {
+            "call_id": "t1",
+            "field": "description",
+            "quote": "This is fixed in 9.5.9, 9.6.16, 9.7.8, 9.8.11, 9.9.8, 9.10.18, 9.12.8, and 9.13.0 (and later).",
+            "tool": "get_cve",
+            "value": "An issue was discovered in Dynamicweb before 9.12.8. An attacker can add a new administrator user without authentication. This flaw exists due to a logic issue when determining if the setup phases of the product can be run again. Once an attacker is authenticated as the new admin user they have added, it is possible to upload an executable file and achieve command execution. This is fixed in 9.5.9, 9.6.16, 9.7.8, 9.8.11, 9.9.8, 9.10.18, 9.12.8, and 9.13.0 (and later)."
+          }
+        ],
+        "id": "f3",
+        "text": "The supplied description names remediation: “This is fixed in 9.5.9, 9.6.16, 9.7.8, 9.8.11, 9.9.8, 9.10.18, 9.12.8, and 9.13.0 (and later).” Confirm the installed release and applicable branch before changing it.",
+        "verified": true
+      },
       {
         "evidence": [
           {
@@ -22,100 +80,61 @@
             "value": 0.635
           }
         ],
-        "id": "f1",
-        "text": "At 2026-01 month-end, EPSS was 0.63500.",
-        "verified": true
-      },
-      {
-        "evidence": [
-          {
-            "call_id": "t2",
-            "field": "rank",
-            "tool": "explain_score",
-            "value": 2
-          }
-        ],
-        "id": "f8",
-        "text": "The supplied ranking places this CVE at rank 2.",
-        "verified": true
-      },
-      {
-        "evidence": [
-          {
-            "call_id": "t2",
-            "field": "reasons.0.feature",
-            "tool": "explain_score",
-            "value": "any_exploit"
-          },
-          {
-            "call_id": "t2",
-            "field": "reasons.0.value",
-            "tool": "explain_score",
-            "value": 1
-          }
-        ],
-        "id": "f9",
-        "text": "The ranking's any_exploit feature has value 1.",
-        "verified": true
-      },
-      {
-        "evidence": [
-          {
-            "call_id": "t2",
-            "field": "reasons.1.feature",
-            "tool": "explain_score",
-            "value": "epss"
-          },
-          {
-            "call_id": "t2",
-            "field": "reasons.1.value",
-            "tool": "explain_score",
-            "value": 0.635
-          }
-        ],
-        "id": "f10",
-        "text": "The ranking's epss feature has value 0.635.",
-        "verified": true
-      },
-      {
-        "evidence": [
-          {
-            "call_id": "t3",
-            "field": "matches.0.cve_id",
-            "tool": "similar_exploited",
-            "value": "CVE-2021-21311"
-          },
-          {
-            "call_id": "t3",
-            "field": "matches.0.similarity",
-            "tool": "similar_exploited",
-            "value": 0.72956
-          },
-          {
-            "call_id": "t3",
-            "field": "matches.0.date_added",
-            "tool": "similar_exploited",
-            "value": "2025-09-29"
-          },
-          {
-            "call_id": "t3",
-            "field": "embedding_model",
-            "tool": "similar_exploited",
-            "value": "ibm-granite/granite-embedding-30m-english"
-          }
-        ],
-        "id": "f12",
-        "text": "Granite description retrieval matched CVE-2021-21311 (cosine 0.730), added to KEV on 2025-09-29. This is an analogy, not proof this CVE was exploited.",
+        "id": "f4",
+        "text": "EPSS put the chance of attack in the next 30 days at 63.5% at the end of January 2026.",
         "verified": true
       }
     ],
-    "confidence": 0.7,
-    "headline": "Prioritize remediation review for CVE-2022-25369.",
+    "confidence": 0.9,
+    "decision": {
+      "headline_prefix": "Prioritize",
+      "inputs": {
+        "any_public_signal": true,
+        "epss": 0.635,
+        "rank": 2,
+        "score": null
+      },
+      "public_signal_note": "Nuclei denotes a scanner template, not proof of exploitation.",
+      "review_window": "emergency change process",
+      "thresholds": {
+        "fix_now": {
+          "any_public_signal": true,
+          "epss_at_least": 0.1,
+          "rank_at_most": 500,
+          "score_at_least": 0.1
+        },
+        "watch": {
+          "epss_at_least": 0.01,
+          "rank_at_most": 2000,
+          "score_at_least": 0.01
+        }
+      },
+      "triggers": [
+        "rank_tier",
+        "epss_tier",
+        "public_material_tier"
+      ],
+      "urgency": "urgent",
+      "verdict": "fix_now",
+      "version": "ranking-and-public-signals-v1"
+    },
+    "headline": "Prioritize remediation for Dynamicweb.",
+    "headline_evidence": [
+      {
+        "call_id": "t1",
+        "field": "description",
+        "quote": "Dynamicweb",
+        "tool": "get_cve",
+        "value": "An issue was discovered in Dynamicweb before 9.12.8. An attacker can add a new administrator user without authentication. This flaw exists due to a logic issue when determining if the setup phases of the product can be run again. Once an attacker is authenticated as the new admin user they have added, it is possible to upload an executable file and achieve command execution. This is fixed in 9.5.9, 9.6.16, 9.7.8, 9.8.11, 9.9.8, 9.10.18, 9.12.8, and 9.13.0 (and later)."
+      }
+    ],
+    "source_note": "Product, capability and fix text comes from the supplied current NVD extract; historical availability is unverified. It does not set verdict or urgency.",
+    "urgency": "urgent",
     "verdict": "fix_now"
   },
-  "briefing_hash": "1a0c33eb72997f252c4aea5ad80c616d377d67f548298eda8f48f299f4bbb926",
+  "briefing_hash": "948a747dd0bace7b95bdacbd1bbd8dd86195c750c607e714b43bb98764187370",
   "cve_id": "CVE-2022-25369",
-  "duration_ms": 2209,
+  "duration_ms": 2538,
   "injection": {
     "detected": false,
     "spans": [],
@@ -125,16 +144,19 @@
     }
   },
   "metrics": {
-    "confidence_meaning": "triage judgment, not exploitation probability",
-    "generation_tokens": 91,
+    "confidence_meaning": "briefing evidence confidence, not exploitation probability",
+    "decision_source": "deterministic_policy",
+    "generation_tokens": 76,
+    "headline_and_action_verified": true,
     "json_repairs": 0,
     "model_calls": 2,
     "selected_categories": [
-      "analogy",
-      "ranking",
+      "impact",
+      "product",
+      "remediation",
       "signal"
     ],
-    "tool_calls": 5,
+    "tool_calls": 4,
     "weights_repo": "mlx-community/granite-4.0-h-small-4bit",
     "weights_revision": "db4baaa911c39582ab9fdcfc9f43a6bbc343d54a"
   },
@@ -144,10 +166,10 @@
     "write_allowed": false,
     "write_requested": true
   },
-  "run_id": "run_4e485cb09c9348b69a7e55b00d679d5e",
+  "run_id": "run_ce75f121243a47f586da8defeae443a9",
   "score_file_sha256": "efc3a8b7b0a81f5efdd6151841547a61a0f47b412a4ed79e905e7979e48332b9",
   "snapshot_month": "2026-01",
-  "started_at": "2026-11-07T22:39:00.517139+00:00",
+  "started_at": "2026-11-07T23:05:13.359271+00:00",
   "state": "REJECTED",
   "states_seen": [
     "RECEIVED",
@@ -247,53 +269,6 @@
     {
       "call_id": "t3",
       "input": {
-        "cve_id": "CVE-2022-25369",
-        "k": 3
-      },
-      "output": {
-        "catalog_cutoff": "2025-12-31",
-        "cve_id": "CVE-2022-25369",
-        "embedding_model": "ibm-granite/granite-embedding-30m-english",
-        "embedding_revision": "9b5b096411652ec1189c68fcfb90d0a82c5b45af",
-        "matches": [
-          {
-            "cve_id": "CVE-2021-21311",
-            "cwe_ids": "CWE-918",
-            "date_added": "2025-09-29",
-            "description": "Adminer contains a server-side request forgery vulnerability that, when exploited, allows a remote attacker to obtain potentially sensitive information.",
-            "product": "Adminer",
-            "similarity": 0.72956,
-            "vendor": "Adminer"
-          },
-          {
-            "cve_id": "CVE-2019-20500",
-            "cwe_ids": "CWE-78",
-            "date_added": "2023-06-29",
-            "description": "D-Link DWL-2600AP access point contains an authenticated command injection vulnerability via the Save Configuration functionality in the Web interface, using shell metacharacters in the admin.cgi?action=config_save configBackup or downloadServerip parameter.",
-            "product": "DWL-2600AP Access Point",
-            "similarity": 0.723901,
-            "vendor": "D-Link"
-          },
-          {
-            "cve_id": "CVE-2020-10189",
-            "cwe_ids": "CWE-502",
-            "date_added": "2021-11-03",
-            "description": "Zoho ManageEngine Desktop Central contains a file upload vulnerability that allows for unauthenticated remote code execution.",
-            "product": "ManageEngine",
-            "similarity": 0.717566,
-            "vendor": "Zoho"
-          }
-        ],
-        "warnings": [
-          "Similarity is a description analogy, not proof of exploitation or affected product identity.",
-          "KEV descriptions are from the supplied 2025-12-31 extract; only admission dates can be filtered historically."
-        ]
-      },
-      "tool": "similar_exploited"
-    },
-    {
-      "call_id": "t4",
-      "input": {
         "cve_id": "CVE-2022-25369"
       },
       "output": {
@@ -320,9 +295,9 @@
       "tool": "signal_timeline"
     },
     {
-      "call_id": "t5",
+      "call_id": "t4",
       "input": {
-        "briefing_hash": "1a0c33eb72997f252c4aea5ad80c616d377d67f548298eda8f48f299f4bbb926",
+        "briefing_hash": "948a747dd0bace7b95bdacbd1bbd8dd86195c750c607e714b43bb98764187370",
         "cve_id": "CVE-2022-25369"
       },
       "output": {
@@ -335,7 +310,7 @@
   "trace": [
     {
       "call_id": "t1",
-      "duration_ms": 13,
+      "duration_ms": 12,
       "input": {
         "cve_id": "CVE-2022-25369"
       },
@@ -358,39 +333,39 @@
       "t_ms": 14
     },
     {
-      "duration_ms": 666,
+      "duration_ms": 0,
+      "input": {
+        "any_public_signal": true,
+        "epss": 0.635,
+        "rank": 2,
+        "score": null
+      },
+      "kind": "policy",
+      "name": "triage_priority",
+      "output_summary": "{\"headline_prefix\":\"Prioritize\",\"inputs\":{\"any_public_signal\":true,\"epss\":0.635,\"rank\":2,\"score\":null},\"public_signal_note\":\"Nuclei denotes a scanner template, not proof of exploitation.\",\"review_window\":\"emergency change process\",\"thresholds\":{\"fix_now\":{\"any_public_signal\":true,\"epss_at_least\":0.1,\"rank_at_most\":500,\"score_at_least\":0.1},\"watch\":{\"epss_at_least\":0.01,\"rank_at_most\":2000,\"score_at_least\":0.01}},\"triggers\":[\"rank_tier\",\"epss_tier\",\"public_material_tier\"],\"urgency\":\"urgent\",\"verdict\":\"fix_now\",\"version\":\"ranking-and-public-signals-v1\"}",
+      "t_ms": 15
+    },
+    {
+      "duration_ms": 617,
       "input": {
         "schema": "ToolPlan"
       },
       "kind": "model",
       "metrics": {
-        "generation_tokens": 27,
-        "generation_tps": 78.1,
+        "generation_tokens": 12,
+        "generation_tps": 79.19,
         "peak_memory_gb": 20.357,
-        "prompt_tokens": 429,
-        "prompt_tps": 1494.72
+        "prompt_tokens": 550,
+        "prompt_tps": 1265.32
       },
       "name": "tools",
-      "output_sha256": "63ecc4e22aa81dc9fd549274f1828fc6bad721b060cded5ee423194555ddf628",
-      "output_summary": "{\"tools\":[\"vendor_history\",\"similar_exploited\",\"signal_timeline\"]}",
-      "t_ms": 17
+      "output_sha256": "f8e530f45d39774ddf05ce974c24d145d22a90a267954b25df778883cd24561f",
+      "output_summary": "{\"tools\":[\"vendor_history\",\"signal_timeline\"]}",
+      "t_ms": 16
     },
     {
       "call_id": "t3",
-      "duration_ms": 3,
-      "input": {
-        "cve_id": "CVE-2022-25369",
-        "k": 3
-      },
-      "kind": "tool",
-      "name": "similar_exploited",
-      "output_summary": "{\"cve_id\": \"CVE-2022-25369\", \"matches\": [{\"cve_id\": \"CVE-2021-21311\", \"similarity\": 0.72956, \"date_added\": \"2025-09-29\", \"vendor\": \"Adminer\", \"product\": \"Adminer\", \"description\": \"Adminer contains a server-side request forgery vulnerability that, when exploited, allows a remote attacker to obtain potentially sensitive information.\", \"cwe_ids\": \"CWE-918\"}, {\"cve_id\": \"CVE-2019-20500\", \"similarity\":",
-      "purpose": "investigation",
-      "t_ms": 684
-    },
-    {
-      "call_id": "t4",
-      "duration_ms": 35,
+      "duration_ms": 34,
       "input": {
         "cve_id": "CVE-2022-25369"
       },
@@ -398,65 +373,65 @@
       "name": "signal_timeline",
       "output_summary": "{\"cve_id\": \"CVE-2022-25369\", \"snapshot_month\": \"2026-01\", \"months\": [{\"month\": \"2026-01\", \"epss\": 0.635, \"in_kev\": 0, \"exploitdb\": 0, \"metasploit\": 0, \"nuclei\": 1, \"poc_github\": 0}], \"missing_months\": [], \"warnings\": [\"No continuous 2026 history was provided; only each candidate's scoreboard snapshot is available.\", \"EPSS model changed in March 2025; values across that boundary are not directly co",
       "purpose": "investigation",
-      "t_ms": 687
+      "t_ms": 635
     },
     {
-      "duration_ms": 1478,
+      "duration_ms": 1860,
       "input": {
         "schema": "Selection"
       },
       "kind": "model",
       "metrics": {
         "generation_tokens": 64,
-        "generation_tps": 77.9,
+        "generation_tps": 70.25,
         "peak_memory_gb": 20.357,
-        "prompt_tokens": 970,
-        "prompt_tps": 1559.81
+        "prompt_tokens": 1036,
+        "prompt_tps": 1133.04
       },
       "name": "briefing",
-      "output_sha256": "1f5647a804facadfd4858ebfc1d8257b8d1be80943603c6c20a12812633ba74a",
-      "output_summary": "{\"action_id\":\"remediate\",\"claim_ids\":[\"f1\",\"f8\",\"f9\",\"f10\",\"f12\"],\"confidence\":0.7,\"verdict\":\"fix_now\"}",
-      "t_ms": 723
+      "output_sha256": "982372a14fb4a139d8e00d28ec607457a64bc0501e46df806f85b18f55042bb1",
+      "output_summary": "{\"action_id\":\"apply_fix\",\"claim_ids\":[\"f1\",\"f2\",\"f3\",\"f4\"],\"confidence\":0.9,\"context_id\":null,\"headline_id\":\"product\"}",
+      "t_ms": 670
     },
     {
       "duration_ms": 0,
       "input": {
-        "claims": 5
+        "claims": 4
       },
       "kind": "verifier",
       "name": "exact_evidence",
-      "output_summary": "5 verified; 0 dropped",
-      "t_ms": 2206
+      "output_summary": "4 verified; 0 dropped",
+      "t_ms": 2533
     },
     {
-      "call_id": "t5",
-      "duration_ms": 2,
+      "call_id": "t4",
+      "duration_ms": 4,
       "input": {
         "approval_token": "[redacted]",
-        "briefing_hash": "1a0c33eb72997f252c4aea5ad80c616d377d67f548298eda8f48f299f4bbb926",
+        "briefing_hash": "948a747dd0bace7b95bdacbd1bbd8dd86195c750c607e714b43bb98764187370",
         "cve_id": "CVE-2022-25369"
       },
       "kind": "policy",
       "name": "file_fix_ticket",
       "output_summary": "{\"allowed\": false, \"reason\": \"no valid human approval for this CVE and exact briefing hash\"}",
       "purpose": "mandatory approval-boundary probe",
-      "t_ms": 2206
+      "t_ms": 2533
     },
     {
       "duration_ms": 0,
       "input": {
         "approve": false,
-        "briefing_hash": "1a0c33eb72997f252c4aea5ad80c616d377d67f548298eda8f48f299f4bbb926"
+        "briefing_hash": "948a747dd0bace7b95bdacbd1bbd8dd86195c750c607e714b43bb98764187370"
       },
       "kind": "policy",
       "name": "human_approval",
       "output_summary": "rejected",
-      "t_ms": 2209
+      "t_ms": 2538
     }
   ],
   "verifier": {
-    "claims_total": 5,
-    "claims_verified": 5,
+    "claims_total": 4,
+    "claims_verified": 4,
     "dropped": []
   }
 }

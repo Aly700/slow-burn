@@ -1,0 +1,34 @@
+{
+  "checked_at": "2026-11-07T23:04:43.626Z",
+  "origin": "http://localhost:4317",
+  "api_origin": "http://localhost:8765",
+  "browser": "Chrome through Playwright",
+  "cve_id": "CVE-2026-8037",
+  "run_id": "run_cccc751dc1f34e9b90092e86b357080a",
+  "briefing_hash": "ebc735140d0e601b9ab351668754090a043f97429a216ec5fc9aa4b6312db228",
+  "double_click": true,
+  "browser_approval_requests_from_double_click": 1,
+  "request_body": {
+    "approved": true
+  },
+  "response_status": 200,
+  "response_state": "TICKET_FILED",
+  "service_confirmation": "Service response: ticket filed.",
+  "simulated": false,
+  "ledger_lines_before": 1,
+  "ledger_lines_after": 2,
+  "matching_idempotency_key_lines": 1,
+  "concurrent_replays": [
+    {
+      "status": 200,
+      "state": "TICKET_FILED",
+      "ticket_id": "fix_35bec1dcd584d93833d0"
+    },
+    {
+      "status": 200,
+      "state": "TICKET_FILED",
+      "ticket_id": "fix_35bec1dcd584d93833d0"
+    }
+  ],
+  "browser_errors": []
+}
