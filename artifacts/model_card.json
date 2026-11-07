@@ -1,0 +1,4 @@
+{
+  "model": "baseline: exploit flag then EPSS",
+  "note": "placeholder until the model lands"
+}

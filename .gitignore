@@ -1,0 +1,13 @@
+data/
+*.zip
+.venv/
+__pycache__/
+.lane/
+shots/
+*.png
+!web/public/**/*.png
+node_modules/
+.next/
+artifacts/cache/
+artifacts/scores_2026_full.csv
+.DS_Store
