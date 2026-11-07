@@ -1,6 +1,6 @@
 {
   "headline": {
-    "ours_hits_top500_2025_backtest": 14,
+    "ours_hits_top500_2025_backtest": 22,
     "baselines_2025_backtest": {
       "cvss_first": 5,
       "epss_first": 10,
@@ -13,8 +13,10 @@
     },
     "pool_2025": 48039,
     "positives_2025": 55,
-    "ours_hits_equal_workload": 14,
+    "ours_hits_equal_workload": 18,
     "equal_workload_budget": 331,
+    "later_kev_with_public_signal": 24,
+    "later_kev_without_public_signal": 31,
     "comparison_note": "2025 is a development backtest. The 2026 reference is organizer-supplied; our 2026 hit count is unknown."
   },
   "two_clocks": {
@@ -22,11 +24,43 @@
     "first_month": 110,
     "later": 55,
     "later_lag_days": {
+      "min": 2,
+      "median": 45.0,
+      "max": 322
+    },
+    "lag_hist": [
+      {
+        "bucket": "0-30 days",
+        "n": 14
+      },
+      {
+        "bucket": "31-60 days",
+        "n": 23
+      },
+      {
+        "bucket": "61-90 days",
+        "n": 5
+      },
+      {
+        "bucket": "91-180 days",
+        "n": 8
+      },
+      {
+        "bucket": "181-365 days",
+        "n": 5
+      },
+      {
+        "bucket": "366+ days",
+        "n": 0
+      }
+    ],
+    "lag_origin": "Publication date to KEV addition",
+    "after_snapshot_lag_days": {
       "min": 1,
       "median": 33.0,
       "max": 297
     },
-    "lag_hist": [
+    "after_snapshot_lag_hist": [
       {
         "bucket": "0-30 days",
         "n": 25
@@ -52,7 +86,6 @@
         "n": 0
       }
     ],
-    "lag_origin": "End of publication month to KEV addition",
     "publication_to_kev_lag_days": {
       "min": 2,
       "median": 45.0,
@@ -130,14 +163,14 @@
     },
     {
       "name": "Vendor has earlier KEV entries (assigner identity)",
-      "n": 8492,
+      "n": 8503,
       "hits": 14,
-      "rate": 0.0016486104569006124,
-      "lift": 1.4399563225281549,
+      "rate": 0.001646477713748089,
+      "lift": 1.4380935071044445,
       "leak_risk": "low",
       "rate_95_wilson_interval": [
-        0.0009823193515780407,
-        0.0027655847995539675
+        0.0009810482471628145,
+        0.002762009575848725
       ],
       "note": "Only known vendor domains are matched; third-party assigning organizations are not treated as vendors."
     },
@@ -156,14 +189,14 @@
     },
     {
       "name": "Current description mentions exploitation",
-      "n": 1283,
-      "hits": 9,
-      "rate": 0.007014809041309431,
-      "lift": 6.126989300644795,
+      "n": 213,
+      "hits": 6,
+      "rate": 0.028169014084507043,
+      "lift": 24.603841229193343,
       "leak_risk": "high",
       "rate_95_wilson_interval": [
-        0.0036948256502551523,
-        0.01327820350888922
+        0.012972527521480544,
+        0.06008356503640503
       ],
       "note": "Excluded from production; text has no historical timestamp."
     },
@@ -272,6 +305,216 @@
       "note": "Descriptive analysis only; current text may differ from publication text."
     }
   ],
+  "vendor_history_within_poc": {
+    "pool": 1084,
+    "positives": 24,
+    "base_rate": 0.02214022140221402,
+    "buckets": [
+      {
+        "identity": "vendor",
+        "earlier_kev_bucket": "0",
+        "n": 495,
+        "hits": 7,
+        "rate": 0.014141414141414142,
+        "lift_within_poc": 0.6387205387205388,
+        "rate_95_wilson_interval": [
+          0.006866531527562418,
+          0.02889953128676582
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "vendor",
+        "earlier_kev_bucket": "1-4",
+        "n": 395,
+        "hits": 9,
+        "rate": 0.02278481012658228,
+        "lift_within_poc": 1.029113924050633,
+        "rate_95_wilson_interval": [
+          0.012032414016796068,
+          0.04273017845099064
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "vendor",
+        "earlier_kev_bucket": "5-19",
+        "n": 63,
+        "hits": 2,
+        "rate": 0.031746031746031744,
+        "lift_within_poc": 1.433862433862434,
+        "rate_95_wilson_interval": [
+          0.00874934404029698,
+          0.10856681834959193
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "vendor",
+        "earlier_kev_bucket": "20-49",
+        "n": 45,
+        "hits": 2,
+        "rate": 0.044444444444444446,
+        "lift_within_poc": 2.0074074074074075,
+        "rate_95_wilson_interval": [
+          0.012273869040444335,
+          0.14827779183880616
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "vendor",
+        "earlier_kev_bucket": "50+",
+        "n": 86,
+        "hits": 4,
+        "rate": 0.046511627906976744,
+        "lift_within_poc": 2.10077519379845,
+        "rate_95_wilson_interval": [
+          0.01823367317295907,
+          0.11357163750717128
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "product",
+        "earlier_kev_bucket": "0",
+        "n": 869,
+        "hits": 12,
+        "rate": 0.01380897583429229,
+        "lift_within_poc": 0.6237054085155351,
+        "rate_95_wilson_interval": [
+          0.00791660806766989,
+          0.023981046672892428
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "product",
+        "earlier_kev_bucket": "1-4",
+        "n": 160,
+        "hits": 11,
+        "rate": 0.06875,
+        "lift_within_poc": 3.105208333333334,
+        "rate_95_wilson_interval": [
+          0.03881901944217292,
+          0.11890404966848031
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "product",
+        "earlier_kev_bucket": "5-19",
+        "n": 20,
+        "hits": 0,
+        "rate": 0.0,
+        "lift_within_poc": 0.0,
+        "rate_95_wilson_interval": [
+          0.0,
+          0.16113012549493322
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "product",
+        "earlier_kev_bucket": "20-49",
+        "n": 8,
+        "hits": 0,
+        "rate": 0.0,
+        "lift_within_poc": 0.0,
+        "rate_95_wilson_interval": [
+          0.0,
+          0.3244156195108769
+        ],
+        "leak_risk": "medium"
+      },
+      {
+        "identity": "product",
+        "earlier_kev_bucket": "50+",
+        "n": 27,
+        "hits": 1,
+        "rate": 0.037037037037037035,
+        "lift_within_poc": 1.6728395061728396,
+        "rate_95_wilson_interval": [
+          0.006567976533097597,
+          0.1828385393415652
+        ],
+        "leak_risk": "medium"
+      }
+    ],
+    "enterprise_comparison": {
+      "groups": [
+        {
+          "group": "named_enterprise_vendors",
+          "n": 99,
+          "hits": 4,
+          "rate": 0.04040404040404041,
+          "rate_95_wilson_interval": [
+            0.015822382974672186,
+            0.09932168323977801
+          ]
+        },
+        {
+          "group": "other_or_unmapped",
+          "n": 985,
+          "hits": 20,
+          "rate": 0.02030456852791878,
+          "rate_95_wilson_interval": [
+            0.013181863976317392,
+            0.03115445844377497
+          ]
+        }
+      ],
+      "fisher_two_sided_p": 0.2669244559473255,
+      "rate_ratio": 1.9898989898989903,
+      "hypothesis_vendor_names": [
+        "apple",
+        "cisco",
+        "citrix",
+        "fortinet",
+        "google",
+        "ivanti",
+        "microsoft",
+        "oracle",
+        "sap",
+        "vmware"
+      ]
+    },
+    "high_history_vs_zero": {
+      "groups": [
+        {
+          "group": "no_matched_prior_kev",
+          "n": 495,
+          "hits": 7,
+          "rate": 0.014141414141414142,
+          "rate_95_wilson_interval": [
+            0.006866531527562418,
+            0.02889953128676582
+          ]
+        },
+        {
+          "group": "at_least_20_prior_kev",
+          "n": 131,
+          "hits": 6,
+          "rate": 0.04580152671755725,
+          "rate_95_wilson_interval": [
+            0.021157596293058425,
+            0.09632543564960615
+          ]
+        }
+      ],
+      "rate_ratio": 3.238822246455834,
+      "fisher_two_sided_p": 0.035338781749340936,
+      "note": "Exploratory contrast of displayed history buckets; low-count middle buckets are shown separately."
+    },
+    "identity_sources": {
+      "unmapped": 495,
+      "description_vendor": 360,
+      "vendor_psirt": 122,
+      "description_product": 107
+    },
+    "method": "Sanitized description vendor/product dictionary restricted to earlier KEV entries; vendor PSIRT takes precedence when identifiable.",
+    "interpretation": "Association with later catalog inclusion within the same public-tool tier, not a causal vendor effect or proof of federal scope. Current description revision remains a medium leak risk."
+  },
   "deprioritize": [
     {
       "name": "WordPress descriptions in this KEV-ranking task",
@@ -305,80 +548,102 @@
     "difference": "Exclude snapshot in_kev=1 even when the frozen catalog disagrees. This removes a high-ranked unlabelled row and changes the exploit-first top-500 cutoff."
   },
   "top500_profile_2026": {
-    "vendors_from_assigner": {
-      "unmapped": 215,
-      "apache": 71,
-      "microsoft": 47,
-      "wordfence": 30,
-      "apple": 19,
-      "google": 18,
-      "joomla": 13,
-      "redhat": 10,
-      "cisco": 8,
-      "wpscan": 7,
-      "patchstack": 7,
-      "fortinet": 6,
-      "mozilla": 6,
-      "ibm": 5,
-      "oracle": 5,
-      "vmware": 4,
-      "samsung": 4,
-      "f5": 3,
-      "adobe": 2,
-      "gitlab": 2
+    "vendors": {
+      "unmapped": 123,
+      "Microsoft": 60,
+      "Apache": 56,
+      "PHP": 42,
+      "Joomla!": 17,
+      "Apple": 16,
+      "Google": 15,
+      "XWiki": 12,
+      "Citrix": 9,
+      "VMware": 8,
+      "GitLab": 7,
+      "Android": 7,
+      "Cisco": 7,
+      "Red Hat": 6,
+      "Oracle": 6,
+      "F5": 6,
+      "Mozilla": 6,
+      "Adobe": 5,
+      "IBM": 4,
+      "Docker": 4
     },
     "assigners": {
-      "security-advisories@github.com": 74,
-      "security@apache.org": 71,
-      "cve@mitre.org": 64,
-      "secure@microsoft.com": 47,
-      "disclosure@vulncheck.com": 45,
-      "security@wordfence.com": 30,
-      "product-security@apple.com": 19,
-      "chrome-cve-admin@google.com": 16,
-      "security@joomla.org": 13,
-      "cna@vuldb.com": 11,
-      "secalert@redhat.com": 10,
-      "psirt@cisco.com": 8,
-      "contact@wpscan.com": 7,
-      "audit@patchstack.com": 7,
-      "psirt@fortinet.com": 6
+      "security-advisories@github.com": 99,
+      "disclosure@vulncheck.com": 89,
+      "security@apache.org": 53,
+      "cve@mitre.org": 48,
+      "secure@microsoft.com": 39,
+      "security@joomla.org": 17,
+      "product-security@apple.com": 16,
+      "chrome-cve-admin@google.com": 12,
+      "secalert@redhat.com": 6,
+      "psirt@cisco.com": 6,
+      "f23511db-6c3e-4e32-a477-6aa17d310630": 6,
+      "f5sirt@f5.com": 6,
+      "security@mozilla.org": 6,
+      "audit@patchstack.com": 5,
+      "cna@vuldb.com": 5
     },
     "cwe_current_display_only": {
-      "CWE-22": 30,
-      "CWE-89": 24,
-      "CWE-94": 22,
-      "CWE-20": 22,
-      "CWE-502": 20,
-      "CWE-78": 19,
-      "CWE-918": 15,
-      "CWE-200": 15,
-      "CWE-79": 13,
+      "CWE-22": 28,
+      "CWE-502": 28,
+      "CWE-94": 24,
+      "CWE-78": 23,
+      "CWE-306": 19,
+      "CWE-89": 18,
       "CWE-863": 12,
-      "CWE-284": 12,
-      "CWE-122": 12,
-      "CWE-306": 11,
-      "CWE-862": 11,
-      "CWE-77": 10
+      "CWE-918": 11,
+      "CWE-20": 10,
+      "CWE-416": 10,
+      "CWE-200": 10,
+      "CWE-862": 10,
+      "CWE-284": 9,
+      "CWE-122": 9,
+      "CWE-77": 8
     },
     "flags": {
       "any_exploit": 500,
       "exploitdb": 9,
-      "metasploit": 7,
-      "nuclei": 153,
-      "poc_github": 417
+      "metasploit": 3,
+      "nuclei": 87,
+      "poc_github": 462
     },
     "snapshot_months": {
-      "2026-01": 15,
-      "2026-02": 19,
-      "2026-03": 42,
-      "2026-04": 39,
-      "2026-05": 49,
-      "2026-07": 140,
-      "2026-08": 107,
-      "2026-09": 89
+      "2026-01": 22,
+      "2026-02": 29,
+      "2026-03": 37,
+      "2026-04": 45,
+      "2026-05": 45,
+      "2026-07": 130,
+      "2026-08": 101,
+      "2026-09": 91
     },
-    "epss_median": 0.005655,
-    "note": "CWE and CVSS in the display CSV are current descriptive metadata and do not enter the strict model."
+    "epss_median": 0.00472,
+    "note": "CWE and CVSS in the display CSV are current descriptive metadata and do not enter the strict model.",
+    "vendors_from_assigner": {
+      "unmapped": 275,
+      "apache": 53,
+      "microsoft": 39,
+      "joomla": 17,
+      "apple": 16,
+      "google": 13,
+      "redhat": 6,
+      "cisco": 6,
+      "f5": 6,
+      "mozilla": 6,
+      "patchstack": 5,
+      "ibm": 4,
+      "wordfence": 4,
+      "fortinet": 4,
+      "oracle": 4,
+      "gitlab": 3,
+      "vmware": 3,
+      "progress": 2,
+      "servicenow": 2,
+      "adobe": 2
+    }
   }
 }

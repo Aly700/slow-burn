@@ -37,7 +37,8 @@ def run():
     test = assign_outcomes(b, '2025-11-04')
     embed = embeddings(original, recipe.embedding)[source_index] if recipe.embedding else None
     model = FittedModel(recipe).fit(x.loc[train.index], train.label, embed[train.index] if embed is not None else None)
-    score = model.predict(x.loc[test.index], embed[test.index] if embed is not None else None)
+    probability = model.predict(x.loc[test.index], embed[test.index] if embed is not None else None)
+    score = model.ranking_score(x.loc[test.index], probability)
     result = {'name': 'exact_calendar_analog_2025',
               'snapshot_rule': 'Published January–September; publication-month end except June shifted to July',
               'train_label_cutoff': '2024-11-04', 'test_label_cutoff': '2025-11-04',
@@ -45,7 +46,7 @@ def run():
               'pool': len(test), 'positives': int(test.label.sum()),
               'minimum_test_followup_days': int(test.followup_days.min()),
               'methods': [ranking_metrics(test, s, n) for n, s in baseline_scores(test).items()] +
-                         [ranking_metrics(test, score, recipe.name, probabilities=True)],
+                         [ranking_metrics(test, score, recipe.name, probabilities=True, probability_values=probability)],
               'note': 'Matches the benchmark calendar shape and November 4 endpoint. Training still requires 90 days follow-up.'}
     path = ARTIFACTS / 'backtest.json'
     backtest = json.loads(path.read_text())

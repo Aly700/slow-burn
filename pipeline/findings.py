@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import numpy as np
 import pandas as pd
+from scipy.stats import fisher_exact
 
 from pipeline.data import ARTIFACTS, CACHE, FLAGS, cohort, kev, month_end, vulnerabilities, historical_signals, write_json
 from pipeline.evaluate import BASELINES, prepared
@@ -59,7 +60,8 @@ def run():
     lag_publish = (pd.to_datetime(later.date_added) - pd.to_datetime(later.published)).dt.days
     buckets = [(1, 30, '0-30 days'), (31, 60, '31-60 days'), (61, 90, '61-90 days'),
                (91, 180, '91-180 days'), (181, 365, '181-365 days'), (366, 10000, '366+ days')]
-    histogram = [{'bucket': label, 'n': int(lag_snapshot.between(lo, hi).sum())} for lo, hi, label in buckets]
+    histogram = [{'bucket': label, 'n': int(lag_publish.between(lo, hi).sum())} for lo, hi, label in buckets]
+    snapshot_histogram = [{'bucket': label, 'n': int(lag_snapshot.between(lo, hi).sum())} for lo, hi, label in buckets]
     def summary(values):
         return {'min': int(values.min()), 'median': float(values.median()), 'max': int(values.max())}
     chosen = next(m for m in backtest['methods'] if m['name'] == backtest['selected_model'])
@@ -74,20 +76,64 @@ def run():
     original_pool['rule_score'] = original_pool[FLAGS].fillna(0).max(axis=1) + original_pool.epss.fillna(0)
     original_top = original_pool.sort_values(['rule_score', 'cve_id'], ascending=[False, True]).head(500)
     mismatches = original_pool.loc[original_pool.in_kev.eq(1), ['cve_id', 'snapshot_month']].to_dict('records')
+    poc = pool.loc[pool.any_exploit.eq(1)]
+    poc_base = float(poc.label.mean())
+    bucket_rows = []
+    for feature, title in [('text_vendor_prior_kev', 'vendor'), ('text_product_prior_kev', 'product')]:
+        values = history.loc[poc.index, feature]
+        for lo, hi, label in [(0, 0, '0'), (1, 4, '1-4'), (5, 19, '5-19'), (20, 49, '20-49'), (50, 100000, '50+')]:
+            part = poc.loc[values.between(lo, hi)]
+            n, hits = len(part), int(part.label.sum())
+            bucket_rows.append({'identity': title, 'earlier_kev_bucket': label, 'n': n, 'hits': hits,
+                                'rate': hits/n if n else 0., 'lift_within_poc': hits/n/poc_base if n else 0.,
+                                'rate_95_wilson_interval': rate_interval(hits, n), 'leak_risk': 'medium'})
+    enterprise_names = {'fortinet', 'ivanti', 'cisco', 'microsoft', 'apple', 'google', 'vmware', 'citrix', 'sap', 'oracle'}
+    enterprise = history.loc[poc.index, 'text_vendor_identity'].str.lower().isin(enterprise_names)
+    enterprise_rows = []
+    for group, mask in [('named_enterprise_vendors', enterprise), ('other_or_unmapped', ~enterprise)]:
+        n, hits = int(mask.sum()), int(poc.loc[mask].label.sum())
+        enterprise_rows.append({'group': group, 'n': n, 'hits': hits, 'rate': hits/n if n else 0.,
+                                'rate_95_wilson_interval': rate_interval(hits, n)})
+    ea, eb = enterprise_rows
+    table = [[ea['hits'], ea['n']-ea['hits']], [eb['hits'], eb['n']-eb['hits']]]
+    enterprise_test = {'groups': enterprise_rows, 'fisher_two_sided_p': float(fisher_exact(table).pvalue),
+                       'rate_ratio': ea['rate']/eb['rate'] if eb['rate'] else None,
+                       'hypothesis_vendor_names': sorted(enterprise_names)}
+    prior_values = history.loc[poc.index, 'text_vendor_prior_kev']
+    recurrence_groups = []
+    for group, mask in [('no_matched_prior_kev', prior_values.eq(0)), ('at_least_20_prior_kev', prior_values.ge(20))]:
+        n, hits = int(mask.sum()), int(poc.loc[mask].label.sum())
+        recurrence_groups.append({'group': group, 'n': n, 'hits': hits, 'rate': hits/n if n else 0.,
+                                   'rate_95_wilson_interval': rate_interval(hits, n)})
+    ra, rb = recurrence_groups
+    recurrence_test = {'groups': recurrence_groups,
+                       'rate_ratio': rb['rate']/ra['rate'] if ra['rate'] else None,
+                       'fisher_two_sided_p': float(fisher_exact([[ra['hits'], ra['n']-ra['hits']],
+                                                               [rb['hits'], rb['n']-rb['hits']]]).pvalue),
+                       'note': 'Exploratory contrast of displayed history buckets; low-count middle buckets are shown separately.'}
     findings = {
         'headline': {'ours_hits_top500_2025_backtest': chosen['hits_at_500'], 'baselines_2025_backtest': baselines,
                      'benchmark_2026_reference': {'cvss_first': 7, 'epss_first': 6, 'exploit_then_epss': 8},
                      'pool_2025': len(pool), 'positives_2025': int(pool.label.sum()),
                      'ours_hits_equal_workload': chosen['hits_at_scaled_budget'], 'equal_workload_budget': chosen['scaled_budget'],
+                     'later_kev_with_public_signal': int(poc.label.sum()),
+                     'later_kev_without_public_signal': int(pool.label.sum() - poc.label.sum()),
                      'comparison_note': '2025 is a development backtest. The 2026 reference is organizer-supplied; our 2026 hit count is unknown.'},
         'two_clocks': {'kev_2025_total': len(linked), 'first_month': int(early_mask.sum()), 'later': len(later),
-                       'later_lag_days': summary(lag_snapshot), 'lag_hist': histogram,
-                       'lag_origin': 'End of publication month to KEV addition',
+                       'later_lag_days': summary(lag_publish), 'lag_hist': histogram,
+                       'lag_origin': 'Publication date to KEV addition',
+                       'after_snapshot_lag_days': summary(lag_snapshot), 'after_snapshot_lag_hist': snapshot_histogram,
                        'publication_to_kev_lag_days': summary(lag_publish),
                        'first_month_share': float(early_mask.mean()),
                        'added_before_publication': int(added.lt(pd.to_datetime(linked.published)).sum()),
                        'note': 'These are catalog clocks, not first-attack timestamps. First-month entries are excluded from the ranking benchmark.'},
         'signals': signals,
+        'vendor_history_within_poc': {'pool': len(poc), 'positives': int(poc.label.sum()), 'base_rate': poc_base,
+                                     'buckets': bucket_rows, 'enterprise_comparison': enterprise_test,
+                                     'high_history_vs_zero': recurrence_test,
+                                     'identity_sources': history.loc[poc.index, 'entity_source'].value_counts().to_dict(),
+                                     'method': 'Sanitized description vendor/product dictionary restricted to earlier KEV entries; vendor PSIRT takes precedence when identifiable.',
+                                     'interpretation': 'Association with later catalog inclusion within the same public-tool tier, not a causal vendor effect or proof of federal scope. Current description revision remains a medium leak risk.'},
         'deprioritize': [{'name': 'WordPress descriptions in this KEV-ranking task', 'n': wordpress['n'],
                           'hits': wordpress['hits'], 'share_of_pool': wordpress['n']/len(pool),
                           'rate_95_wilson_interval': wordpress['rate_95_wilson_interval'],
@@ -105,13 +151,15 @@ def run():
         selected = pd.read_csv(path, keep_default_na=False).head(500)
         if 'vendor_identity' in selected:
             findings['top500_profile_2026'] = {
-                'vendors_from_assigner': selected.vendor_identity.replace('', 'unmapped').value_counts().head(20).to_dict(),
+                'vendors': selected.vendor_identity.replace('', 'unmapped').value_counts().head(20).to_dict(),
                 'assigners': selected.assigner.value_counts().head(15).to_dict(),
                 'cwe_current_display_only': selected.cwe_ids.replace('', 'unassigned').value_counts().head(15).to_dict(),
                 'flags': {f: int(selected[f].sum()) for f in ['any_exploit', 'exploitdb', 'metasploit', 'nuclei', 'poc_github']},
                 'snapshot_months': selected.snapshot_month.value_counts().sort_index().to_dict(),
                 'epss_median': float(selected.epss.replace('', np.nan).astype(float).median()),
                 'note': 'CWE and CVSS in the display CSV are current descriptive metadata and do not enter the strict model.'}
+            target_lookup = rows.set_index('cve_id').index.get_indexer(selected.cve_id)
+            findings['top500_profile_2026']['vendors_from_assigner'] = history.loc[target_lookup, 'vendor_identity'].replace('', 'unmapped').value_counts().head(20).to_dict()
     write_json(ARTIFACTS / 'findings.json', findings)
     print('Findings:', len(linked), 'first month:', int(early_mask.sum()), 'later:', len(later),
           'median snapshot lag:', lag_snapshot.median(), flush=True)

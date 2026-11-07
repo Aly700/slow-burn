@@ -22,7 +22,7 @@ def ranked_indices(ids, scores):
     return np.lexsort((np.asarray(ids, dtype=str), -np.asarray(scores, dtype=float)))
 
 
-def ranking_metrics(rows, scores, name, probabilities=False):
+def ranking_metrics(rows, scores, name, probabilities=False, probability_values=None):
     y = rows.label.to_numpy()
     order = ranked_indices(rows.cve_id, scores)
     k = min(500, len(y))
@@ -37,8 +37,9 @@ def ranking_metrics(rows, scores, name, probabilities=False):
               'recall_at_scaled_budget': scaled / positives if positives else 0.,
               'average_precision': float(average_precision_score(y, scores)) if positives else 0.}
     if probabilities:
-        result['brier_score'] = float(brier_score_loss(y, scores))
-        result['mean_probability'] = float(np.mean(scores))
+        values = scores if probability_values is None else probability_values
+        result['brier_score'] = float(brier_score_loss(y, values))
+        result['mean_probability'] = float(np.mean(values))
     return result
 
 
@@ -115,32 +116,42 @@ def paired_month_bootstrap(rows, ours, baseline, iterations=1000):
     months = rows.snapshot_month.unique()
     groups = [np.flatnonzero(rows.snapshot_month.to_numpy() == m) for m in months]
     deltas = []
+    literal_deltas = []
     for _ in range(iterations):
         idx = np.concatenate([groups[i] for i in rng.integers(0, len(groups), len(groups))])
         k = max(1, int(np.floor(len(idx) * RATE + .5)))
         y = rows.label.to_numpy()[idx]
         ids = rows.cve_id.to_numpy()[idx]
-        a = int(y[ranked_indices(ids, ours[idx])[:k]].sum())
-        b = int(y[ranked_indices(ids, baseline[idx])[:k]].sum())
+        ours_order = ranked_indices(ids, ours[idx])
+        baseline_order = ranked_indices(ids, baseline[idx])
+        a = int(y[ours_order[:k]].sum())
+        b = int(y[baseline_order[:k]].sum())
         deltas.append(a - b)
+        literal_deltas.append(int(y[ours_order[:500]].sum() - y[baseline_order[:500]].sum()))
     return {'method': 'paired month bootstrap; equal-workload budget; fixed fitted models',
             'iterations': iterations, 'seed': 2026,
             'delta_hits_95_percentile_interval': [float(x) for x in np.quantile(deltas, [.025, .975])],
             'fraction_delta_positive': float(np.mean(np.array(deltas) > 0)),
-            'limitation': 'Only 12 months; does not include model selection or retraining uncertainty.'}
+            'fraction_delta_negative': float(np.mean(np.array(deltas) < 0)),
+            'literal_500': {'delta_hits_95_percentile_interval': [float(x) for x in np.quantile(literal_deltas, [.025, .975])],
+                            'fraction_delta_positive': float(np.mean(np.array(literal_deltas) > 0)),
+                            'fraction_delta_negative': float(np.mean(np.array(literal_deltas) < 0))},
+            'months': len(months),
+            'limitation': f'Only {len(months)} months; does not include model selection or retraining uncertainty.'}
 
 
 def run(include_embeddings=True):
     rows, history, blocks = prepared()
     emb = {kind: embeddings(rows, kind) for kind in ['identity', 'description']} if include_embeddings else {}
     recipes = [r for r in RECIPES if not r.embedding or include_embeddings]
-    results, predictions = [], {}
+    results, predictions, probability_predictions = [], {}, {}
     for name, train, test, cutoff, endpoint in splits(rows):
         assert set(train.cve_id).isdisjoint(test.cve_id)
         assert train.snapshot_month.max() < test.snapshot_month.min()
         assert train.followup_days.ge(90).all()
         methods = [ranking_metrics(test, s, n) for n, s in baseline_scores(test).items()]
         predictions[name] = baseline_scores(test)
+        probability_predictions[name] = {}
         for recipe in recipes:
             # The encoder was released in December 2024, after this historical split.
             if name == 'forward_2024_q4' and recipe.embedding:
@@ -149,28 +160,35 @@ def run(include_embeddings=True):
             train_emb = emb[recipe.embedding][train.index] if recipe.embedding else None
             test_emb = emb[recipe.embedding][test.index] if recipe.embedding else None
             fitted = FittedModel(recipe).fit(x.loc[train.index], train.label, train_emb)
-            scores = fitted.predict(x.loc[test.index], test_emb)
+            probability = fitted.predict(x.loc[test.index], test_emb)
+            scores = fitted.ranking_score(x.loc[test.index], probability)
             predictions[name][recipe.name] = scores
-            methods.append(ranking_metrics(test, scores, recipe.name, probabilities=True))
+            probability_predictions[name][recipe.name] = probability
+            methods.append(ranking_metrics(test, scores, recipe.name, probabilities=True, probability_values=probability))
             print(name, recipe.name, methods[-1]['hits_at_500'], methods[-1]['hits_at_scaled_budget'], flush=True)
         results.append({'name': name, 'train_pool': len(train), 'train_positives': int(train.label.sum()),
                         'train_label_cutoff': cutoff, 'train_snapshot_max': str(train.snapshot_month.max()),
                         'test_label_cutoff': endpoint, 'test_pool': len(test), 'test_positives': int(test.label.sum()),
                         'methods': methods})
-    eligible = [r.name for r in recipes if r.block in ['strict', 'signals'] and not r.no_history]
-    # Use two complementary budgets, average across the two 2025 forward evaluations.
-    # A two-hit indifference band favors the lower-dimensional, unblended model.
-    def quality(name):
-        values = []
+    eligible = [r for r in recipes if r.block in ['strict', 'signals', 'text']]
+    gates = {}
+    for recipe in eligible:
+        margins = []
         for split in results[:2]:
-            m = next(x for x in split['methods'] if x['name'] == name)
-            values.append((m['hits_at_500'] + m['hits_at_scaled_budget']) / (2 * split['test_positives']))
-        return float(np.mean(values))
-    qualities = {name: quality(name) for name in eligible}
-    best = max(eligible, key=lambda name: qualities[name])
-    tolerance = 1 / results[0]['test_positives']
-    near = [r for r in recipes if r.name in eligible and qualities[r.name] >= qualities[best] - tolerance]
-    chosen = min(near, key=lambda r: (bool(r.embedding), bool(r.blend), r.algorithm != 'logistic', r.block != 'signals')).name
+            m = next(x for x in split['methods'] if x['name'] == recipe.name)
+            reference = next(x for x in split['methods'] if x['name'] == BASELINES[-1])
+            margins.extend([m[key] - reference[key] for key in ['hits_at_500', 'hits_at_scaled_budget']])
+        gates[recipe.name] = {'margins': margins, 'passes_all_four': all(d >= 0 for d in margins),
+                              'strict_improvement': any(d > 0 for d in margins)}
+    qualified = [r for r in eligible if r.algorithm != 'rule' and gates[r.name]['passes_all_four'] and gates[r.name]['strict_improvement']]
+    # No weak-budget tradeoff is allowed. Prefer the simplest qualifying learned recipe.
+    if qualified:
+        chosen = min(qualified, key=lambda r: (bool(r.embedding), r.algorithm != 'logistic',
+                                               r.block == 'text', bool(r.blend),
+                                               -sum(gates[r.name]['margins']), r.name)).name
+    else:
+        chosen = 'calibrated_exploit_rule'
+    assert gates[chosen]['passes_all_four']
     test = splits(rows)[0][2]
     ours = predictions['2024_to_2025'][chosen]
     baseline = predictions['2024_to_2025'][BASELINES[-1]]
@@ -179,7 +197,8 @@ def run(include_embeddings=True):
     fixed = assign_outcomes(mature, '2025-12-31', horizon_days=90)
     sensitivity = []
     for name, part in [('mature_90_days_minimum', mature), ('fixed_90_day_endpoint', fixed)]:
-        sensitivity.append({'name': name, 'methods': [ranking_metrics(part, score[mature_mask], method, method not in BASELINES)
+        sensitivity.append({'name': name, 'methods': [ranking_metrics(part, score[mature_mask], method, method not in BASELINES,
+                            probability_predictions['2024_to_2025'][method][mature_mask] if method not in BASELINES else None)
                             for method, score in predictions['2024_to_2025'].items()]})
     ablations = []
     names = {'signals only': 'logistic_signals', 'no text (strict)': 'logistic_strict',
@@ -197,8 +216,10 @@ def run(include_embeddings=True):
               'selected_model': chosen, 'methods': results[0]['methods'], 'splits': results,
               'monthly': monthly_metrics(test, ours, baseline), 'ablations': ablations,
               'censoring_sensitivity': sensitivity,
-              'selection': {'rule': 'Mean recall across literal and equal-workload budgets in two forward 2025 evaluations; within 1/55 prefer simpler',
-                            'scores': qualities, 'warning': 'Development comparisons; test-year model selection is optimistic. H2 overlaps the primary test.'},
+              'selection': {'rule': 'Must match or beat exploit-first at literal 500 and equal-workload budgets on both 2025 splits; prefer simpler qualifying learned models with at least one improvement, otherwise use the calibrated rule',
+                            'margin_order': ['primary_500', 'primary_scaled', 'h2_500', 'h2_scaled'],
+                            'gates': gates, 'passed': True,
+                            'warning': 'Development comparisons; test-year model selection is optimistic. H2 overlaps the primary test.'},
               'scaling': {'scoreboard_pool': 72670, 'scoreboard_budget': 500, 'fraction': RATE,
                           'formula': 'round(pool_size * 500 / 72670)',
                           'note': 'Literal 500 is also shown. Monthly budgets partition 500 by cohort size; not 500 per month.'},
@@ -206,6 +227,12 @@ def run(include_embeddings=True):
                             'excluded_2025_immature': int((~mature_mask).sum()),
                             'note': 'Primary includes censored late rows for seed comparability; mature and fixed-90-day results are separate. December has zero follow-up.'},
               'uncertainty': paired_month_bootstrap(test, ours, baseline),
+              'split_uncertainty': [{'split': name, 'bootstrap': paired_month_bootstrap(part, predictions[name][chosen], predictions[name][BASELINES[-1]])}
+                                    for name, _, part, _, _ in splits(rows)[:2]],
+              'tiered_comparisons': [{'name': r.name, 'gate': gates[r.name],
+                                      'bootstrap': paired_month_bootstrap(test, predictions['2024_to_2025'][r.name], baseline, iterations=500)}
+                                     for r in eligible if r.tiered],
+              'ranking_policy': 'Public exploit/detection flag tier first; learned probability within tier' if next(r for r in recipes if r.name == chosen).tiered else 'Model probability descending',
               'tie_break': 'Descending score, then cve_id ascending; CVSS baseline uses current scores only for benchmark reference',
               'baseline_caveat': 'Current CVSS is an explicitly unsafe reference, never a strict production feature.'}
     write_json(ARTIFACTS / 'backtest.json', result)

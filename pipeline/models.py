@@ -17,6 +17,8 @@ class Recipe:
     embedding: str = ''
     no_history: bool = False
     blend: float = 0.
+    variant: str = 'standard'
+    tiered: bool = False
 
 
 RECIPES = [
@@ -33,6 +35,16 @@ RECIPES = [
     Recipe('logistic_full_audit', block='full', embedding='description'),
     Recipe('logistic_no_history', block='text', embedding='description', no_history=True),
     Recipe('logistic_strict_blend', blend=.25),
+    Recipe('calibrated_exploit_rule', 'rule', 'signals'),
+    Recipe('lightgbm_sparse_strict', 'lightgbm', variant='sparse'),
+    Recipe('lightgbm_sparse_signals', 'lightgbm', 'signals', variant='sparse'),
+    Recipe('lightgbm_sparse_identity', 'lightgbm', embedding='identity', variant='sparse'),
+    Recipe('tiered_logistic_strict', tiered=True),
+    Recipe('tiered_logistic_text', block='text', tiered=True),
+    Recipe('tiered_logistic_description', block='text', embedding='description', tiered=True),
+    Recipe('tiered_lightgbm_strict', 'lightgbm', variant='sparse', tiered=True),
+    Recipe('tiered_lightgbm_text', 'lightgbm', 'text', variant='sparse', tiered=True),
+    Recipe('tiered_lightgbm_description', 'lightgbm', 'text', 'description', variant='sparse', tiered=True),
 ]
 
 
@@ -42,6 +54,13 @@ class FittedModel:
         self.seed = seed
         self.pca = None
         self.rule_calibrator = None
+
+    def ranking_score(self, x, probabilities):
+        if not self.recipe.tiered:
+            return np.asarray(probabilities)
+        unique, ordinal = np.unique(probabilities, return_inverse=True)
+        # Integer ordinals preserve even adjacent floating-point probabilities.
+        return ordinal + x.any_exploit.to_numpy().astype('int64') * len(unique)
 
     def design(self, x, embedding=None, fit=False):
         x = x.copy()
@@ -69,12 +88,20 @@ class FittedModel:
         self.scale = np.maximum(design.std(ddof=0).to_numpy(), .1)
         self.train_n = len(y)
         self.train_positives = int(np.sum(y))
-        if self.recipe.algorithm == 'logistic':
+        if self.recipe.algorithm == 'rule':
+            self.columns = ['any_exploit', 'epss_log']
+            self.model = LogisticRegression(C=1., max_iter=1000)
+            self.model.fit(self.rule_input(x), y)
+            assert self.model.coef_[0, 0] > 0, 'Rule calibration must preserve its ranking'
+        elif self.recipe.algorithm == 'logistic':
             self.model = LogisticRegression(C=.2, max_iter=2000, solver='lbfgs', random_state=self.seed)
             self.model.fit((design.to_numpy() - self.mean) / self.scale, y)
         else:
+            sparse = self.recipe.variant == 'sparse'
             self.model = LGBMClassifier(n_estimators=160, learning_rate=.035, num_leaves=7, max_depth=3,
-                                        min_child_samples=300, min_child_weight=2., reg_lambda=10., reg_alpha=.5,
+                                        min_child_samples=40 if sparse else 300,
+                                        min_child_weight=.05 if sparse else 2.,
+                                        reg_lambda=2. if sparse else 10., reg_alpha=.1 if sparse else .5,
                                         verbosity=-1, n_jobs=6, random_state=self.seed,
                                         deterministic=True, force_col_wise=True)
             self.model.fit(design, y)
@@ -85,7 +112,12 @@ class FittedModel:
 
     def predict(self, x, embedding=None, contributions=False):
         design = self.design(x, embedding)
-        if self.recipe.algorithm == 'logistic':
+        if self.recipe.algorithm == 'rule':
+            coef = self.model.coef_[0, 0]
+            terms = np.column_stack([x.any_exploit.to_numpy() * 8 * coef, x.epss_log.to_numpy() * coef])
+            intercept = np.full(len(x), self.model.intercept_[0])
+            raw = terms.sum(axis=1) + intercept
+        elif self.recipe.algorithm == 'logistic':
             scaled = (design.to_numpy() - self.mean) / self.scale
             terms = scaled * self.model.coef_[0]
             intercept = np.full(len(x), float(self.model.intercept_[0]))
@@ -94,7 +126,7 @@ class FittedModel:
             if contributions:
                 parts = self.model.predict(design, pred_contrib=True)
                 terms, intercept = parts[:, :-1], parts[:, -1]
-                raw = parts.sum(axis=1)
+                raw = self.model.predict(design, raw_score=True)
             else:
                 raw = self.model.predict(design, raw_score=True)
         if self.recipe.blend:

@@ -9,7 +9,7 @@ uv run python -I pipeline/checks.py --artifacts
 uv run python -I pipeline/report.py
 ```
 
-The first run downloads the pinned IBM Granite embedding weights. Subsequent runs reuse content-addressed embeddings under the ignored `artifacts/cache/`. MPS is used when available; CPU is a documented fallback. There are no external vulnerability-data requests in the pipeline.
+The first run downloads the pinned IBM Granite embedding weights. Subsequent runs reuse content-addressed embeddings under the ignored `artifacts/cache/`. MPS is used when available; CPU is a documented fallback. Embeddings run in a separate interpreter because the combined Torch/LightGBM process exposed a native OpenMP crash on macOS. There are no external vulnerability-data requests in the pipeline.
 
 | Artifact or stage | One command |
 |---|---|
@@ -48,8 +48,8 @@ Top-500 metrics are literal. The equal-workload budget is `round(N * 500 / 72670
 | Assigning organization | `assigner`; vendor domain with conservative exclusions for third-party assigners | Eligible under a stated stability assumption; the data has no field-level provenance. |
 | KEV history | Local catalog `date_added`, `vendor`, joined historical assigning organization | Eligible only for dates at or before snapshot; 2026 history freezes at December 2025. Counts and recent-year counts. |
 | IBM identity embeddings | Fixed template containing only the assigning organization | Eligible candidate; 384 dimensions reduced to 24 by PCA fitted on training rows only. |
-| Description keywords and Granite embeddings | Sanitized current `description` | Experimental only. Explicit incident claims, URLs, dates and CVE IDs are removed, but that does not prove historical availability. |
-| Description vendor/product history | Catalog names already known at snapshot, matched to current description | Experimental only; excluded from the strict production matrix. |
+| Description keywords and Granite embeddings | Sanitized current `description` | Eligible with disclosed residual risk. Entire explicit incident-claim sentences, URLs, dates and CVE IDs are removed first, but that does not prove historical availability. Strict no-text models remain audit references. |
+| Description vendor/product history | Catalog names already known at snapshot, matched to sanitized description | Eligible with the same text risk. Vendor PSIRT identity takes precedence; otherwise match the first named vendor or an unambiguous product. Counts use only earlier KEV entries. |
 | First monthly EPSS | Earliest observed value no later than snapshot | Historical audit only; equivalent history is absent from the 2026 scoreboard. |
 | Vendor-supplied CVSS/vector | `cvss3_source`, `cvss3_score`, `cvss3_vector` | Audit only; provenance is safer than NIST but lacks a timestamp and masking can reveal coverage. |
 | NIST/CISA CVSS, CWE, missing scores | Current severity/vector fields and `cwe_ids` | Excluded; no historical enrichment timestamps. Current CVSS remains a clearly labeled benchmark reference. |
@@ -57,14 +57,16 @@ Top-500 metrics are literal. The equal-workload budget is `round(N * 500 / 72670
 | Ransomware | `known_ransomware_use` | Excluded; KEV inclusion date does not date subsequent ransomware annotation. |
 | Record updates, target KEV, external feeds | `last_modified`, target `in_kev`, any external outcome/score | Excluded. Target membership is only for cohort eligibility and labels. |
 
-The model card contains the exact selected feature names and signed audit deltas for logistic regression and LightGBM. A suspect feature failing to improve a backtest does not prove it safe. Current description/CVSS/CWE fields in the output CSV serve the display contract only and do not enter the strict model.
+The model card contains the exact selected feature names and signed audit deltas for logistic regression and LightGBM. A suspect feature failing to improve a backtest does not prove it safe. Current CVSS/CWE fields in the output CSV serve the display contract only. The CSV's `description` field is sanitized to keep incident claims out of downstream displays. Description-derived features enter text recipes only after sanitization; their residual revision risk is explicitly disclosed.
 
 ## Selection, probabilities and reasons
 
-The candidate family is intentionally small: regularized logistic regression, small LightGBM trees, feature-block ablations, and a 25% log-odds blend with a training-calibrated exploit-first rule. The selection rule averages recall at literal and equal-workload budgets across two forward 2025 evaluations. A one-primary-hit indifference band favors simpler models. These are development comparisons, including overlapping test periods, not an untouched test of the selected recipe. A paired month bootstrap reports variability without claiming to include model-selection uncertainty.
+The candidate family includes regularized logistic regression, small LightGBM trees, feature-block ablations, a 25% log-odds blend, a calibrated exploit-first rule, and explicit tiered variants. A submitted learned model must match or beat exploit-first at both literal 500 and equal-workload budgets on both 2025 splits, and improve at least one of the four counts. Among qualifiers, prefer no embeddings, then logistic over trees, then fewer feature blocks; otherwise submit the calibrated rule. The scarce-positive tree variant reduces the minimum leaf Hessian from 2 to 0.05: at the training base rate, the original threshold prevented isolation of small signal groups. Both variants remain reported.
 
-Models optimize unweighted binary log-loss. `score` is the estimated probability of later catalog inclusion under historical, variable follow-up. It is neither EPSS nor a calibrated 30-day attack probability. Brier scores and mean predictions are included in the backtest; scarcity, censoring and temporal drift limit calibration.
+These are development comparisons, including overlapping test periods, not an untouched test of the selected recipe. Paired month bootstraps compare every tiered recipe with the rule and report variability without including model-selection uncertainty. The lead's older-CVE hazard experiment was already below the rule and is not repeated here.
 
-Reasons are signed logistic terms or LightGBM `pred_contrib` values in log-odds units. The five largest absolute grouped contributions are shown; embedding dimensions combine into one organization-identity term. Extra CSV columns preserve the base log odds and omitted contribution sum, so the probability can be reconstructed. Reasons describe model associations, not causal explanations.
+Models optimize unweighted binary log-loss. `score` is the estimated probability of later catalog inclusion under historical, variable follow-up. It is neither EPSS nor a calibrated 30-day attack probability. For tiered recipes, `rank` puts every public-tool row first and sorts by probability within each tier. Probability is not altered to imitate a ranking score, so it can increase at the tier boundary. Brier scores use the actual probabilities; ranking metrics and bootstraps use the tier policy. Scarcity, censoring and temporal drift limit calibration.
+
+Reasons are signed logistic terms or LightGBM `pred_contrib` values in log-odds units. The five largest absolute grouped contributions are shown; embedding dimensions combine into one identity or sanitized-description term. Extra CSV columns preserve the base log odds and omitted contribution sum, so the probability can be reconstructed. `ranking_tier` records the separate policy. Reasons describe model associations, not causal explanations.
 
 Before each local milestone commit, regenerate the touched artifacts, run the temporal and contract checks, and verify no input data/cache is staged. Commit subjects start with lowercase `model:`. No push is part of this workflow.

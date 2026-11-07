@@ -53,6 +53,47 @@ class TemporalChecks(unittest.TestCase):
         history = pd.DataFrame(columns=['cve_id', 'date_added', 'assigner', 'vendor', 'product', 'known_ransomware_use'])
         pd.testing.assert_frame_equal(make_features(a, history, 'strict'), make_features(b, history, 'strict'))
 
+    def test_incident_claims_are_removed_before_entity_features(self):
+        from pipeline.features import clean_description, history_features
+        dirty = 'An unrelated application has a flaw. We are aware of reports that Microsoft Windows has been exploited in the wild.'
+        self.assertNotIn('Microsoft', clean_description(dirty))
+        self.assertNotIn('reports', clean_description('The vendor is aware of reports of active attacks.'))
+        self.assertEqual(clean_description('Exploitation evidence was first observed by the Shadowserver Foundation on 2025-08-30.'), '')
+        self.assertEqual(clean_description('Attacks targeting the issue were reported during the campaign.'), '')
+        self.assertIn('remote', clean_description('A remote attacker can exploit this flaw to execute arbitrary code.'))
+        history = pd.DataFrame({'cve_id': ['CVE-2020-1'], 'date_added': ['2023-12-31'],
+                                'assigner': ['secure@microsoft.com'], 'vendor': ['Microsoft'],
+                                'product': ['Windows'], 'known_ransomware_use': ['Unknown']})
+        rows = pd.DataFrame({'cve_id': ['CVE-2024-1'], 'snapshot_month': ['2024-01'],
+                             'assigner': ['cve@mitre.org'], 'description': [dirty]})
+        h = history_features(rows, history)
+        self.assertEqual(h.text_vendor_prior_kev.iloc[0], 0)
+        self.assertEqual(h.text_product_prior_kev.iloc[0], 0)
+
+    def test_tiered_ranking_preserves_public_signal_priority(self):
+        from pipeline.models import FittedModel, Recipe
+        model = FittedModel(Recipe('tier_check', tiered=True))
+        x = pd.DataFrame({'any_exploit': [0, 1, 1, 0]})
+        probabilities = np.array([.9, .001, .1, .2])
+        order = np.argsort(-model.ranking_score(x, probabilities))
+        self.assertEqual(order.tolist(), [2, 1, 0, 3])
+        close = model.ranking_score(pd.DataFrame({'any_exploit': [1, 1]}), np.array([.3, np.nextafter(.3, 1.)]))
+        self.assertGreater(close[1], close[0])
+
+    def test_generic_product_words_do_not_assign_a_vendor(self):
+        from pipeline.features import history_features
+        history = pd.DataFrame({'cve_id': ['CVE-2020-1', 'CVE-2020-2', 'CVE-2020-3'],
+                                'date_added': ['2023-12-31'] * 3, 'assigner': [''] * 3,
+                                'vendor': ['Cisco', 'ChakraCore', 'Sitecore'],
+                                'product': ['Smart Install', 'Scripting Engine', 'CMS'],
+                                'known_ransomware_use': ['Unknown'] * 3})
+        rows = pd.DataFrame({'cve_id': ['CVE-2024-1'], 'snapshot_month': ['2024-01'],
+                             'assigner': ['cve@mitre.org'],
+                             'description': ['An unrelated CMS has a scripting engine used in a smart home.']})
+        h = history_features(rows, history)
+        self.assertEqual(h.text_vendor_prior_kev.iloc[0], 0)
+        self.assertEqual(h.text_product_prior_kev.iloc[0], 0)
+
     def test_censoring_excludes_immature_training_rows(self):
         from pipeline.data import training_rows
         f = pd.DataFrame({'snapshot_month': ['2024-08', '2024-12'], 'date_added': [None, None]})
@@ -85,6 +126,26 @@ class TemporalChecks(unittest.TestCase):
             data.ROOT, data.DATA, data.CACHE = original
             data.ensure_cache.cache_clear()
 
+    def test_model_terms_reconstruct_probabilities_and_rule_order(self):
+        from pipeline.models import FittedModel, Recipe
+        from pipeline.evaluate import ranked_indices
+        from scipy.special import expit
+        rng = np.random.default_rng(5)
+        x = pd.DataFrame({'any_exploit': rng.binomial(1, .2, 500),
+                          'epss_log': rng.uniform(-5, -.1, 500),
+                          'id_year_gap': rng.integers(0, 3, 500)})
+        y = rng.binomial(1, expit(-5 + 2*x.any_exploit + .6*(x.epss_log+5)))
+        for algorithm in ['logistic', 'lightgbm', 'rule']:
+            model = FittedModel(Recipe('check', algorithm, variant='sparse')).fit(x, y)
+            probability, terms, base, names = model.predict(x, contributions=True)
+            self.assertTrue(np.allclose(expit(terms.sum(axis=1) + base), probability))
+            np.testing.assert_array_equal(probability, model.predict(x, contributions=False))
+            self.assertEqual(terms.shape[1], len(names))
+            if algorithm == 'rule':
+                ids = np.arange(len(x)).astype(str)
+                expected = ranked_indices(ids, x.any_exploit + 10 ** x.epss_log)
+                np.testing.assert_array_equal(ranked_indices(ids, probability), expected)
+
 
 def artifact_checks():
     import json
@@ -98,9 +159,16 @@ def artifact_checks():
     assert list(top.columns) == ['cve_id'] and len(top) == 500 and top.cve_id.is_unique
     assert list(scores.columns[:len(expected)]) == expected and len(scores) == 5000
     assert scores.cve_id.is_unique and top.cve_id.tolist() == scores.cve_id.head(500).tolist()
+    from pipeline.features import clean_description
+    assert scores.description.map(clean_description).eq(scores.description).all()
     assert set(scores.cve_id) <= set(board.cve_id)
     assert scores['rank'].tolist() == list(range(1, 5001))
-    assert scores.score.between(0, 1).all() and scores.score.is_monotonic_decreasing
+    assert scores.score.between(0, 1).all()
+    if 'ranking_tier' in scores:
+        assert scores.ranking_tier.is_monotonic_decreasing
+        assert all(part.score.is_monotonic_decreasing for _, part in scores.groupby('ranking_tier'))
+    else:
+        assert scores.score.is_monotonic_decreasing
     source = board.set_index('cve_id').loc[scores.cve_id]
     assert source.snapshot_month.tolist() == scores.snapshot_month.tolist()
     for flag in ['exploitdb', 'metasploit', 'nuclei', 'poc_github']:
@@ -119,6 +187,9 @@ def artifact_checks():
     card = json.loads((ARTIFACTS / 'model_card.json').read_text())
     assert all(k in card for k in ['model', 'trained_on', 'features_used', 'features_excluded', 'ibm_technology'])
     assert card['leak_checks']['passed']
+    b = json.loads((ARTIFACTS / 'backtest.json').read_text())
+    assert b['selected_model'] == card['model']
+    assert b['selection']['gates'][card['model']]['passes_all_four']
     for name in ['backtest', 'findings']:
         json.loads((ARTIFACTS / f'{name}.json').read_text())
     print('Artifact contracts: passed (500 / 5000 rows, probabilities, reasons, membership, column order)')

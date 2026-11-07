@@ -3,6 +3,7 @@ from pathlib import Path
 import argparse
 import json
 import pickle
+import subprocess
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -12,7 +13,7 @@ import pandas as pd
 from pipeline.data import ARTIFACTS, CACHE, FLAGS, manifest, training_rows, write_json
 from pipeline.embed import MODEL_ID, REVISION, embeddings
 from pipeline.evaluate import prepared, ranked_indices
-from pipeline.features import strict_allowlist
+from pipeline.features import production_allowlist, KEYWORDS, clean_description
 from pipeline.models import Recipe, FittedModel
 
 CONTRACT_COLUMNS = ['rank', 'cve_id', 'published', 'snapshot_month', 'score', 'epss', 'any_exploit',
@@ -42,6 +43,21 @@ def explanation_label(name, row, h, value):
         return name, f'{int(value)} days between publication and snapshot', int(value)
     if name == 'identity_embedding':
         return name, 'IBM Granite representation of the assigning organization', str(row.assigner)
+    if name == 'description_embedding':
+        return name, 'IBM Granite representation of the sanitized technical description', 'sanitized description'
+    if name in {'text_vendor_prior_kev', 'text_product_prior_kev', 'text_vendor_recent_kev', 'text_product_recent_kev'}:
+        count = int(h[name])
+        kind = 'product' if 'product' in name else 'vendor'
+        identity = h[f'text_{kind}_identity'] or f'unmatched {kind}'
+        period = ' in the preceding year' if 'recent' in name else ''
+        return name, f'{identity} has {count} earlier KEV entries{period}', count
+    if name.startswith('text_') and name[5:] in KEYWORDS:
+        meanings = {'remote_code': 'remote code or command execution', 'unauthenticated': 'unauthenticated access',
+                    'traversal': 'path traversal', 'deserialization': 'deserialization', 'edge_device': 'an edge device',
+                    'privilege_escalation': 'privilege escalation', 'memory_corruption': 'memory corruption',
+                    'sql_injection': 'SQL injection', 'xss': 'cross-site scripting', 'wordpress': 'WordPress',
+                    'denial_service': 'denial of service', 'upload': 'executable file upload'}
+        return name, f'Sanitized description {"mentions" if value else "does not mention"} {meanings[name[5:]]}', int(value)
     if name == 'exploit_rule_blend':
         return name, 'Contribution from the public-exploit-first ranking rule', int(row.any_exploit)
     raise ValueError(f'No plain-English explanation for {name}')
@@ -51,7 +67,7 @@ def reasons_for(rows, h, x, terms, names):
     # Sum embedding dimensions into one interpretable group; the grouping preserves log odds.
     groups = {}
     for i, name in enumerate(names):
-        group = 'identity_embedding' if name.startswith('identity_emb_') else name
+        group = 'identity_embedding' if name.startswith('identity_emb_') else ('description_embedding' if name.startswith('description_emb_') else name)
         groups.setdefault(group, []).append(i)
     grouped = {name: terms[:, ix].sum(axis=1) for name, ix in groups.items()}
     output = []
@@ -71,45 +87,55 @@ def run():
     backtest = json.loads((ARTIFACTS / 'backtest.json').read_text())
     audit = json.loads((CACHE / 'leak_audit.json').read_text())
     recipe = Recipe(**json.loads((CACHE / 'selected_recipe.json').read_text()))
+    assert backtest['selection']['gates'][recipe.name]['passes_all_four'], 'Submitted recipe must pass all baseline gates'
     rows, h, blocks = prepared()
     train = training_rows(rows.loc[rows.published.str[:4].isin(['2024', '2025'])], '2025-12-31')
     target = rows.loc[rows.published.str.startswith('2026')].copy()
     assert len(target) == 72670
     x = blocks[recipe.block]
-    strict_allowlist(x.columns)
+    production_allowlist(x.columns, allow_text=recipe.block == 'text')
     embed = embeddings(rows, recipe.embedding) if recipe.embedding else None
     model = FittedModel(recipe).fit(x.loc[train.index], train.label, embed[train.index] if embed is not None else None)
-    strict_allowlist(model.columns)
+    production_allowlist(model.columns, allow_text=recipe.block == 'text')
     probability, terms, intercept, names = model.predict(x.loc[target.index], embed[target.index] if embed is not None else None, contributions=True)
     target['score'] = probability
-    order = ranked_indices(target.cve_id, probability)
+    rank_score = model.ranking_score(x.loc[target.index], probability)
+    order = ranked_indices(target.cve_id, rank_score)
     best = target.iloc[order[:5000]].copy()
     best['rank'] = np.arange(1, 5001)
     best['reasons'] = reasons_for(best, h, x, terms[order[:5000]], names)
-    best['vendor_identity'] = h.loc[best.index, 'vendor_identity']
-    best['vendor_prior_kev'] = h.loc[best.index, 'vendor_prior_kev'].astype(int)
+    best['description'] = best.description.map(clean_description)
+    vendor_key = 'text_vendor_identity' if recipe.block == 'text' else 'vendor_identity'
+    history_key = 'text_vendor_prior_kev' if recipe.block == 'text' else 'vendor_prior_kev'
+    best['vendor_identity'] = h.loc[best.index, vendor_key]
+    best['vendor_prior_kev'] = h.loc[best.index, history_key].astype(int)
     best['assigner_prior_kev'] = h.loc[best.index, 'assigner_prior_kev'].astype(int)
+    best['product_identity'] = h.loc[best.index, 'text_product_identity']
+    best['product_prior_kev'] = h.loc[best.index, 'text_product_prior_kev'].astype(int)
+    best['entity_source'] = h.loc[best.index, 'entity_source']
+    best['ranking_tier'] = best.any_exploit if recipe.tiered else 0
     best['score_horizon'] = 'later KEV inclusion; historical variable follow-up'
     best['explanation_base_log_odds'] = intercept[order[:5000]]
     best['explanation_omitted_log_odds'] = [float(terms[p].sum() - sum(r['contribution'] for r in json.loads(reason)))
                                            for p, reason in zip(order[:5000], best.reasons)]
     extras = ['vendor_identity', 'vendor_prior_kev', 'assigner_prior_kev', 'score_horizon',
-              'explanation_base_log_odds', 'explanation_omitted_log_odds']
+              'explanation_base_log_odds', 'explanation_omitted_log_odds', 'product_identity',
+              'product_prior_kev', 'entity_source', 'ranking_tier']
     best[CONTRACT_COLUMNS + extras].to_csv(ARTIFACTS / 'scores_2026_top5000.csv', index=False)
     best[['cve_id']].head(500).to_csv(ARTIFACTS / 'top500.csv', index=False)
     target[['cve_id', 'score']].iloc[order].to_parquet(CACHE / 'scores_2026_full.parquet', index=False)
     with (CACHE / 'fitted_model.pkl').open('wb') as f:
         pickle.dump(model, f)
     exclusions = audit['features_excluded'] + [
-        {'name': 'current_description_semantics_and_identity',
-         'why': 'Sanitization removes explicit incident claims but cannot establish historical provenance. Evaluated only in ablations; excluded from strict production.'},
+        {'name': 'unfiltered_description_and_incident_claims',
+         'why': 'Explicit exploitation claims and incident reports are removed before keyword, entity and embedding features. Sanitized text is an eligible candidate under a documented residual timestamp risk.'},
         {'name': 'post_2025_exploitation_data', 'why': 'No external labels or scores used. All outcomes stop at 2025-12-31.'},
         {'name': 'target_kev_membership', 'why': 'Only used for historical eligibility/labels; never a model feature.'}]
     card = {
         'model': recipe.name, 'trained_on': '2024-published and Jan–Sep 2025-published eligible CVEs, labels observed by 2025-12-31; minimum 90 days follow-up',
         'features_used': names, 'features_excluded': exclusions,
         'ibm_technology': [f'{MODEL_ID} revision {REVISION}; sentence-transformers on Apple MPS; description and identity embedding ablations'],
-        'ibm_in_selected_model': recipe.embedding or 'Evaluated in research; not selected by strict validation rule',
+        'ibm_in_selected_model': recipe.embedding or 'Evaluated in research; not selected by baseline-protection gate',
         'recipe': recipe.__dict__, 'training_pool': len(train), 'training_positives': int(train.label.sum()),
         'label': 'KEV addition after the row’s snapshot through the historical label cutoff',
         'score_interpretation': 'Estimated probability of later catalog inclusion under historical variable follow-up; not a 30-day exploitation probability.',
@@ -117,14 +143,25 @@ def run():
                         'limitation': 'Scarce positives, censored negatives, changing catalog scope and EPSS versions limit absolute probability reliability.'},
         'explanations': 'Top five grouped terms by absolute signed log-odds contribution. Base and omitted terms are supplied separately; contributions are associations, not causes.',
         'snapshot_rule': 'Use supplied scoreboard snapshot_month, including June 2026 → July. Never fetch a later signal.',
+        'ranking_policy': backtest['ranking_policy'],
+        'ranking_probability_note': 'For a tiered recipe, score remains the learned probability; rank enforces public-tool-first policy. Scores need only decrease within each tier. Tier priority is a policy, not a claimed log-odds effect.',
+        'calendar_analog': backtest.get('exact_calendar_analog'),
+        'calendar_analog_caveat': 'This additional calendar-shaped sensitivity is reported separately from the two required selection splits; the learned recipe may lose to the rule at one of its budgets.',
         'history_cutoff': 'KEV entries date_added <= snapshot end and <= 2025-12-31; 2026 history is frozen at 2025 year-end.',
         'metadata_display': ['cvss3_score', 'attack_vector', 'cwe_ids', 'description'],
-        'metadata_display_note': 'Current metadata is included for the UI contract only and does not enter the strict model.',
+        'metadata_display_note': 'Current CVSS, attack vector and CWE serve the display contract only. The CSV exports sanitized current description text; description features enter only text recipes.',
+        'description_policy': {'enabled_in_selected_model': recipe.block == 'text',
+                               'sanitization': 'Remove entire incident-claim sentences, then URLs, CVE identifiers and dates, before entities/keywords/embeddings.',
+                               'residual_risk': 'Current technical descriptions may have changed after the snapshot. Sanitization cannot establish original wording; identity matching is heuristic.',
+                               'strict_reference': 'logistic_strict and lightgbm_sparse_strict remain in every eligible split.'},
         'limitations': ['Historical labels are KEV inclusion, not first attack.', 'All-2025 results include right censoring; mature and fixed-horizon sensitivity are separate.',
                         'Model selection uses historical development splits; no untouched validation of the selected recipe.',
-                        'Historical assigning-organization values are assumed stable; the source has no field-level revision history.'],
-        'leak_checks': {'passed': True, **audit['checks'], 'strict_production_allowlist': True,
-                        'train_test_cve_disjoint': True, 'training_label_cutoffs_enforced': True},
+                        'Historical assigning-organization values are assumed stable; the source has no field-level revision history.',
+                        'Sanitized description features, if selected, retain unquantifiable residual revision risk.'],
+        'leak_checks': {'passed': True, **audit['checks'],
+                        'train_test_cve_disjoint': True, 'training_label_cutoffs_enforced': True,
+                        'baseline_protection_gate': True, 'strict_production_allowlist': recipe.block != 'text',
+                        'sanitized_text_allowlist': recipe.block == 'text'},
         'input_manifest': json.loads((CACHE / 'input_manifest.json').read_text()),
         'audit_baseline': audit['baseline'],
     }
@@ -141,11 +178,10 @@ if __name__ == '__main__':
     parser.add_argument('--all', action='store_true', help='Rebuild embeddings, evaluation, leak audit and final artifacts')
     args = parser.parse_args()
     if args.all:
-        from pipeline.embed import all_rows
-        rows = all_rows()
         manifest()
-        for kind in ['identity', 'description']:
-            embeddings(rows, kind, build=True)
+        # Torch/MPS and LightGBM load different native OpenMP runtimes on macOS.
+        # A fresh interpreter keeps embedding generation out of the training process.
+        subprocess.run([sys.executable, '-I', str(Path(__file__).with_name('embed.py'))], check=True)
         from pipeline.evaluate import run as evaluate
         from pipeline.leak_audit import run as leak_audit
         evaluate()

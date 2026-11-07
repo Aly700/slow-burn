@@ -1,7 +1,7 @@
 {
   "pool": "2025-published CVEs; publication-month end; exclude prior KEV from catalog or snapshot flag",
   "label": "KEV date_added after snapshot month and through 2025-12-31; non-KEV is unobserved, not proven safe",
-  "selected_model": "logistic_strict",
+  "selected_model": "tiered_logistic_text",
   "methods": [
     {
       "name": "CVSS first",
@@ -53,9 +53,9 @@
       "hits_at_scaled_budget": 14,
       "precision_at_scaled_budget": 0.04229607250755287,
       "recall_at_scaled_budget": 0.2545454545454545,
-      "average_precision": 0.03588643036171092,
-      "brier_score": 0.0011941381823026783,
-      "mean_probability": 0.001257391723823299
+      "average_precision": 0.03588615536693217,
+      "brier_score": 0.0011941383574671659,
+      "mean_probability": 0.001257518200491746
     },
     {
       "name": "lightgbm_strict",
@@ -68,9 +68,9 @@
       "hits_at_scaled_budget": 0,
       "precision_at_scaled_budget": 0.0,
       "recall_at_scaled_budget": 0.0,
-      "average_precision": 0.002757958038442471,
-      "brier_score": 0.0011440919349162734,
-      "mean_probability": 0.0014422050661516055
+      "average_precision": 0.00275791317324736,
+      "brier_score": 0.0011440921094692646,
+      "mean_probability": 0.0014422731194939403
     },
     {
       "name": "logistic_signals",
@@ -113,9 +113,9 @@
       "hits_at_scaled_budget": 13,
       "precision_at_scaled_budget": 0.03927492447129909,
       "recall_at_scaled_budget": 0.23636363636363636,
-      "average_precision": 0.05063455446970143,
-      "brier_score": 0.0012016163798584502,
-      "mean_probability": 0.001256083797025246
+      "average_precision": 0.050634418111918565,
+      "brier_score": 0.001201616501586082,
+      "mean_probability": 0.0012561688122669776
     },
     {
       "name": "lightgbm_identity",
@@ -136,36 +136,6 @@
       "name": "logistic_text",
       "pool": 48039,
       "positives": 55,
-      "hits_at_500": 18,
-      "precision_at_500": 0.036,
-      "recall_at_500": 0.32727272727272727,
-      "scaled_budget": 331,
-      "hits_at_scaled_budget": 13,
-      "precision_at_scaled_budget": 0.03927492447129909,
-      "recall_at_scaled_budget": 0.23636363636363636,
-      "average_precision": 0.056947279592644943,
-      "brier_score": 0.001182827142117562,
-      "mean_probability": 0.001169744686193203
-    },
-    {
-      "name": "lightgbm_text",
-      "pool": 48039,
-      "positives": 55,
-      "hits_at_500": 4,
-      "precision_at_500": 0.008,
-      "recall_at_500": 0.07272727272727272,
-      "scaled_budget": 331,
-      "hits_at_scaled_budget": 4,
-      "precision_at_scaled_budget": 0.012084592145015106,
-      "recall_at_scaled_budget": 0.07272727272727272,
-      "average_precision": 0.0038295232073941705,
-      "brier_score": 0.0011434121186571227,
-      "mean_probability": 0.0013058389217136407
-    },
-    {
-      "name": "logistic_description",
-      "pool": 48039,
-      "positives": 55,
       "hits_at_500": 16,
       "precision_at_500": 0.032,
       "recall_at_500": 0.2909090909090909,
@@ -173,9 +143,39 @@
       "hits_at_scaled_budget": 14,
       "precision_at_scaled_budget": 0.04229607250755287,
       "recall_at_scaled_budget": 0.2545454545454545,
-      "average_precision": 0.06736670270700455,
-      "brier_score": 0.0011710045138858365,
-      "mean_probability": 0.0011826010020464421
+      "average_precision": 0.05355730653980882,
+      "brier_score": 0.0012137063988634281,
+      "mean_probability": 0.0012763514276499688
+    },
+    {
+      "name": "lightgbm_text",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 5,
+      "precision_at_500": 0.01,
+      "recall_at_500": 0.09090909090909091,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 2,
+      "precision_at_scaled_budget": 0.006042296072507553,
+      "recall_at_scaled_budget": 0.03636363636363636,
+      "average_precision": 0.004333083746021255,
+      "brier_score": 0.0011428538274409704,
+      "mean_probability": 0.0012918752946307047
+    },
+    {
+      "name": "logistic_description",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 17,
+      "precision_at_500": 0.034,
+      "recall_at_500": 0.3090909090909091,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 15,
+      "precision_at_scaled_budget": 0.045317220543806644,
+      "recall_at_scaled_budget": 0.2727272727272727,
+      "average_precision": 0.0549564816986314,
+      "brier_score": 0.0011814289317696033,
+      "mean_probability": 0.0011808947841408636
     },
     {
       "name": "lightgbm_description",
@@ -185,12 +185,12 @@
       "precision_at_500": 0.01,
       "recall_at_500": 0.09090909090909091,
       "scaled_budget": 331,
-      "hits_at_scaled_budget": 5,
-      "precision_at_scaled_budget": 0.015105740181268883,
-      "recall_at_scaled_budget": 0.09090909090909091,
-      "average_precision": 0.007295091953082896,
-      "brier_score": 0.001140634798433889,
-      "mean_probability": 0.0011536943347618962
+      "hits_at_scaled_budget": 4,
+      "precision_at_scaled_budget": 0.012084592145015106,
+      "recall_at_scaled_budget": 0.07272727272727272,
+      "average_precision": 0.006196780578905607,
+      "brier_score": 0.0011416830955399584,
+      "mean_probability": 0.0010977663035179146
     },
     {
       "name": "logistic_full_audit",
@@ -203,24 +203,24 @@
       "hits_at_scaled_budget": 15,
       "precision_at_scaled_budget": 0.045317220543806644,
       "recall_at_scaled_budget": 0.2727272727272727,
-      "average_precision": 0.0867928609977188,
-      "brier_score": 0.0011204058659265534,
-      "mean_probability": 0.0009477544858871833
+      "average_precision": 0.08325128694985405,
+      "brier_score": 0.001128328712331089,
+      "mean_probability": 0.0009500712528754396
     },
     {
       "name": "logistic_no_history",
       "pool": 48039,
       "positives": 55,
-      "hits_at_500": 18,
-      "precision_at_500": 0.036,
-      "recall_at_500": 0.32727272727272727,
+      "hits_at_500": 20,
+      "precision_at_500": 0.04,
+      "recall_at_500": 0.36363636363636365,
       "scaled_budget": 331,
       "hits_at_scaled_budget": 16,
       "precision_at_scaled_budget": 0.04833836858006042,
       "recall_at_scaled_budget": 0.2909090909090909,
-      "average_precision": 0.0671310231474973,
-      "brier_score": 0.0011414928205478224,
-      "mean_probability": 0.0011081658099422046
+      "average_precision": 0.06482500953357279,
+      "brier_score": 0.0011521040403301719,
+      "mean_probability": 0.0011822078036352601
     },
     {
       "name": "logistic_strict_blend",
@@ -233,9 +233,159 @@
       "hits_at_scaled_budget": 14,
       "precision_at_scaled_budget": 0.04229607250755287,
       "recall_at_scaled_budget": 0.2545454545454545,
-      "average_precision": 0.04043273550741231,
-      "brier_score": 0.0011437854973887116,
-      "mean_probability": 0.001056958893522992
+      "average_precision": 0.04043245120233602,
+      "brier_score": 0.0011437856296505622,
+      "mean_probability": 0.001057057188274669
+    },
+    {
+      "name": "calibrated_exploit_rule",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 19,
+      "precision_at_500": 0.038,
+      "recall_at_500": 0.34545454545454546,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 17,
+      "precision_at_scaled_budget": 0.0513595166163142,
+      "recall_at_scaled_budget": 0.3090909090909091,
+      "average_precision": 0.043579952382459784,
+      "brier_score": 0.0011268456302593996,
+      "mean_probability": 0.0012315277192801466
+    },
+    {
+      "name": "lightgbm_sparse_strict",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 19,
+      "precision_at_500": 0.038,
+      "recall_at_500": 0.34545454545454546,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 17,
+      "precision_at_scaled_budget": 0.0513595166163142,
+      "recall_at_scaled_budget": 0.3090909090909091,
+      "average_precision": 0.043900410736104206,
+      "brier_score": 0.0011281879577801266,
+      "mean_probability": 0.001348051830736668
+    },
+    {
+      "name": "lightgbm_sparse_signals",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 17,
+      "precision_at_500": 0.034,
+      "recall_at_500": 0.3090909090909091,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 14,
+      "precision_at_scaled_budget": 0.04229607250755287,
+      "recall_at_scaled_budget": 0.2545454545454545,
+      "average_precision": 0.044991675159384334,
+      "brier_score": 0.0011164846441841117,
+      "mean_probability": 0.0014559357716959994
+    },
+    {
+      "name": "lightgbm_sparse_identity",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 14,
+      "precision_at_500": 0.028,
+      "recall_at_500": 0.2545454545454545,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 14,
+      "precision_at_scaled_budget": 0.04229607250755287,
+      "recall_at_scaled_budget": 0.2545454545454545,
+      "average_precision": 0.08266790451625086,
+      "brier_score": 0.0011422539961676872,
+      "mean_probability": 0.001635239970979224
+    },
+    {
+      "name": "tiered_logistic_strict",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 17,
+      "precision_at_500": 0.034,
+      "recall_at_500": 0.3090909090909091,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 14,
+      "precision_at_scaled_budget": 0.04229607250755287,
+      "recall_at_scaled_budget": 0.2545454545454545,
+      "average_precision": 0.039531975027576466,
+      "brier_score": 0.0011941383574671659,
+      "mean_probability": 0.001257518200491746
+    },
+    {
+      "name": "tiered_logistic_text",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 22,
+      "precision_at_500": 0.044,
+      "recall_at_500": 0.4,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 18,
+      "precision_at_scaled_budget": 0.054380664652567974,
+      "recall_at_scaled_budget": 0.32727272727272727,
+      "average_precision": 0.06054434843941339,
+      "brier_score": 0.0012137063988634281,
+      "mean_probability": 0.0012763514276499688
+    },
+    {
+      "name": "tiered_logistic_description",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 21,
+      "precision_at_500": 0.042,
+      "recall_at_500": 0.38181818181818183,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 18,
+      "precision_at_scaled_budget": 0.054380664652567974,
+      "recall_at_scaled_budget": 0.32727272727272727,
+      "average_precision": 0.06248954329655926,
+      "brier_score": 0.0011814289317696033,
+      "mean_probability": 0.0011808947841408636
+    },
+    {
+      "name": "tiered_lightgbm_strict",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 20,
+      "precision_at_500": 0.04,
+      "recall_at_500": 0.36363636363636365,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 20,
+      "precision_at_scaled_budget": 0.06042296072507553,
+      "recall_at_scaled_budget": 0.36363636363636365,
+      "average_precision": 0.04850058475453266,
+      "brier_score": 0.0011281879577801266,
+      "mean_probability": 0.001348051830736668
+    },
+    {
+      "name": "tiered_lightgbm_text",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 21,
+      "precision_at_500": 0.042,
+      "recall_at_500": 0.38181818181818183,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 21,
+      "precision_at_scaled_budget": 0.0634441087613293,
+      "recall_at_scaled_budget": 0.38181818181818183,
+      "average_precision": 0.07115769871469713,
+      "brier_score": 0.0011171350990599929,
+      "mean_probability": 0.0011953104026203479
+    },
+    {
+      "name": "tiered_lightgbm_description",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 22,
+      "precision_at_500": 0.044,
+      "recall_at_500": 0.4,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 21,
+      "precision_at_scaled_budget": 0.0634441087613293,
+      "recall_at_scaled_budget": 0.38181818181818183,
+      "average_precision": 0.06462367788570898,
+      "brier_score": 0.0011183941033213755,
+      "mean_probability": 0.0009689228780775762
     }
   ],
   "splits": [
@@ -299,9 +449,9 @@
           "hits_at_scaled_budget": 14,
           "precision_at_scaled_budget": 0.04229607250755287,
           "recall_at_scaled_budget": 0.2545454545454545,
-          "average_precision": 0.03588643036171092,
-          "brier_score": 0.0011941381823026783,
-          "mean_probability": 0.001257391723823299
+          "average_precision": 0.03588615536693217,
+          "brier_score": 0.0011941383574671659,
+          "mean_probability": 0.001257518200491746
         },
         {
           "name": "lightgbm_strict",
@@ -314,9 +464,9 @@
           "hits_at_scaled_budget": 0,
           "precision_at_scaled_budget": 0.0,
           "recall_at_scaled_budget": 0.0,
-          "average_precision": 0.002757958038442471,
-          "brier_score": 0.0011440919349162734,
-          "mean_probability": 0.0014422050661516055
+          "average_precision": 0.00275791317324736,
+          "brier_score": 0.0011440921094692646,
+          "mean_probability": 0.0014422731194939403
         },
         {
           "name": "logistic_signals",
@@ -359,9 +509,9 @@
           "hits_at_scaled_budget": 13,
           "precision_at_scaled_budget": 0.03927492447129909,
           "recall_at_scaled_budget": 0.23636363636363636,
-          "average_precision": 0.05063455446970143,
-          "brier_score": 0.0012016163798584502,
-          "mean_probability": 0.001256083797025246
+          "average_precision": 0.050634418111918565,
+          "brier_score": 0.001201616501586082,
+          "mean_probability": 0.0012561688122669776
         },
         {
           "name": "lightgbm_identity",
@@ -382,36 +532,6 @@
           "name": "logistic_text",
           "pool": 48039,
           "positives": 55,
-          "hits_at_500": 18,
-          "precision_at_500": 0.036,
-          "recall_at_500": 0.32727272727272727,
-          "scaled_budget": 331,
-          "hits_at_scaled_budget": 13,
-          "precision_at_scaled_budget": 0.03927492447129909,
-          "recall_at_scaled_budget": 0.23636363636363636,
-          "average_precision": 0.056947279592644943,
-          "brier_score": 0.001182827142117562,
-          "mean_probability": 0.001169744686193203
-        },
-        {
-          "name": "lightgbm_text",
-          "pool": 48039,
-          "positives": 55,
-          "hits_at_500": 4,
-          "precision_at_500": 0.008,
-          "recall_at_500": 0.07272727272727272,
-          "scaled_budget": 331,
-          "hits_at_scaled_budget": 4,
-          "precision_at_scaled_budget": 0.012084592145015106,
-          "recall_at_scaled_budget": 0.07272727272727272,
-          "average_precision": 0.0038295232073941705,
-          "brier_score": 0.0011434121186571227,
-          "mean_probability": 0.0013058389217136407
-        },
-        {
-          "name": "logistic_description",
-          "pool": 48039,
-          "positives": 55,
           "hits_at_500": 16,
           "precision_at_500": 0.032,
           "recall_at_500": 0.2909090909090909,
@@ -419,9 +539,39 @@
           "hits_at_scaled_budget": 14,
           "precision_at_scaled_budget": 0.04229607250755287,
           "recall_at_scaled_budget": 0.2545454545454545,
-          "average_precision": 0.06736670270700455,
-          "brier_score": 0.0011710045138858365,
-          "mean_probability": 0.0011826010020464421
+          "average_precision": 0.05355730653980882,
+          "brier_score": 0.0012137063988634281,
+          "mean_probability": 0.0012763514276499688
+        },
+        {
+          "name": "lightgbm_text",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.09090909090909091,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 2,
+          "precision_at_scaled_budget": 0.006042296072507553,
+          "recall_at_scaled_budget": 0.03636363636363636,
+          "average_precision": 0.004333083746021255,
+          "brier_score": 0.0011428538274409704,
+          "mean_probability": 0.0012918752946307047
+        },
+        {
+          "name": "logistic_description",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 17,
+          "precision_at_500": 0.034,
+          "recall_at_500": 0.3090909090909091,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 15,
+          "precision_at_scaled_budget": 0.045317220543806644,
+          "recall_at_scaled_budget": 0.2727272727272727,
+          "average_precision": 0.0549564816986314,
+          "brier_score": 0.0011814289317696033,
+          "mean_probability": 0.0011808947841408636
         },
         {
           "name": "lightgbm_description",
@@ -431,12 +581,12 @@
           "precision_at_500": 0.01,
           "recall_at_500": 0.09090909090909091,
           "scaled_budget": 331,
-          "hits_at_scaled_budget": 5,
-          "precision_at_scaled_budget": 0.015105740181268883,
-          "recall_at_scaled_budget": 0.09090909090909091,
-          "average_precision": 0.007295091953082896,
-          "brier_score": 0.001140634798433889,
-          "mean_probability": 0.0011536943347618962
+          "hits_at_scaled_budget": 4,
+          "precision_at_scaled_budget": 0.012084592145015106,
+          "recall_at_scaled_budget": 0.07272727272727272,
+          "average_precision": 0.006196780578905607,
+          "brier_score": 0.0011416830955399584,
+          "mean_probability": 0.0010977663035179146
         },
         {
           "name": "logistic_full_audit",
@@ -449,24 +599,24 @@
           "hits_at_scaled_budget": 15,
           "precision_at_scaled_budget": 0.045317220543806644,
           "recall_at_scaled_budget": 0.2727272727272727,
-          "average_precision": 0.0867928609977188,
-          "brier_score": 0.0011204058659265534,
-          "mean_probability": 0.0009477544858871833
+          "average_precision": 0.08325128694985405,
+          "brier_score": 0.001128328712331089,
+          "mean_probability": 0.0009500712528754396
         },
         {
           "name": "logistic_no_history",
           "pool": 48039,
           "positives": 55,
-          "hits_at_500": 18,
-          "precision_at_500": 0.036,
-          "recall_at_500": 0.32727272727272727,
+          "hits_at_500": 20,
+          "precision_at_500": 0.04,
+          "recall_at_500": 0.36363636363636365,
           "scaled_budget": 331,
           "hits_at_scaled_budget": 16,
           "precision_at_scaled_budget": 0.04833836858006042,
           "recall_at_scaled_budget": 0.2909090909090909,
-          "average_precision": 0.0671310231474973,
-          "brier_score": 0.0011414928205478224,
-          "mean_probability": 0.0011081658099422046
+          "average_precision": 0.06482500953357279,
+          "brier_score": 0.0011521040403301719,
+          "mean_probability": 0.0011822078036352601
         },
         {
           "name": "logistic_strict_blend",
@@ -479,9 +629,159 @@
           "hits_at_scaled_budget": 14,
           "precision_at_scaled_budget": 0.04229607250755287,
           "recall_at_scaled_budget": 0.2545454545454545,
-          "average_precision": 0.04043273550741231,
-          "brier_score": 0.0011437854973887116,
-          "mean_probability": 0.001056958893522992
+          "average_precision": 0.04043245120233602,
+          "brier_score": 0.0011437856296505622,
+          "mean_probability": 0.001057057188274669
+        },
+        {
+          "name": "calibrated_exploit_rule",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 19,
+          "precision_at_500": 0.038,
+          "recall_at_500": 0.34545454545454546,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 17,
+          "precision_at_scaled_budget": 0.0513595166163142,
+          "recall_at_scaled_budget": 0.3090909090909091,
+          "average_precision": 0.043579952382459784,
+          "brier_score": 0.0011268456302593996,
+          "mean_probability": 0.0012315277192801466
+        },
+        {
+          "name": "lightgbm_sparse_strict",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 19,
+          "precision_at_500": 0.038,
+          "recall_at_500": 0.34545454545454546,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 17,
+          "precision_at_scaled_budget": 0.0513595166163142,
+          "recall_at_scaled_budget": 0.3090909090909091,
+          "average_precision": 0.043900410736104206,
+          "brier_score": 0.0011281879577801266,
+          "mean_probability": 0.001348051830736668
+        },
+        {
+          "name": "lightgbm_sparse_signals",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 17,
+          "precision_at_500": 0.034,
+          "recall_at_500": 0.3090909090909091,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 14,
+          "precision_at_scaled_budget": 0.04229607250755287,
+          "recall_at_scaled_budget": 0.2545454545454545,
+          "average_precision": 0.044991675159384334,
+          "brier_score": 0.0011164846441841117,
+          "mean_probability": 0.0014559357716959994
+        },
+        {
+          "name": "lightgbm_sparse_identity",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 14,
+          "precision_at_500": 0.028,
+          "recall_at_500": 0.2545454545454545,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 14,
+          "precision_at_scaled_budget": 0.04229607250755287,
+          "recall_at_scaled_budget": 0.2545454545454545,
+          "average_precision": 0.08266790451625086,
+          "brier_score": 0.0011422539961676872,
+          "mean_probability": 0.001635239970979224
+        },
+        {
+          "name": "tiered_logistic_strict",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 17,
+          "precision_at_500": 0.034,
+          "recall_at_500": 0.3090909090909091,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 14,
+          "precision_at_scaled_budget": 0.04229607250755287,
+          "recall_at_scaled_budget": 0.2545454545454545,
+          "average_precision": 0.039531975027576466,
+          "brier_score": 0.0011941383574671659,
+          "mean_probability": 0.001257518200491746
+        },
+        {
+          "name": "tiered_logistic_text",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 22,
+          "precision_at_500": 0.044,
+          "recall_at_500": 0.4,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 18,
+          "precision_at_scaled_budget": 0.054380664652567974,
+          "recall_at_scaled_budget": 0.32727272727272727,
+          "average_precision": 0.06054434843941339,
+          "brier_score": 0.0012137063988634281,
+          "mean_probability": 0.0012763514276499688
+        },
+        {
+          "name": "tiered_logistic_description",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 21,
+          "precision_at_500": 0.042,
+          "recall_at_500": 0.38181818181818183,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 18,
+          "precision_at_scaled_budget": 0.054380664652567974,
+          "recall_at_scaled_budget": 0.32727272727272727,
+          "average_precision": 0.06248954329655926,
+          "brier_score": 0.0011814289317696033,
+          "mean_probability": 0.0011808947841408636
+        },
+        {
+          "name": "tiered_lightgbm_strict",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 20,
+          "precision_at_500": 0.04,
+          "recall_at_500": 0.36363636363636365,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 20,
+          "precision_at_scaled_budget": 0.06042296072507553,
+          "recall_at_scaled_budget": 0.36363636363636365,
+          "average_precision": 0.04850058475453266,
+          "brier_score": 0.0011281879577801266,
+          "mean_probability": 0.001348051830736668
+        },
+        {
+          "name": "tiered_lightgbm_text",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 21,
+          "precision_at_500": 0.042,
+          "recall_at_500": 0.38181818181818183,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 21,
+          "precision_at_scaled_budget": 0.0634441087613293,
+          "recall_at_scaled_budget": 0.38181818181818183,
+          "average_precision": 0.07115769871469713,
+          "brier_score": 0.0011171350990599929,
+          "mean_probability": 0.0011953104026203479
+        },
+        {
+          "name": "tiered_lightgbm_description",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 22,
+          "precision_at_500": 0.044,
+          "recall_at_500": 0.4,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 21,
+          "precision_at_scaled_budget": 0.0634441087613293,
+          "recall_at_scaled_budget": 0.38181818181818183,
+          "average_precision": 0.06462367788570898,
+          "brier_score": 0.0011183941033213755,
+          "mean_probability": 0.0009689228780775762
         }
       ]
     },
@@ -545,9 +845,9 @@
           "hits_at_scaled_budget": 3,
           "precision_at_scaled_budget": 0.037037037037037035,
           "recall_at_scaled_budget": 0.23076923076923078,
-          "average_precision": 0.011686516521316335,
-          "brier_score": 0.001176386157230549,
-          "mean_probability": 0.0019155274518506838
+          "average_precision": 0.011686315390870844,
+          "brier_score": 0.0011763862901709942,
+          "mean_probability": 0.001915596742622525
         },
         {
           "name": "lightgbm_strict",
@@ -561,8 +861,8 @@
           "precision_at_scaled_budget": 0.037037037037037035,
           "recall_at_scaled_budget": 0.23076923076923078,
           "average_precision": 0.0637058084206489,
-          "brier_score": 0.0010836878088081132,
-          "mean_probability": 0.0018223954422054696
+          "brier_score": 0.0010836886576413214,
+          "mean_probability": 0.0018225632533416458
         },
         {
           "name": "logistic_signals",
@@ -606,8 +906,8 @@
           "precision_at_scaled_budget": 0.012345679012345678,
           "recall_at_scaled_budget": 0.07692307692307693,
           "average_precision": 0.011226163697560146,
-          "brier_score": 0.0011892554946635755,
-          "mean_probability": 0.001992623162656631
+          "brier_score": 0.0011892555403805148,
+          "mean_probability": 0.0019926502646365916
         },
         {
           "name": "lightgbm_identity",
@@ -628,16 +928,16 @@
           "name": "logistic_text",
           "pool": 11702,
           "positives": 13,
-          "hits_at_500": 5,
-          "precision_at_500": 0.01,
-          "recall_at_500": 0.38461538461538464,
+          "hits_at_500": 6,
+          "precision_at_500": 0.012,
+          "recall_at_500": 0.46153846153846156,
           "scaled_budget": 81,
           "hits_at_scaled_budget": 2,
           "precision_at_scaled_budget": 0.024691358024691357,
           "recall_at_scaled_budget": 0.15384615384615385,
-          "average_precision": 0.01763279356089053,
-          "brier_score": 0.0012326802500210539,
-          "mean_probability": 0.001987820044297544
+          "average_precision": 0.013111164030997297,
+          "brier_score": 0.001263290985175722,
+          "mean_probability": 0.002022235839504207
         },
         {
           "name": "lightgbm_text",
@@ -650,42 +950,12 @@
           "hits_at_scaled_budget": 3,
           "precision_at_scaled_budget": 0.037037037037037035,
           "recall_at_scaled_budget": 0.23076923076923078,
-          "average_precision": 0.028924151477341144,
-          "brier_score": 0.0011043336742927782,
-          "mean_probability": 0.0018235641155982842
+          "average_precision": 0.03157703292757774,
+          "brier_score": 0.0011019811492370265,
+          "mean_probability": 0.001794518926826021
         },
         {
           "name": "logistic_description",
-          "pool": 11702,
-          "positives": 13,
-          "hits_at_500": 6,
-          "precision_at_500": 0.012,
-          "recall_at_500": 0.46153846153846156,
-          "scaled_budget": 81,
-          "hits_at_scaled_budget": 2,
-          "precision_at_scaled_budget": 0.024691358024691357,
-          "recall_at_scaled_budget": 0.15384615384615385,
-          "average_precision": 0.015742636318338193,
-          "brier_score": 0.0012631852805318933,
-          "mean_probability": 0.0021005882565486743
-        },
-        {
-          "name": "lightgbm_description",
-          "pool": 11702,
-          "positives": 13,
-          "hits_at_500": 6,
-          "precision_at_500": 0.012,
-          "recall_at_500": 0.46153846153846156,
-          "scaled_budget": 81,
-          "hits_at_scaled_budget": 4,
-          "precision_at_scaled_budget": 0.04938271604938271,
-          "recall_at_scaled_budget": 0.3076923076923077,
-          "average_precision": 0.03529862627391409,
-          "brier_score": 0.001096927225233435,
-          "mean_probability": 0.0019064707884753802
-        },
-        {
-          "name": "logistic_full_audit",
           "pool": 11702,
           "positives": 13,
           "hits_at_500": 5,
@@ -695,9 +965,39 @@
           "hits_at_scaled_budget": 2,
           "precision_at_scaled_budget": 0.024691358024691357,
           "recall_at_scaled_budget": 0.15384615384615385,
-          "average_precision": 0.011150311442178628,
-          "brier_score": 0.0013719007322941523,
-          "mean_probability": 0.0020809388041238886
+          "average_precision": 0.013274177519155413,
+          "brier_score": 0.001270358443569589,
+          "mean_probability": 0.0020973811454445355
+        },
+        {
+          "name": "lightgbm_description",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 4,
+          "precision_at_scaled_budget": 0.04938271604938271,
+          "recall_at_scaled_budget": 0.3076923076923077,
+          "average_precision": 0.028212362571443442,
+          "brier_score": 0.001109493722297599,
+          "mean_probability": 0.0018052880880980288
+        },
+        {
+          "name": "logistic_full_audit",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 0,
+          "precision_at_scaled_budget": 0.0,
+          "recall_at_scaled_budget": 0.0,
+          "average_precision": 0.009351033894679187,
+          "brier_score": 0.0014228185218614973,
+          "mean_probability": 0.0021499920889109423
         },
         {
           "name": "logistic_no_history",
@@ -710,9 +1010,9 @@
           "hits_at_scaled_budget": 2,
           "precision_at_scaled_budget": 0.024691358024691357,
           "recall_at_scaled_budget": 0.15384615384615385,
-          "average_precision": 0.01606972202841662,
-          "brier_score": 0.0012424494160192018,
-          "mean_probability": 0.0018785491680686586
+          "average_precision": 0.016396106709212457,
+          "brier_score": 0.0012323098305310153,
+          "mean_probability": 0.0019563967864878714
         },
         {
           "name": "logistic_strict_blend",
@@ -725,9 +1025,159 @@
           "hits_at_scaled_budget": 3,
           "precision_at_scaled_budget": 0.037037037037037035,
           "recall_at_scaled_budget": 0.23076923076923078,
-          "average_precision": 0.011988157785295665,
-          "brier_score": 0.0011366019812984224,
-          "mean_probability": 0.0017526409153698942
+          "average_precision": 0.01198791199089357,
+          "brier_score": 0.0011366020814064133,
+          "mean_probability": 0.0017526930640578873
+        },
+        {
+          "name": "calibrated_exploit_rule",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 2,
+          "precision_at_scaled_budget": 0.024691358024691357,
+          "recall_at_scaled_budget": 0.15384615384615385,
+          "average_precision": 0.011283609613266132,
+          "brier_score": 0.0011084535131595991,
+          "mean_probability": 0.0017329791834226507
+        },
+        {
+          "name": "lightgbm_sparse_strict",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 4,
+          "precision_at_500": 0.008,
+          "recall_at_500": 0.3076923076923077,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 4,
+          "precision_at_scaled_budget": 0.04938271604938271,
+          "recall_at_scaled_budget": 0.3076923076923077,
+          "average_precision": 0.0348751553009002,
+          "brier_score": 0.0011351349565905553,
+          "mean_probability": 0.0018025577282114239
+        },
+        {
+          "name": "lightgbm_sparse_signals",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 1,
+          "precision_at_scaled_budget": 0.012345679012345678,
+          "recall_at_scaled_budget": 0.07692307692307693,
+          "average_precision": 0.01107155089215764,
+          "brier_score": 0.0011763220691529256,
+          "mean_probability": 0.0019293920122644833
+        },
+        {
+          "name": "lightgbm_sparse_identity",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 3,
+          "precision_at_500": 0.006,
+          "recall_at_500": 0.23076923076923078,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 3,
+          "precision_at_scaled_budget": 0.037037037037037035,
+          "recall_at_scaled_budget": 0.23076923076923078,
+          "average_precision": 0.029186365139473525,
+          "brier_score": 0.0011888041952212154,
+          "mean_probability": 0.0028853641869271886
+        },
+        {
+          "name": "tiered_logistic_strict",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 3,
+          "precision_at_scaled_budget": 0.037037037037037035,
+          "recall_at_scaled_budget": 0.23076923076923078,
+          "average_precision": 0.011752047230275554,
+          "brier_score": 0.0011763862901709942,
+          "mean_probability": 0.001915596742622525
+        },
+        {
+          "name": "tiered_logistic_text",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 6,
+          "precision_at_500": 0.012,
+          "recall_at_500": 0.46153846153846156,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 2,
+          "precision_at_scaled_budget": 0.024691358024691357,
+          "recall_at_scaled_budget": 0.15384615384615385,
+          "average_precision": 0.01510558974694065,
+          "brier_score": 0.001263290985175722,
+          "mean_probability": 0.002022235839504207
+        },
+        {
+          "name": "tiered_logistic_description",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 2,
+          "precision_at_scaled_budget": 0.024691358024691357,
+          "recall_at_scaled_budget": 0.15384615384615385,
+          "average_precision": 0.016955339940001167,
+          "brier_score": 0.001270358443569589,
+          "mean_probability": 0.0020973811454445355
+        },
+        {
+          "name": "tiered_lightgbm_strict",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 4,
+          "precision_at_scaled_budget": 0.04938271604938271,
+          "recall_at_scaled_budget": 0.3076923076923077,
+          "average_precision": 0.0366395037848802,
+          "brier_score": 0.0011351349565905553,
+          "mean_probability": 0.0018025577282114239
+        },
+        {
+          "name": "tiered_lightgbm_text",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 6,
+          "precision_at_500": 0.012,
+          "recall_at_500": 0.46153846153846156,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 4,
+          "precision_at_scaled_budget": 0.04938271604938271,
+          "recall_at_scaled_budget": 0.3076923076923077,
+          "average_precision": 0.02745042225394565,
+          "brier_score": 0.0011454331556593031,
+          "mean_probability": 0.0018263660340743805
+        },
+        {
+          "name": "tiered_lightgbm_description",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 5,
+          "precision_at_scaled_budget": 0.06172839506172839,
+          "recall_at_scaled_budget": 0.38461538461538464,
+          "average_precision": 0.03458988636218117,
+          "brier_score": 0.0011090209091978345,
+          "mean_probability": 0.00175502706173736
         }
       ]
     },
@@ -851,24 +1301,24 @@
           "hits_at_scaled_budget": 4,
           "precision_at_scaled_budget": 0.05263157894736842,
           "recall_at_scaled_budget": 0.21052631578947367,
-          "average_precision": 0.027500484556083126,
-          "brier_score": 0.0017585121086962595,
-          "mean_probability": 0.0006411437275259189
+          "average_precision": 0.01977850050085919,
+          "brier_score": 0.00176294462677488,
+          "mean_probability": 0.0006632389098030836
         },
         {
           "name": "lightgbm_text",
           "pool": 11029,
           "positives": 19,
-          "hits_at_500": 2,
-          "precision_at_500": 0.004,
-          "recall_at_500": 0.10526315789473684,
+          "hits_at_500": 1,
+          "precision_at_500": 0.002,
+          "recall_at_500": 0.05263157894736842,
           "scaled_budget": 76,
-          "hits_at_scaled_budget": 1,
-          "precision_at_scaled_budget": 0.013157894736842105,
-          "recall_at_scaled_budget": 0.05263157894736842,
-          "average_precision": 0.004006274498853459,
-          "brier_score": 0.0017209398236391785,
-          "mean_probability": 0.000615880354871239
+          "hits_at_scaled_budget": 0,
+          "precision_at_scaled_budget": 0.0,
+          "recall_at_scaled_budget": 0.0,
+          "average_precision": 0.0022609014977518155,
+          "brier_score": 0.001721438125717695,
+          "mean_probability": 0.000641601773402505
         },
         {
           "name": "logistic_strict_blend",
@@ -884,6 +1334,111 @@
           "average_precision": 0.02934054520362797,
           "brier_score": 0.001714201565723501,
           "mean_probability": 0.0006240391896017999
+        },
+        {
+          "name": "calibrated_exploit_rule",
+          "pool": 11029,
+          "positives": 19,
+          "hits_at_500": 4,
+          "precision_at_500": 0.008,
+          "recall_at_500": 0.21052631578947367,
+          "scaled_budget": 76,
+          "hits_at_scaled_budget": 3,
+          "precision_at_scaled_budget": 0.039473684210526314,
+          "recall_at_scaled_budget": 0.15789473684210525,
+          "average_precision": 0.11090206982200305,
+          "brier_score": 0.0017041340745126698,
+          "mean_probability": 0.0006961246006961138
+        },
+        {
+          "name": "lightgbm_sparse_strict",
+          "pool": 11029,
+          "positives": 19,
+          "hits_at_500": 4,
+          "precision_at_500": 0.008,
+          "recall_at_500": 0.21052631578947367,
+          "scaled_budget": 76,
+          "hits_at_scaled_budget": 3,
+          "precision_at_scaled_budget": 0.039473684210526314,
+          "recall_at_scaled_budget": 0.15789473684210525,
+          "average_precision": 0.09372589304794367,
+          "brier_score": 0.0016586389355152933,
+          "mean_probability": 0.0008513495714477356
+        },
+        {
+          "name": "lightgbm_sparse_signals",
+          "pool": 11029,
+          "positives": 19,
+          "hits_at_500": 4,
+          "precision_at_500": 0.008,
+          "recall_at_500": 0.21052631578947367,
+          "scaled_budget": 76,
+          "hits_at_scaled_budget": 2,
+          "precision_at_scaled_budget": 0.02631578947368421,
+          "recall_at_scaled_budget": 0.10526315789473684,
+          "average_precision": 0.06636781399736896,
+          "brier_score": 0.001661775733985384,
+          "mean_probability": 0.000675539910403429
+        },
+        {
+          "name": "tiered_logistic_strict",
+          "pool": 11029,
+          "positives": 19,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.2631578947368421,
+          "scaled_budget": 76,
+          "hits_at_scaled_budget": 2,
+          "precision_at_scaled_budget": 0.02631578947368421,
+          "recall_at_scaled_budget": 0.10526315789473684,
+          "average_precision": 0.02426389053350697,
+          "brier_score": 0.0017218095987300707,
+          "mean_probability": 0.0006983780066300468
+        },
+        {
+          "name": "tiered_logistic_text",
+          "pool": 11029,
+          "positives": 19,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.2631578947368421,
+          "scaled_budget": 76,
+          "hits_at_scaled_budget": 3,
+          "precision_at_scaled_budget": 0.039473684210526314,
+          "recall_at_scaled_budget": 0.15789473684210525,
+          "average_precision": 0.01982546849940944,
+          "brier_score": 0.00176294462677488,
+          "mean_probability": 0.0006632389098030836
+        },
+        {
+          "name": "tiered_lightgbm_strict",
+          "pool": 11029,
+          "positives": 19,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.2631578947368421,
+          "scaled_budget": 76,
+          "hits_at_scaled_budget": 3,
+          "precision_at_scaled_budget": 0.039473684210526314,
+          "recall_at_scaled_budget": 0.15789473684210525,
+          "average_precision": 0.09526479947125145,
+          "brier_score": 0.0016586389355152933,
+          "mean_probability": 0.0008513495714477356
+        },
+        {
+          "name": "tiered_lightgbm_text",
+          "pool": 11029,
+          "positives": 19,
+          "hits_at_500": 4,
+          "precision_at_500": 0.008,
+          "recall_at_500": 0.21052631578947367,
+          "scaled_budget": 76,
+          "hits_at_scaled_budget": 3,
+          "precision_at_scaled_budget": 0.039473684210526314,
+          "recall_at_scaled_budget": 0.15789473684210525,
+          "average_precision": 0.11222085320676872,
+          "brier_score": 0.001650355619657396,
+          "mean_probability": 0.0010473388091039551
         }
       ]
     }
@@ -934,9 +1489,9 @@
       "positives": 5,
       "budget": 42,
       "scaled_budget": 28,
-      "ours_hits": 2,
+      "ours_hits": 3,
       "baseline_hits": 3,
-      "ours_hits_scaled": 2,
+      "ours_hits_scaled": 3,
       "baseline_hits_scaled": 3,
       "followup_days": 245,
       "signals_missing": 98
@@ -947,9 +1502,9 @@
       "positives": 6,
       "budget": 41,
       "scaled_budget": 27,
-      "ours_hits": 1,
+      "ours_hits": 3,
       "baseline_hits": 3,
-      "ours_hits_scaled": 1,
+      "ours_hits_scaled": 2,
       "baseline_hits_scaled": 2,
       "followup_days": 214,
       "signals_missing": 18
@@ -988,7 +1543,7 @@
       "scaled_budget": 25,
       "ours_hits": 1,
       "baseline_hits": 1,
-      "ours_hits_scaled": 1,
+      "ours_hits_scaled": 0,
       "baseline_hits_scaled": 1,
       "followup_days": 122,
       "signals_missing": 27
@@ -999,9 +1554,9 @@
       "positives": 6,
       "budget": 45,
       "scaled_budget": 30,
-      "ours_hits": 2,
+      "ours_hits": 3,
       "baseline_hits": 2,
-      "ours_hits_scaled": 2,
+      "ours_hits_scaled": 3,
       "baseline_hits_scaled": 2,
       "followup_days": 92,
       "signals_missing": 102
@@ -1027,7 +1582,7 @@
       "scaled_budget": 21,
       "ours_hits": 1,
       "baseline_hits": 1,
-      "ours_hits_scaled": 1,
+      "ours_hits_scaled": 0,
       "baseline_hits_scaled": 1,
       "followup_days": 31,
       "signals_missing": 13
@@ -1074,45 +1629,13 @@
       "hits_at_scaled_budget": 14,
       "precision_at_scaled_budget": 0.04229607250755287,
       "recall_at_scaled_budget": 0.2545454545454545,
-      "average_precision": 0.03588643036171092,
-      "brier_score": 0.0011941381823026783,
-      "mean_probability": 0.001257391723823299,
+      "average_precision": 0.03588615536693217,
+      "brier_score": 0.0011941383574671659,
+      "mean_probability": 0.001257518200491746,
       "recipe": "logistic_strict"
     },
     {
       "name": "no embeddings (keywords and history)",
-      "pool": 48039,
-      "positives": 55,
-      "hits_at_500": 18,
-      "precision_at_500": 0.036,
-      "recall_at_500": 0.32727272727272727,
-      "scaled_budget": 331,
-      "hits_at_scaled_budget": 13,
-      "precision_at_scaled_budget": 0.03927492447129909,
-      "recall_at_scaled_budget": 0.23636363636363636,
-      "average_precision": 0.056947279592644943,
-      "brier_score": 0.001182827142117562,
-      "mean_probability": 0.001169744686193203,
-      "recipe": "logistic_text"
-    },
-    {
-      "name": "no vendor or assigner history",
-      "pool": 48039,
-      "positives": 55,
-      "hits_at_500": 18,
-      "precision_at_500": 0.036,
-      "recall_at_500": 0.32727272727272727,
-      "scaled_budget": 331,
-      "hits_at_scaled_budget": 16,
-      "precision_at_scaled_budget": 0.04833836858006042,
-      "recall_at_scaled_budget": 0.2909090909090909,
-      "average_precision": 0.0671310231474973,
-      "brier_score": 0.0011414928205478224,
-      "mean_probability": 0.0011081658099422046,
-      "recipe": "logistic_no_history"
-    },
-    {
-      "name": "description embeddings and keywords",
       "pool": 48039,
       "positives": 55,
       "hits_at_500": 16,
@@ -1122,9 +1645,41 @@
       "hits_at_scaled_budget": 14,
       "precision_at_scaled_budget": 0.04229607250755287,
       "recall_at_scaled_budget": 0.2545454545454545,
-      "average_precision": 0.06736670270700455,
-      "brier_score": 0.0011710045138858365,
-      "mean_probability": 0.0011826010020464421,
+      "average_precision": 0.05355730653980882,
+      "brier_score": 0.0012137063988634281,
+      "mean_probability": 0.0012763514276499688,
+      "recipe": "logistic_text"
+    },
+    {
+      "name": "no vendor or assigner history",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 20,
+      "precision_at_500": 0.04,
+      "recall_at_500": 0.36363636363636365,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 16,
+      "precision_at_scaled_budget": 0.04833836858006042,
+      "recall_at_scaled_budget": 0.2909090909090909,
+      "average_precision": 0.06482500953357279,
+      "brier_score": 0.0011521040403301719,
+      "mean_probability": 0.0011822078036352601,
+      "recipe": "logistic_no_history"
+    },
+    {
+      "name": "description embeddings and keywords",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 17,
+      "precision_at_500": 0.034,
+      "recall_at_500": 0.3090909090909091,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 15,
+      "precision_at_scaled_budget": 0.045317220543806644,
+      "recall_at_scaled_budget": 0.2727272727272727,
+      "average_precision": 0.0549564816986314,
+      "brier_score": 0.0011814289317696033,
+      "mean_probability": 0.0011808947841408636,
       "recipe": "logistic_description"
     },
     {
@@ -1138,9 +1693,9 @@
       "hits_at_scaled_budget": 13,
       "precision_at_scaled_budget": 0.03927492447129909,
       "recall_at_scaled_budget": 0.23636363636363636,
-      "average_precision": 0.05063455446970143,
-      "brier_score": 0.0012016163798584502,
-      "mean_probability": 0.001256083797025246,
+      "average_precision": 0.050634418111918565,
+      "brier_score": 0.001201616501586082,
+      "mean_probability": 0.0012561688122669776,
       "recipe": "logistic_identity"
     },
     {
@@ -1154,9 +1709,9 @@
       "hits_at_scaled_budget": 15,
       "precision_at_scaled_budget": 0.045317220543806644,
       "recall_at_scaled_budget": 0.2727272727272727,
-      "average_precision": 0.0867928609977188,
-      "brier_score": 0.0011204058659265534,
-      "mean_probability": 0.0009477544858871833,
+      "average_precision": 0.08325128694985405,
+      "brier_score": 0.001128328712331089,
+      "mean_probability": 0.0009500712528754396,
       "recipe": "logistic_full_audit"
     }
   ],
@@ -1214,9 +1769,9 @@
           "hits_at_scaled_budget": 12,
           "precision_at_scaled_budget": 0.04938271604938271,
           "recall_at_scaled_budget": 0.23076923076923078,
-          "average_precision": 0.03767414640340154,
-          "brier_score": 0.001534227459178184,
-          "mean_probability": 0.00135204942154741
+          "average_precision": 0.03767400252229727,
+          "brier_score": 0.0015342275225799214,
+          "mean_probability": 0.0013520869752399445
         },
         {
           "name": "lightgbm_strict",
@@ -1230,8 +1785,8 @@
           "precision_at_scaled_budget": 0.0,
           "recall_at_scaled_budget": 0.0,
           "average_precision": 0.003355317912647541,
-          "brier_score": 0.0014718120934951273,
-          "mean_probability": 0.0014470183780941348
+          "brier_score": 0.0014718122010875503,
+          "mean_probability": 0.0014470297995683157
         },
         {
           "name": "logistic_signals",
@@ -1274,9 +1829,9 @@
           "hits_at_scaled_budget": 11,
           "precision_at_scaled_budget": 0.04526748971193416,
           "recall_at_scaled_budget": 0.21153846153846154,
-          "average_precision": 0.05383674415780873,
-          "brier_score": 0.0015394746543492674,
-          "mean_probability": 0.0013488213812697413
+          "average_precision": 0.053836659955811224,
+          "brier_score": 0.0015394747004182335,
+          "mean_probability": 0.001348847160200271
         },
         {
           "name": "lightgbm_identity",
@@ -1297,76 +1852,76 @@
           "name": "logistic_text",
           "pool": 35280,
           "positives": 52,
-          "hits_at_500": 17,
-          "precision_at_500": 0.034,
-          "recall_at_500": 0.3269230769230769,
+          "hits_at_500": 15,
+          "precision_at_500": 0.03,
+          "recall_at_500": 0.28846153846153844,
           "scaled_budget": 243,
-          "hits_at_scaled_budget": 12,
-          "precision_at_scaled_budget": 0.04938271604938271,
-          "recall_at_scaled_budget": 0.23076923076923078,
-          "average_precision": 0.0596703671853573,
-          "brier_score": 0.0015132793200418125,
-          "mean_probability": 0.0012492681072423693
+          "hits_at_scaled_budget": 13,
+          "precision_at_scaled_budget": 0.053497942386831275,
+          "recall_at_scaled_budget": 0.25,
+          "average_precision": 0.054826211562187546,
+          "brier_score": 0.0015641199392789707,
+          "mean_probability": 0.0014112944232678852
         },
         {
           "name": "lightgbm_text",
           "pool": 35280,
           "positives": 52,
-          "hits_at_500": 3,
-          "precision_at_500": 0.006,
-          "recall_at_500": 0.057692307692307696,
+          "hits_at_500": 8,
+          "precision_at_500": 0.016,
+          "recall_at_500": 0.15384615384615385,
           "scaled_budget": 243,
-          "hits_at_scaled_budget": 3,
-          "precision_at_scaled_budget": 0.012345679012345678,
-          "recall_at_scaled_budget": 0.057692307692307696,
-          "average_precision": 0.004754585172000685,
-          "brier_score": 0.0014707778718696606,
-          "mean_probability": 0.001287810576932272
+          "hits_at_scaled_budget": 1,
+          "precision_at_scaled_budget": 0.00411522633744856,
+          "recall_at_scaled_budget": 0.019230769230769232,
+          "average_precision": 0.005269156412403065,
+          "brier_score": 0.0014700080129138556,
+          "mean_probability": 0.0012552938941182807
         },
         {
           "name": "logistic_description",
           "pool": 35280,
           "positives": 52,
-          "hits_at_500": 14,
-          "precision_at_500": 0.028,
-          "recall_at_500": 0.2692307692307692,
+          "hits_at_500": 16,
+          "precision_at_500": 0.032,
+          "recall_at_500": 0.3076923076923077,
           "scaled_budget": 243,
-          "hits_at_scaled_budget": 12,
-          "precision_at_scaled_budget": 0.04938271604938271,
-          "recall_at_scaled_budget": 0.23076923076923078,
-          "average_precision": 0.06826549582628537,
-          "brier_score": 0.0015005806747658173,
-          "mean_probability": 0.001246331171194941
+          "hits_at_scaled_budget": 13,
+          "precision_at_scaled_budget": 0.053497942386831275,
+          "recall_at_scaled_budget": 0.25,
+          "average_precision": 0.0532014589977676,
+          "brier_score": 0.0015190381988710161,
+          "mean_probability": 0.0012561732236173128
         },
         {
           "name": "lightgbm_description",
           "pool": 35280,
           "positives": 52,
-          "hits_at_500": 6,
-          "precision_at_500": 0.012,
-          "recall_at_500": 0.11538461538461539,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.09615384615384616,
           "scaled_budget": 243,
-          "hits_at_scaled_budget": 5,
-          "precision_at_scaled_budget": 0.0205761316872428,
-          "recall_at_scaled_budget": 0.09615384615384616,
-          "average_precision": 0.009352692702094312,
-          "brier_score": 0.0014672000292911686,
-          "mean_probability": 0.001143396000372633
+          "hits_at_scaled_budget": 4,
+          "precision_at_scaled_budget": 0.01646090534979424,
+          "recall_at_scaled_budget": 0.07692307692307693,
+          "average_precision": 0.007603261225021172,
+          "brier_score": 0.0014686270526122675,
+          "mean_probability": 0.0010753758618092107
         },
         {
           "name": "logistic_full_audit",
           "pool": 35280,
           "positives": 52,
-          "hits_at_500": 13,
-          "precision_at_500": 0.026,
-          "recall_at_500": 0.25,
+          "hits_at_500": 12,
+          "precision_at_500": 0.024,
+          "recall_at_500": 0.23076923076923078,
           "scaled_budget": 243,
           "hits_at_scaled_budget": 12,
           "precision_at_scaled_budget": 0.04938271604938271,
           "recall_at_scaled_budget": 0.23076923076923078,
-          "average_precision": 0.08763817143017166,
-          "brier_score": 0.0014387308804667456,
-          "mean_probability": 0.0010042074766687774
+          "average_precision": 0.08218417011663635,
+          "brier_score": 0.0014525663515557203,
+          "mean_probability": 0.00100670186779846
         },
         {
           "name": "logistic_no_history",
@@ -1379,9 +1934,9 @@
           "hits_at_scaled_budget": 14,
           "precision_at_scaled_budget": 0.05761316872427984,
           "recall_at_scaled_budget": 0.2692307692307692,
-          "average_precision": 0.06725138188059349,
-          "brier_score": 0.0014609803417014384,
-          "mean_probability": 0.0011268331601337214
+          "average_precision": 0.06558345825083753,
+          "brier_score": 0.0014765616146350494,
+          "mean_probability": 0.001207328259497259
         },
         {
           "name": "logistic_strict_blend",
@@ -1394,9 +1949,159 @@
           "hits_at_scaled_budget": 12,
           "precision_at_scaled_budget": 0.04938271604938271,
           "recall_at_scaled_budget": 0.23076923076923078,
-          "average_precision": 0.043493999829023224,
-          "brier_score": 0.001470462411057048,
-          "mean_probability": 0.0011092936042291443
+          "average_precision": 0.043493867165745215,
+          "brier_score": 0.0014704624528822003,
+          "mean_probability": 0.0011093201548518126
+        },
+        {
+          "name": "calibrated_exploit_rule",
+          "pool": 35280,
+          "positives": 52,
+          "hits_at_500": 18,
+          "precision_at_500": 0.036,
+          "recall_at_500": 0.34615384615384615,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 14,
+          "precision_at_scaled_budget": 0.05761316872427984,
+          "recall_at_scaled_budget": 0.2692307692307692,
+          "average_precision": 0.047119029429330925,
+          "brier_score": 0.0014488047640767467,
+          "mean_probability": 0.001216661725957453
+        },
+        {
+          "name": "lightgbm_sparse_strict",
+          "pool": 35280,
+          "positives": 52,
+          "hits_at_500": 18,
+          "precision_at_500": 0.036,
+          "recall_at_500": 0.34615384615384615,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 15,
+          "precision_at_scaled_budget": 0.06172839506172839,
+          "recall_at_scaled_budget": 0.28846153846153844,
+          "average_precision": 0.05748236522478475,
+          "brier_score": 0.0014309083646953592,
+          "mean_probability": 0.0013247549617963735
+        },
+        {
+          "name": "lightgbm_sparse_signals",
+          "pool": 35280,
+          "positives": 52,
+          "hits_at_500": 20,
+          "precision_at_500": 0.04,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 13,
+          "precision_at_scaled_budget": 0.053497942386831275,
+          "recall_at_scaled_budget": 0.25,
+          "average_precision": 0.04597187522790079,
+          "brier_score": 0.0014375586249478973,
+          "mean_probability": 0.0014128968682941656
+        },
+        {
+          "name": "lightgbm_sparse_identity",
+          "pool": 35280,
+          "positives": 52,
+          "hits_at_500": 13,
+          "precision_at_500": 0.026,
+          "recall_at_500": 0.25,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 13,
+          "precision_at_scaled_budget": 0.053497942386831275,
+          "recall_at_scaled_budget": 0.25,
+          "average_precision": 0.10479982373668972,
+          "brier_score": 0.0014204748901665459,
+          "mean_probability": 0.001380432290213049
+        },
+        {
+          "name": "tiered_logistic_strict",
+          "pool": 35280,
+          "positives": 52,
+          "hits_at_500": 18,
+          "precision_at_500": 0.036,
+          "recall_at_500": 0.34615384615384615,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 12,
+          "precision_at_scaled_budget": 0.04938271604938271,
+          "recall_at_scaled_budget": 0.23076923076923078,
+          "average_precision": 0.04291640418917596,
+          "brier_score": 0.0015342275225799214,
+          "mean_probability": 0.0013520869752399445
+        },
+        {
+          "name": "tiered_logistic_text",
+          "pool": 35280,
+          "positives": 52,
+          "hits_at_500": 22,
+          "precision_at_500": 0.044,
+          "recall_at_500": 0.4230769230769231,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 16,
+          "precision_at_scaled_budget": 0.06584362139917696,
+          "recall_at_scaled_budget": 0.3076923076923077,
+          "average_precision": 0.06428360035577284,
+          "brier_score": 0.0015641199392789707,
+          "mean_probability": 0.0014112944232678852
+        },
+        {
+          "name": "tiered_logistic_description",
+          "pool": 35280,
+          "positives": 52,
+          "hits_at_500": 22,
+          "precision_at_500": 0.044,
+          "recall_at_500": 0.4230769230769231,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 16,
+          "precision_at_scaled_budget": 0.06584362139917696,
+          "recall_at_scaled_budget": 0.3076923076923077,
+          "average_precision": 0.06285882755629726,
+          "brier_score": 0.0015190381988710161,
+          "mean_probability": 0.0012561732236173128
+        },
+        {
+          "name": "tiered_lightgbm_strict",
+          "pool": 35280,
+          "positives": 52,
+          "hits_at_500": 19,
+          "precision_at_500": 0.038,
+          "recall_at_500": 0.36538461538461536,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 18,
+          "precision_at_scaled_budget": 0.07407407407407407,
+          "recall_at_scaled_budget": 0.34615384615384615,
+          "average_precision": 0.06447319505627523,
+          "brier_score": 0.0014309083646953592,
+          "mean_probability": 0.0013247549617963735
+        },
+        {
+          "name": "tiered_lightgbm_text",
+          "pool": 35280,
+          "positives": 52,
+          "hits_at_500": 20,
+          "precision_at_500": 0.04,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 19,
+          "precision_at_scaled_budget": 0.07818930041152264,
+          "recall_at_scaled_budget": 0.36538461538461536,
+          "average_precision": 0.08899317501563109,
+          "brier_score": 0.0014213066617517105,
+          "mean_probability": 0.0011498536943124066
+        },
+        {
+          "name": "tiered_lightgbm_description",
+          "pool": 35280,
+          "positives": 52,
+          "hits_at_500": 20,
+          "precision_at_500": 0.04,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 19,
+          "precision_at_scaled_budget": 0.07818930041152264,
+          "recall_at_scaled_budget": 0.36538461538461536,
+          "average_precision": 0.08129324319734392,
+          "brier_score": 0.0014347084430024783,
+          "mean_probability": 0.0009326821902563636
         }
       ]
     },
@@ -1453,9 +2158,9 @@
           "hits_at_scaled_budget": 10,
           "precision_at_scaled_budget": 0.0411522633744856,
           "recall_at_scaled_budget": 0.24390243902439024,
-          "average_precision": 0.027411771963538892,
-          "brier_score": 0.0012707729768589107,
-          "mean_probability": 0.00135204942154741
+          "average_precision": 0.027411648676564666,
+          "brier_score": 0.0012707730402606477,
+          "mean_probability": 0.0013520869752399445
         },
         {
           "name": "lightgbm_strict",
@@ -1469,8 +2174,8 @@
           "precision_at_scaled_budget": 0.0,
           "recall_at_scaled_budget": 0.0,
           "average_precision": 0.003236400298652402,
-          "brier_score": 0.0011610836556158498,
-          "mean_probability": 0.0014470183780941348
+          "brier_score": 0.0011610837632082722,
+          "mean_probability": 0.0014470297995683157
         },
         {
           "name": "logistic_signals",
@@ -1513,9 +2218,9 @@
           "hits_at_scaled_budget": 9,
           "precision_at_scaled_budget": 0.037037037037037035,
           "recall_at_scaled_budget": 0.21951219512195122,
-          "average_precision": 0.042301337760133395,
-          "brier_score": 0.0012767343017646034,
-          "mean_probability": 0.0013488213812697413
+          "average_precision": 0.042301254781536304,
+          "brier_score": 0.0012767343478335695,
+          "mean_probability": 0.001348847160200271
         },
         {
           "name": "lightgbm_identity",
@@ -1536,76 +2241,76 @@
           "name": "logistic_text",
           "pool": 35280,
           "positives": 41,
-          "hits_at_500": 13,
-          "precision_at_500": 0.026,
-          "recall_at_500": 0.3170731707317073,
+          "hits_at_500": 12,
+          "precision_at_500": 0.024,
+          "recall_at_500": 0.2926829268292683,
           "scaled_budget": 243,
-          "hits_at_scaled_budget": 9,
-          "precision_at_scaled_budget": 0.037037037037037035,
-          "recall_at_scaled_budget": 0.21951219512195122,
-          "average_precision": 0.05394904471982792,
-          "brier_score": 0.0012442445771101446,
-          "mean_probability": 0.0012492681072423693
+          "hits_at_scaled_budget": 10,
+          "precision_at_scaled_budget": 0.0411522633744856,
+          "recall_at_scaled_budget": 0.24390243902439024,
+          "average_precision": 0.050613917386509236,
+          "brier_score": 0.0013023110980672813,
+          "mean_probability": 0.0014112944232678852
         },
         {
           "name": "lightgbm_text",
           "pool": 35280,
           "positives": 41,
-          "hits_at_500": 1,
-          "precision_at_500": 0.002,
-          "recall_at_500": 0.024390243902439025,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.12195121951219512,
           "scaled_budget": 243,
           "hits_at_scaled_budget": 1,
           "precision_at_scaled_budget": 0.00411522633744856,
           "recall_at_scaled_budget": 0.024390243902439025,
-          "average_precision": 0.0033929362044648123,
-          "brier_score": 0.0011612443160100804,
-          "mean_probability": 0.001287810576932272
+          "average_precision": 0.003911895964132174,
+          "brier_score": 0.0011603786491669516,
+          "mean_probability": 0.0012552938941182807
         },
         {
           "name": "logistic_description",
           "pool": 35280,
           "positives": 41,
-          "hits_at_500": 11,
-          "precision_at_500": 0.022,
-          "recall_at_500": 0.2682926829268293,
+          "hits_at_500": 12,
+          "precision_at_500": 0.024,
+          "recall_at_500": 0.2926829268292683,
           "scaled_budget": 243,
-          "hits_at_scaled_budget": 10,
-          "precision_at_scaled_budget": 0.0411522633744856,
-          "recall_at_scaled_budget": 0.24390243902439024,
-          "average_precision": 0.0591991455247527,
-          "brier_score": 0.0012323052447491911,
-          "mean_probability": 0.001246331171194941
+          "hits_at_scaled_budget": 11,
+          "precision_at_scaled_budget": 0.04526748971193416,
+          "recall_at_scaled_budget": 0.2682926829268293,
+          "average_precision": 0.0437532875850606,
+          "brier_score": 0.0012488337321386594,
+          "mean_probability": 0.0012561732236173128
         },
         {
           "name": "lightgbm_description",
           "pool": 35280,
           "positives": 41,
-          "hits_at_500": 6,
-          "precision_at_500": 0.012,
-          "recall_at_500": 0.14634146341463414,
+          "hits_at_500": 4,
+          "precision_at_500": 0.008,
+          "recall_at_500": 0.0975609756097561,
           "scaled_budget": 243,
-          "hits_at_scaled_budget": 5,
-          "precision_at_scaled_budget": 0.0205761316872428,
-          "recall_at_scaled_budget": 0.12195121951219512,
-          "average_precision": 0.0093524086462308,
-          "brier_score": 0.001156989671947008,
-          "mean_probability": 0.001143396000372633
+          "hits_at_scaled_budget": 3,
+          "precision_at_scaled_budget": 0.012345679012345678,
+          "recall_at_scaled_budget": 0.07317073170731707,
+          "average_precision": 0.0072018953682281344,
+          "brier_score": 0.00115849074113132,
+          "mean_probability": 0.0010753758618092107
         },
         {
           "name": "logistic_full_audit",
           "pool": 35280,
           "positives": 41,
-          "hits_at_500": 10,
-          "precision_at_500": 0.02,
-          "recall_at_500": 0.24390243902439024,
+          "hits_at_500": 9,
+          "precision_at_500": 0.018,
+          "recall_at_500": 0.21951219512195122,
           "scaled_budget": 243,
           "hits_at_scaled_budget": 9,
           "precision_at_scaled_budget": 0.037037037037037035,
           "recall_at_scaled_budget": 0.21951219512195122,
-          "average_precision": 0.08126329234665121,
-          "brier_score": 0.001170477089192306,
-          "mean_probability": 0.0010042074766687774
+          "average_precision": 0.07031032664399046,
+          "brier_score": 0.0011848436285995644,
+          "mean_probability": 0.00100670186779846
         },
         {
           "name": "logistic_no_history",
@@ -1618,9 +2323,9 @@
           "hits_at_scaled_budget": 11,
           "precision_at_scaled_budget": 0.04526748971193416,
           "recall_at_scaled_budget": 0.2682926829268293,
-          "average_precision": 0.06038129395660759,
-          "brier_score": 0.0011791015594691068,
-          "mean_probability": 0.0011268331601337214
+          "average_precision": 0.058596191311083894,
+          "brier_score": 0.0011991168832081105,
+          "mean_probability": 0.001207328259497259
         },
         {
           "name": "logistic_strict_blend",
@@ -1633,24 +2338,394 @@
           "hits_at_scaled_budget": 10,
           "precision_at_scaled_budget": 0.0411522633744856,
           "recall_at_scaled_budget": 0.24390243902439024,
-          "average_precision": 0.0309450498822835,
-          "brier_score": 0.0011917716694862799,
-          "mean_probability": 0.0011092936042291443
+          "average_precision": 0.03094491793041117,
+          "brier_score": 0.0011917717113114322,
+          "mean_probability": 0.0011093201548518126
+        },
+        {
+          "name": "calibrated_exploit_rule",
+          "pool": 35280,
+          "positives": 41,
+          "hits_at_500": 14,
+          "precision_at_500": 0.028,
+          "recall_at_500": 0.34146341463414637,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 11,
+          "precision_at_scaled_budget": 0.04526748971193416,
+          "recall_at_scaled_budget": 0.2682926829268293,
+          "average_precision": 0.04902816071154722,
+          "brier_score": 0.0011444888002148468,
+          "mean_probability": 0.001216661725957453
+        },
+        {
+          "name": "lightgbm_sparse_strict",
+          "pool": 35280,
+          "positives": 41,
+          "hits_at_500": 14,
+          "precision_at_500": 0.028,
+          "recall_at_500": 0.34146341463414637,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 12,
+          "precision_at_scaled_budget": 0.04938271604938271,
+          "recall_at_scaled_budget": 0.2926829268292683,
+          "average_precision": 0.06076067076706044,
+          "brier_score": 0.001125427190175142,
+          "mean_probability": 0.0013247549617963735
+        },
+        {
+          "name": "lightgbm_sparse_signals",
+          "pool": 35280,
+          "positives": 41,
+          "hits_at_500": 15,
+          "precision_at_500": 0.03,
+          "recall_at_500": 0.36585365853658536,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 11,
+          "precision_at_scaled_budget": 0.04526748971193416,
+          "recall_at_scaled_budget": 0.2682926829268293,
+          "average_precision": 0.047003907046862275,
+          "brier_score": 0.0011323879205813018,
+          "mean_probability": 0.0014128968682941656
+        },
+        {
+          "name": "lightgbm_sparse_identity",
+          "pool": 35280,
+          "positives": 41,
+          "hits_at_500": 10,
+          "precision_at_500": 0.02,
+          "recall_at_500": 0.24390243902439024,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 10,
+          "precision_at_scaled_budget": 0.0411522633744856,
+          "recall_at_scaled_budget": 0.24390243902439024,
+          "average_precision": 0.12281800578642654,
+          "brier_score": 0.001120887960464284,
+          "mean_probability": 0.001380432290213049
+        },
+        {
+          "name": "tiered_logistic_strict",
+          "pool": 35280,
+          "positives": 41,
+          "hits_at_500": 12,
+          "precision_at_500": 0.024,
+          "recall_at_500": 0.2926829268292683,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 10,
+          "precision_at_scaled_budget": 0.0411522633744856,
+          "recall_at_scaled_budget": 0.24390243902439024,
+          "average_precision": 0.030419633794527442,
+          "brier_score": 0.0012707730402606477,
+          "mean_probability": 0.0013520869752399445
+        },
+        {
+          "name": "tiered_logistic_text",
+          "pool": 35280,
+          "positives": 41,
+          "hits_at_500": 16,
+          "precision_at_500": 0.032,
+          "recall_at_500": 0.3902439024390244,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 11,
+          "precision_at_scaled_budget": 0.04526748971193416,
+          "recall_at_scaled_budget": 0.2682926829268293,
+          "average_precision": 0.056399301337616954,
+          "brier_score": 0.0013023110980672813,
+          "mean_probability": 0.0014112944232678852
+        },
+        {
+          "name": "tiered_logistic_description",
+          "pool": 35280,
+          "positives": 41,
+          "hits_at_500": 16,
+          "precision_at_500": 0.032,
+          "recall_at_500": 0.3902439024390244,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 12,
+          "precision_at_scaled_budget": 0.04938271604938271,
+          "recall_at_scaled_budget": 0.2926829268292683,
+          "average_precision": 0.049138730983835706,
+          "brier_score": 0.0012488337321386594,
+          "mean_probability": 0.0012561732236173128
+        },
+        {
+          "name": "tiered_lightgbm_strict",
+          "pool": 35280,
+          "positives": 41,
+          "hits_at_500": 14,
+          "precision_at_500": 0.028,
+          "recall_at_500": 0.34146341463414637,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 14,
+          "precision_at_scaled_budget": 0.05761316872427984,
+          "recall_at_scaled_budget": 0.34146341463414637,
+          "average_precision": 0.06385935914806341,
+          "brier_score": 0.001125427190175142,
+          "mean_probability": 0.0013247549617963735
+        },
+        {
+          "name": "tiered_lightgbm_text",
+          "pool": 35280,
+          "positives": 41,
+          "hits_at_500": 15,
+          "precision_at_500": 0.03,
+          "recall_at_500": 0.36585365853658536,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 14,
+          "precision_at_scaled_budget": 0.05761316872427984,
+          "recall_at_scaled_budget": 0.34146341463414637,
+          "average_precision": 0.09583812431367143,
+          "brier_score": 0.0011136087962712357,
+          "mean_probability": 0.0011498536943124066
+        },
+        {
+          "name": "tiered_lightgbm_description",
+          "pool": 35280,
+          "positives": 41,
+          "hits_at_500": 15,
+          "precision_at_500": 0.03,
+          "recall_at_500": 0.36585365853658536,
+          "scaled_budget": 243,
+          "hits_at_scaled_budget": 15,
+          "precision_at_scaled_budget": 0.06172839506172839,
+          "recall_at_scaled_budget": 0.36585365853658536,
+          "average_precision": 0.08119394759770608,
+          "brier_score": 0.0011272831811485952,
+          "mean_probability": 0.0009326821902563636
         }
       ]
     }
   ],
   "selection": {
-    "rule": "Mean recall across literal and equal-workload budgets in two forward 2025 evaluations; within 1/55 prefer simpler",
-    "scores": {
-      "logistic_strict": 0.2811188811188811,
-      "lightgbm_strict": 0.15384615384615385,
-      "logistic_signals": 0.23356643356643358,
-      "lightgbm_signals": 0.18006993006993005,
-      "logistic_identity": 0.23356643356643358,
-      "lightgbm_identity": 0.18006993006993005,
-      "logistic_strict_blend": 0.2947552447552447
+    "rule": "Must match or beat exploit-first at literal 500 and equal-workload budgets on both 2025 splits; prefer simpler qualifying learned models with at least one improvement, otherwise use the calibrated rule",
+    "margin_order": [
+      "primary_500",
+      "primary_scaled",
+      "h2_500",
+      "h2_scaled"
+    ],
+    "gates": {
+      "logistic_strict": {
+        "margins": [
+          -5,
+          -3,
+          0,
+          1
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "lightgbm_strict": {
+        "margins": [
+          -19,
+          -17,
+          0,
+          1
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "logistic_signals": {
+        "margins": [
+          -5,
+          -5,
+          1,
+          -2
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "lightgbm_signals": {
+        "margins": [
+          -14,
+          -12,
+          0,
+          0
+        ],
+        "passes_all_four": false,
+        "strict_improvement": false
+      },
+      "logistic_identity": {
+        "margins": [
+          -6,
+          -4,
+          0,
+          -1
+        ],
+        "passes_all_four": false,
+        "strict_improvement": false
+      },
+      "lightgbm_identity": {
+        "margins": [
+          -14,
+          -12,
+          -1,
+          1
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "logistic_text": {
+        "margins": [
+          -3,
+          -3,
+          1,
+          0
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "lightgbm_text": {
+        "margins": [
+          -14,
+          -15,
+          1,
+          1
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "logistic_description": {
+        "margins": [
+          -2,
+          -2,
+          0,
+          0
+        ],
+        "passes_all_four": false,
+        "strict_improvement": false
+      },
+      "lightgbm_description": {
+        "margins": [
+          -14,
+          -13,
+          0,
+          2
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "logistic_no_history": {
+        "margins": [
+          1,
+          -1,
+          2,
+          0
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "logistic_strict_blend": {
+        "margins": [
+          -2,
+          -3,
+          0,
+          1
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "calibrated_exploit_rule": {
+        "margins": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "passes_all_four": true,
+        "strict_improvement": false
+      },
+      "lightgbm_sparse_strict": {
+        "margins": [
+          0,
+          0,
+          -1,
+          2
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "lightgbm_sparse_signals": {
+        "margins": [
+          -2,
+          -3,
+          0,
+          -1
+        ],
+        "passes_all_four": false,
+        "strict_improvement": false
+      },
+      "lightgbm_sparse_identity": {
+        "margins": [
+          -5,
+          -3,
+          -2,
+          1
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "tiered_logistic_strict": {
+        "margins": [
+          -2,
+          -3,
+          0,
+          1
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "tiered_logistic_text": {
+        "margins": [
+          3,
+          1,
+          1,
+          0
+        ],
+        "passes_all_four": true,
+        "strict_improvement": true
+      },
+      "tiered_logistic_description": {
+        "margins": [
+          2,
+          1,
+          0,
+          0
+        ],
+        "passes_all_four": true,
+        "strict_improvement": true
+      },
+      "tiered_lightgbm_strict": {
+        "margins": [
+          1,
+          3,
+          0,
+          2
+        ],
+        "passes_all_four": true,
+        "strict_improvement": true
+      },
+      "tiered_lightgbm_text": {
+        "margins": [
+          2,
+          4,
+          1,
+          2
+        ],
+        "passes_all_four": true,
+        "strict_improvement": true
+      },
+      "tiered_lightgbm_description": {
+        "margins": [
+          3,
+          4,
+          0,
+          3
+        ],
+        "passes_all_four": true,
+        "strict_improvement": true
+      }
     },
+    "passed": true,
     "warning": "Development comparisons; test-year model selection is optimistic. H2 overlaps the primary test."
   },
   "scaling": {
@@ -1670,12 +2745,279 @@
     "iterations": 1000,
     "seed": 2026,
     "delta_hits_95_percentile_interval": [
-      -8.0,
-      2.0
+      -5.0,
+      7.0
     ],
-    "fraction_delta_positive": 0.097,
+    "fraction_delta_positive": 0.648,
+    "fraction_delta_negative": 0.247,
+    "literal_500": {
+      "delta_hits_95_percentile_interval": [
+        -1.0,
+        7.0
+      ],
+      "fraction_delta_positive": 0.906,
+      "fraction_delta_negative": 0.04
+    },
+    "months": 12,
     "limitation": "Only 12 months; does not include model selection or retraining uncertainty."
   },
+  "split_uncertainty": [
+    {
+      "split": "2024_to_2025",
+      "bootstrap": {
+        "method": "paired month bootstrap; equal-workload budget; fixed fitted models",
+        "iterations": 1000,
+        "seed": 2026,
+        "delta_hits_95_percentile_interval": [
+          -5.0,
+          7.0
+        ],
+        "fraction_delta_positive": 0.648,
+        "fraction_delta_negative": 0.247,
+        "literal_500": {
+          "delta_hits_95_percentile_interval": [
+            -1.0,
+            7.0
+          ],
+          "fraction_delta_positive": 0.906,
+          "fraction_delta_negative": 0.04
+        },
+        "months": 12,
+        "limitation": "Only 12 months; does not include model selection or retraining uncertainty."
+      }
+    },
+    {
+      "split": "forward_2025_h2",
+      "bootstrap": {
+        "method": "paired month bootstrap; equal-workload budget; fixed fitted models",
+        "iterations": 1000,
+        "seed": 2026,
+        "delta_hits_95_percentile_interval": [
+          -3.0,
+          2.0
+        ],
+        "fraction_delta_positive": 0.329,
+        "fraction_delta_negative": 0.359,
+        "literal_500": {
+          "delta_hits_95_percentile_interval": [
+            0.0,
+            3.0
+          ],
+          "fraction_delta_positive": 0.705,
+          "fraction_delta_negative": 0.0
+        },
+        "months": 3,
+        "limitation": "Only 3 months; does not include model selection or retraining uncertainty."
+      }
+    }
+  ],
+  "tiered_comparisons": [
+    {
+      "name": "tiered_logistic_strict",
+      "gate": {
+        "margins": [
+          -2,
+          -3,
+          0,
+          1
+        ],
+        "passes_all_four": false,
+        "strict_improvement": true
+      },
+      "bootstrap": {
+        "method": "paired month bootstrap; equal-workload budget; fixed fitted models",
+        "iterations": 500,
+        "seed": 2026,
+        "delta_hits_95_percentile_interval": [
+          -7.524999999999999,
+          2.0
+        ],
+        "fraction_delta_positive": 0.152,
+        "fraction_delta_negative": 0.724,
+        "literal_500": {
+          "delta_hits_95_percentile_interval": [
+            -7.524999999999999,
+            3.0
+          ],
+          "fraction_delta_positive": 0.194,
+          "fraction_delta_negative": 0.674
+        },
+        "months": 12,
+        "limitation": "Only 12 months; does not include model selection or retraining uncertainty."
+      }
+    },
+    {
+      "name": "tiered_logistic_text",
+      "gate": {
+        "margins": [
+          3,
+          1,
+          1,
+          0
+        ],
+        "passes_all_four": true,
+        "strict_improvement": true
+      },
+      "bootstrap": {
+        "method": "paired month bootstrap; equal-workload budget; fixed fitted models",
+        "iterations": 500,
+        "seed": 2026,
+        "delta_hits_95_percentile_interval": [
+          -5.0,
+          7.0
+        ],
+        "fraction_delta_positive": 0.656,
+        "fraction_delta_negative": 0.25,
+        "literal_500": {
+          "delta_hits_95_percentile_interval": [
+            -1.0,
+            7.0
+          ],
+          "fraction_delta_positive": 0.918,
+          "fraction_delta_negative": 0.038
+        },
+        "months": 12,
+        "limitation": "Only 12 months; does not include model selection or retraining uncertainty."
+      }
+    },
+    {
+      "name": "tiered_logistic_description",
+      "gate": {
+        "margins": [
+          2,
+          1,
+          0,
+          0
+        ],
+        "passes_all_four": true,
+        "strict_improvement": true
+      },
+      "bootstrap": {
+        "method": "paired month bootstrap; equal-workload budget; fixed fitted models",
+        "iterations": 500,
+        "seed": 2026,
+        "delta_hits_95_percentile_interval": [
+          -2.0,
+          6.0
+        ],
+        "fraction_delta_positive": 0.74,
+        "fraction_delta_negative": 0.148,
+        "literal_500": {
+          "delta_hits_95_percentile_interval": [
+            -2.0,
+            6.0
+          ],
+          "fraction_delta_positive": 0.776,
+          "fraction_delta_negative": 0.13
+        },
+        "months": 12,
+        "limitation": "Only 12 months; does not include model selection or retraining uncertainty."
+      }
+    },
+    {
+      "name": "tiered_lightgbm_strict",
+      "gate": {
+        "margins": [
+          1,
+          3,
+          0,
+          2
+        ],
+        "passes_all_four": true,
+        "strict_improvement": true
+      },
+      "bootstrap": {
+        "method": "paired month bootstrap; equal-workload budget; fixed fitted models",
+        "iterations": 500,
+        "seed": 2026,
+        "delta_hits_95_percentile_interval": [
+          -1.0,
+          8.0
+        ],
+        "fraction_delta_positive": 0.882,
+        "fraction_delta_negative": 0.044,
+        "literal_500": {
+          "delta_hits_95_percentile_interval": [
+            -2.0,
+            5.0
+          ],
+          "fraction_delta_positive": 0.628,
+          "fraction_delta_negative": 0.178
+        },
+        "months": 12,
+        "limitation": "Only 12 months; does not include model selection or retraining uncertainty."
+      }
+    },
+    {
+      "name": "tiered_lightgbm_text",
+      "gate": {
+        "margins": [
+          2,
+          4,
+          1,
+          2
+        ],
+        "passes_all_four": true,
+        "strict_improvement": true
+      },
+      "bootstrap": {
+        "method": "paired month bootstrap; equal-workload budget; fixed fitted models",
+        "iterations": 500,
+        "seed": 2026,
+        "delta_hits_95_percentile_interval": [
+          1.0,
+          9.0
+        ],
+        "fraction_delta_positive": 0.98,
+        "fraction_delta_negative": 0.0,
+        "literal_500": {
+          "delta_hits_95_percentile_interval": [
+            0.0,
+            5.0
+          ],
+          "fraction_delta_positive": 0.86,
+          "fraction_delta_negative": 0.02
+        },
+        "months": 12,
+        "limitation": "Only 12 months; does not include model selection or retraining uncertainty."
+      }
+    },
+    {
+      "name": "tiered_lightgbm_description",
+      "gate": {
+        "margins": [
+          3,
+          4,
+          0,
+          3
+        ],
+        "passes_all_four": true,
+        "strict_improvement": true
+      },
+      "bootstrap": {
+        "method": "paired month bootstrap; equal-workload budget; fixed fitted models",
+        "iterations": 500,
+        "seed": 2026,
+        "delta_hits_95_percentile_interval": [
+          1.0,
+          8.0
+        ],
+        "fraction_delta_positive": 0.982,
+        "fraction_delta_negative": 0.0,
+        "literal_500": {
+          "delta_hits_95_percentile_interval": [
+            0.0,
+            6.524999999999977
+          ],
+          "fraction_delta_positive": 0.95,
+          "fraction_delta_negative": 0.01
+        },
+        "months": 12,
+        "limitation": "Only 12 months; does not include model selection or retraining uncertainty."
+      }
+    }
+  ],
+  "ranking_policy": "Public exploit/detection flag tier first; learned probability within tier",
   "tie_break": "Descending score, then cve_id ascending; CVSS baseline uses current scores only for benchmark reference",
   "baseline_caveat": "Current CVSS is an explicitly unsafe reference, never a strict production feature.",
   "exact_calendar_analog": {
@@ -1729,19 +3071,19 @@
         "average_precision": 0.045796438171101544
       },
       {
-        "name": "logistic_strict",
+        "name": "tiered_logistic_text",
         "pool": 35277,
         "positives": 45,
-        "hits_at_500": 8,
-        "precision_at_500": 0.016,
-        "recall_at_500": 0.17777777777777778,
+        "hits_at_500": 18,
+        "precision_at_500": 0.036,
+        "recall_at_500": 0.4,
         "scaled_budget": 243,
-        "hits_at_scaled_budget": 4,
-        "precision_at_scaled_budget": 0.01646090534979424,
-        "recall_at_scaled_budget": 0.08888888888888889,
-        "average_precision": 0.03173973076306204,
-        "brier_score": 0.0012848603716660056,
-        "mean_probability": 0.0010242363170093992
+        "hits_at_scaled_budget": 10,
+        "precision_at_scaled_budget": 0.0411522633744856,
+        "recall_at_scaled_budget": 0.2222222222222222,
+        "average_precision": 0.038011190841337215,
+        "brier_score": 0.001308872634970871,
+        "mean_probability": 0.0010442651888935093
       }
     ],
     "note": "Matches the benchmark calendar shape and November 4 endpoint. Training still requires 90 days follow-up."

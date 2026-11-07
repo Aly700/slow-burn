@@ -1,5 +1,5 @@
 {
-  "model": "logistic_strict",
+  "model": "tiered_logistic_text",
   "trained_on": "2024-published and Jan\u2013Sep 2025-published eligible CVEs, labels observed by 2025-12-31; minimum 90 days follow-up",
   "features_used": [
     "epss_log",
@@ -15,7 +15,23 @@
     "assigner_prior_kev",
     "assigner_recent_kev",
     "vendor_prior_kev",
-    "vendor_recent_kev"
+    "vendor_recent_kev",
+    "text_remote_code",
+    "text_unauthenticated",
+    "text_traversal",
+    "text_deserialization",
+    "text_edge_device",
+    "text_privilege_escalation",
+    "text_memory_corruption",
+    "text_sql_injection",
+    "text_xss",
+    "text_wordpress",
+    "text_denial_service",
+    "text_upload",
+    "text_vendor_prior_kev",
+    "text_product_prior_kev",
+    "text_vendor_recent_kev",
+    "text_product_recent_kev"
   ],
   "features_excluded": [
     {
@@ -34,7 +50,7 @@
           "hits_at_scaled_budget": 15,
           "precision_at_scaled_budget": 0.045317220543806644,
           "recall_at_scaled_budget": 0.2727272727272727,
-          "average_precision": 0.0702780970713336,
+          "average_precision": 0.0702775912285292,
           "delta_hits_at_500": 5,
           "delta_hits_at_scaled_budget": 1
         },
@@ -49,7 +65,7 @@
           "hits_at_scaled_budget": 2,
           "precision_at_scaled_budget": 0.006042296072507553,
           "recall_at_scaled_budget": 0.03636363636363636,
-          "average_precision": 0.0046623981221240625,
+          "average_precision": 0.004662243338690935,
           "delta_hits_at_500": 7,
           "delta_hits_at_scaled_budget": 2
         }
@@ -76,7 +92,7 @@
           "hits_at_scaled_budget": 12,
           "precision_at_scaled_budget": 0.03625377643504532,
           "recall_at_scaled_budget": 0.21818181818181817,
-          "average_precision": 0.0530347066867531,
+          "average_precision": 0.05303455187526759,
           "delta_hits_at_500": 2,
           "delta_hits_at_scaled_budget": -2
         },
@@ -91,7 +107,7 @@
           "hits_at_scaled_budget": 4,
           "precision_at_scaled_budget": 0.012084592145015106,
           "recall_at_scaled_budget": 0.07272727272727272,
-          "average_precision": 0.005530525197134367,
+          "average_precision": 0.005530094751652049,
           "delta_hits_at_500": 8,
           "delta_hits_at_scaled_budget": 4
         }
@@ -118,7 +134,7 @@
           "hits_at_scaled_budget": 13,
           "precision_at_scaled_budget": 0.03927492447129909,
           "recall_at_scaled_budget": 0.23636363636363636,
-          "average_precision": 0.03549017146603723,
+          "average_precision": 0.03548997245809053,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": -1
         },
@@ -133,7 +149,7 @@
           "hits_at_scaled_budget": 1,
           "precision_at_scaled_budget": 0.0030211480362537764,
           "recall_at_scaled_budget": 0.01818181818181818,
-          "average_precision": 0.0029468141447192503,
+          "average_precision": 0.0029465741244767774,
           "delta_hits_at_500": 3,
           "delta_hits_at_scaled_budget": 1
         }
@@ -160,7 +176,7 @@
           "hits_at_scaled_budget": 14,
           "precision_at_scaled_budget": 0.04229607250755287,
           "recall_at_scaled_budget": 0.2545454545454545,
-          "average_precision": 0.0363143156153922,
+          "average_precision": 0.03631403239261024,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": 0
         },
@@ -175,7 +191,7 @@
           "hits_at_scaled_budget": 0,
           "precision_at_scaled_budget": 0.0,
           "recall_at_scaled_budget": 0.0,
-          "average_precision": 0.002757958038442471,
+          "average_precision": 0.00275791317324736,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": 0
         }
@@ -202,7 +218,7 @@
           "hits_at_scaled_budget": 11,
           "precision_at_scaled_budget": 0.03323262839879154,
           "recall_at_scaled_budget": 0.2,
-          "average_precision": 0.05008352567748214,
+          "average_precision": 0.050083427855140646,
           "delta_hits_at_500": -2,
           "delta_hits_at_scaled_budget": -3
         },
@@ -217,7 +233,7 @@
           "hits_at_scaled_budget": 4,
           "precision_at_scaled_budget": 0.012084592145015106,
           "recall_at_scaled_budget": 0.07272727272727272,
-          "average_precision": 0.005726799378461833,
+          "average_precision": 0.005726353648139521,
           "delta_hits_at_500": 7,
           "delta_hits_at_scaled_budget": 4
         }
@@ -244,7 +260,7 @@
           "hits_at_scaled_budget": 11,
           "precision_at_scaled_budget": 0.03323262839879154,
           "recall_at_scaled_budget": 0.2,
-          "average_precision": 0.05341249157218956,
+          "average_precision": 0.053411985483451954,
           "delta_hits_at_500": -2,
           "delta_hits_at_scaled_budget": -3
         },
@@ -259,7 +275,7 @@
           "hits_at_scaled_budget": 2,
           "precision_at_scaled_budget": 0.006042296072507553,
           "recall_at_scaled_budget": 0.03636363636363636,
-          "average_precision": 0.00299091369356521,
+          "average_precision": 0.002991088346567752,
           "delta_hits_at_500": 2,
           "delta_hits_at_scaled_budget": 2
         }
@@ -286,7 +302,7 @@
           "hits_at_scaled_budget": 12,
           "precision_at_scaled_budget": 0.03625377643504532,
           "recall_at_scaled_budget": 0.21818181818181817,
-          "average_precision": 0.051826876097279255,
+          "average_precision": 0.05182661005302745,
           "delta_hits_at_500": 3,
           "delta_hits_at_scaled_budget": -2
         },
@@ -301,7 +317,7 @@
           "hits_at_scaled_budget": 0,
           "precision_at_scaled_budget": 0.0,
           "recall_at_scaled_budget": 0.0,
-          "average_precision": 0.002782084337443251,
+          "average_precision": 0.0027822857577594296,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": 0
         }
@@ -328,7 +344,7 @@
           "hits_at_scaled_budget": 14,
           "precision_at_scaled_budget": 0.04229607250755287,
           "recall_at_scaled_budget": 0.2545454545454545,
-          "average_precision": 0.03664606644943816,
+          "average_precision": 0.03543115145628163,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": 0
         },
@@ -343,15 +359,15 @@
           "hits_at_scaled_budget": 0,
           "precision_at_scaled_budget": 0.0,
           "recall_at_scaled_budget": 0.0,
-          "average_precision": 0.002757958038442471,
+          "average_precision": 0.00275791317324736,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": 0
         }
       ],
       "nonzero_coverage_2025": {
-        "n": 1283,
-        "positives": 9,
-        "rate": 0.007014809041309431
+        "n": 213,
+        "positives": 6,
+        "rate": 0.028169014084507043
       }
     },
     {
@@ -370,7 +386,7 @@
           "hits_at_scaled_budget": 12,
           "precision_at_scaled_budget": 0.03625377643504532,
           "recall_at_scaled_budget": 0.21818181818181817,
-          "average_precision": 0.03741010530287983,
+          "average_precision": 0.03741004187007292,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": -2
         },
@@ -412,7 +428,7 @@
           "hits_at_scaled_budget": 13,
           "precision_at_scaled_budget": 0.03927492447129909,
           "recall_at_scaled_budget": 0.23636363636363636,
-          "average_precision": 0.04676676110348341,
+          "average_precision": 0.046765878267432476,
           "delta_hits_at_500": 1,
           "delta_hits_at_scaled_budget": -1
         },
@@ -427,7 +443,7 @@
           "hits_at_scaled_budget": 1,
           "precision_at_scaled_budget": 0.0030211480362537764,
           "recall_at_scaled_budget": 0.01818181818181818,
-          "average_precision": 0.0028308521909522007,
+          "average_precision": 0.002830572354722708,
           "delta_hits_at_500": 2,
           "delta_hits_at_scaled_budget": 1
         }
@@ -454,7 +470,7 @@
           "hits_at_scaled_budget": 14,
           "precision_at_scaled_budget": 0.04229607250755287,
           "recall_at_scaled_budget": 0.2545454545454545,
-          "average_precision": 0.039220641400628205,
+          "average_precision": 0.03922034855679266,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": 0
         },
@@ -469,7 +485,7 @@
           "hits_at_scaled_budget": 0,
           "precision_at_scaled_budget": 0.0,
           "recall_at_scaled_budget": 0.0,
-          "average_precision": 0.002757958038442471,
+          "average_precision": 0.00275791317324736,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": 0
         }
@@ -496,7 +512,7 @@
           "hits_at_scaled_budget": 13,
           "precision_at_scaled_budget": 0.03927492447129909,
           "recall_at_scaled_budget": 0.23636363636363636,
-          "average_precision": 0.04670074951618122,
+          "average_precision": 0.046700399073071976,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": -1
         },
@@ -511,7 +527,7 @@
           "hits_at_scaled_budget": 0,
           "precision_at_scaled_budget": 0.0,
           "recall_at_scaled_budget": 0.0,
-          "average_precision": 0.0028796571330533638,
+          "average_precision": 0.0028796141631543233,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": 0
         }
@@ -538,7 +554,7 @@
           "hits_at_scaled_budget": 15,
           "precision_at_scaled_budget": 0.045317220543806644,
           "recall_at_scaled_budget": 0.2727272727272727,
-          "average_precision": 0.040457048755452446,
+          "average_precision": 0.04045696291827434,
           "delta_hits_at_500": 2,
           "delta_hits_at_scaled_budget": 1
         },
@@ -553,7 +569,7 @@
           "hits_at_scaled_budget": 1,
           "precision_at_scaled_budget": 0.0030211480362537764,
           "recall_at_scaled_budget": 0.01818181818181818,
-          "average_precision": 0.005496750816368765,
+          "average_precision": 0.005496714278509705,
           "delta_hits_at_500": 3,
           "delta_hits_at_scaled_budget": 1
         }
@@ -580,7 +596,7 @@
           "hits_at_scaled_budget": 12,
           "precision_at_scaled_budget": 0.03625377643504532,
           "recall_at_scaled_budget": 0.21818181818181817,
-          "average_precision": 0.03695101607550342,
+          "average_precision": 0.03695081813857586,
           "delta_hits_at_500": -2,
           "delta_hits_at_scaled_budget": -2
         },
@@ -595,7 +611,7 @@
           "hits_at_scaled_budget": 0,
           "precision_at_scaled_budget": 0.0,
           "recall_at_scaled_budget": 0.0,
-          "average_precision": 0.002757958038442471,
+          "average_precision": 0.00275791317324736,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": 0
         }
@@ -607,8 +623,8 @@
       }
     },
     {
-      "name": "current_description_semantics_and_identity",
-      "why": "Sanitization removes explicit incident claims but cannot establish historical provenance. Evaluated only in ablations; excluded from strict production."
+      "name": "unfiltered_description_and_incident_claims",
+      "why": "Explicit exploitation claims and incident reports are removed before keyword, entity and embedding features. Sanitized text is an eligible candidate under a documented residual timestamp risk."
     },
     {
       "name": "post_2025_exploitation_data",
@@ -622,14 +638,16 @@
   "ibm_technology": [
     "ibm-granite/granite-embedding-30m-english revision ae3da2ae1b16814b84c52deccd9aeee77727d044; sentence-transformers on Apple MPS; description and identity embedding ablations"
   ],
-  "ibm_in_selected_model": "Evaluated in research; not selected by strict validation rule",
+  "ibm_in_selected_model": "Evaluated in research; not selected by baseline-protection gate",
   "recipe": {
-    "name": "logistic_strict",
+    "name": "tiered_logistic_text",
     "algorithm": "logistic",
-    "block": "strict",
+    "block": "text",
     "embedding": "",
     "no_history": false,
-    "blend": 0.0
+    "blend": 0.0,
+    "variant": "standard",
+    "tiered": true
   },
   "training_pool": 75148,
   "training_positives": 119,
@@ -641,6 +659,77 @@
   },
   "explanations": "Top five grouped terms by absolute signed log-odds contribution. Base and omitted terms are supplied separately; contributions are associations, not causes.",
   "snapshot_rule": "Use supplied scoreboard snapshot_month, including June 2026 \u2192 July. Never fetch a later signal.",
+  "ranking_policy": "Public exploit/detection flag tier first; learned probability within tier",
+  "ranking_probability_note": "For a tiered recipe, score remains the learned probability; rank enforces public-tool-first policy. Scores need only decrease within each tier. Tier priority is a policy, not a claimed log-odds effect.",
+  "calendar_analog": {
+    "name": "exact_calendar_analog_2025",
+    "snapshot_rule": "Published January\u2013September; publication-month end except June shifted to July",
+    "train_label_cutoff": "2024-11-04",
+    "test_label_cutoff": "2025-11-04",
+    "train_pool": 23443,
+    "train_positives": 16,
+    "pool": 35277,
+    "positives": 45,
+    "minimum_test_followup_days": 35,
+    "methods": [
+      {
+        "name": "CVSS first",
+        "pool": 35277,
+        "positives": 45,
+        "hits_at_500": 4,
+        "precision_at_500": 0.008,
+        "recall_at_500": 0.08888888888888889,
+        "scaled_budget": 243,
+        "hits_at_scaled_budget": 4,
+        "precision_at_scaled_budget": 0.01646090534979424,
+        "recall_at_scaled_budget": 0.08888888888888889,
+        "average_precision": 0.004834859073310152
+      },
+      {
+        "name": "EPSS first",
+        "pool": 35277,
+        "positives": 45,
+        "hits_at_500": 8,
+        "precision_at_500": 0.016,
+        "recall_at_500": 0.17777777777777778,
+        "scaled_budget": 243,
+        "hits_at_scaled_budget": 8,
+        "precision_at_scaled_budget": 0.03292181069958848,
+        "recall_at_scaled_budget": 0.17777777777777778,
+        "average_precision": 0.030735762640261406
+      },
+      {
+        "name": "Exploit code first, then EPSS",
+        "pool": 35277,
+        "positives": 45,
+        "hits_at_500": 16,
+        "precision_at_500": 0.032,
+        "recall_at_500": 0.35555555555555557,
+        "scaled_budget": 243,
+        "hits_at_scaled_budget": 14,
+        "precision_at_scaled_budget": 0.05761316872427984,
+        "recall_at_scaled_budget": 0.3111111111111111,
+        "average_precision": 0.045796438171101544
+      },
+      {
+        "name": "tiered_logistic_text",
+        "pool": 35277,
+        "positives": 45,
+        "hits_at_500": 18,
+        "precision_at_500": 0.036,
+        "recall_at_500": 0.4,
+        "scaled_budget": 243,
+        "hits_at_scaled_budget": 10,
+        "precision_at_scaled_budget": 0.0411522633744856,
+        "recall_at_scaled_budget": 0.2222222222222222,
+        "average_precision": 0.038011190841337215,
+        "brier_score": 0.001308872634970871,
+        "mean_probability": 0.0010442651888935093
+      }
+    ],
+    "note": "Matches the benchmark calendar shape and November 4 endpoint. Training still requires 90 days follow-up."
+  },
+  "calendar_analog_caveat": "This additional calendar-shaped sensitivity is reported separately from the two required selection splits; the learned recipe may lose to the rule at one of its budgets.",
   "history_cutoff": "KEV entries date_added <= snapshot end and <= 2025-12-31; 2026 history is frozen at 2025 year-end.",
   "metadata_display": [
     "cvss3_score",
@@ -648,12 +737,19 @@
     "cwe_ids",
     "description"
   ],
-  "metadata_display_note": "Current metadata is included for the UI contract only and does not enter the strict model.",
+  "metadata_display_note": "Current CVSS, attack vector and CWE serve the display contract only. The CSV exports sanitized current description text; description features enter only text recipes.",
+  "description_policy": {
+    "enabled_in_selected_model": true,
+    "sanitization": "Remove entire incident-claim sentences, then URLs, CVE identifiers and dates, before entities/keywords/embeddings.",
+    "residual_risk": "Current technical descriptions may have changed after the snapshot. Sanitization cannot establish original wording; identity matching is heuristic.",
+    "strict_reference": "logistic_strict and lightgbm_sparse_strict remain in every eligible split."
+  },
   "limitations": [
     "Historical labels are KEV inclusion, not first attack.",
     "All-2025 results include right censoring; mature and fixed-horizon sensitivity are separate.",
     "Model selection uses historical development splits; no untouched validation of the selected recipe.",
-    "Historical assigning-organization values are assumed stable; the source has no field-level revision history."
+    "Historical assigning-organization values are assumed stable; the source has no field-level revision history.",
+    "Sanitized description features, if selected, retain unquantifiable residual revision risk."
   ],
   "leak_checks": {
     "passed": true,
@@ -661,9 +757,11 @@
     "no_post_2025_labels": true,
     "all_metadata_local": true,
     "production_suspect_columns": [],
-    "strict_production_allowlist": true,
     "train_test_cve_disjoint": true,
-    "training_label_cutoffs_enforced": true
+    "training_label_cutoffs_enforced": true,
+    "baseline_protection_gate": true,
+    "strict_production_allowlist": false,
+    "sanitized_text_allowlist": true
   },
   "input_manifest": {
     "affected_products.csv": {
@@ -711,7 +809,7 @@
       "hits_at_scaled_budget": 14,
       "precision_at_scaled_budget": 0.04229607250755287,
       "recall_at_scaled_budget": 0.2545454545454545,
-      "average_precision": 0.03588643036171092
+      "average_precision": 0.03588615536693217
     },
     "lightgbm": {
       "name": "lightgbm",
@@ -724,7 +822,7 @@
       "hits_at_scaled_budget": 0,
       "precision_at_scaled_budget": 0.0,
       "recall_at_scaled_budget": 0.0,
-      "average_precision": 0.002757958038442471
+      "average_precision": 0.00275791317324736
     }
   }
 }
