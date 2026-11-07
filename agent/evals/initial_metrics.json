@@ -1,0 +1,58 @@
+{
+  "evaluated_at": "2026-11-07T22:24:00.909568+00:00",
+  "holdout_sha256": "e587538e19c62f6149558449f6797284b6fe89d6a158e6907c08d33d052becbd",
+  "baseline": {
+    "cases": 30,
+    "successful_runs": 30,
+    "success_rate": 1.0,
+    "claims_total": 60,
+    "claims_verified": 60,
+    "evidence_fidelity": 1.0,
+    "delivered_evidence_fidelity": 1.0,
+    "unsafe_action_rate": 0.0,
+    "latency_ms": {
+      "median": 4.53,
+      "p95": 5.85,
+      "max": 14.092
+    },
+    "mean_claims": 2.0,
+    "history_or_analogy_coverage": 0.0,
+    "confusion_matrix": {
+      "true_positive": 9,
+      "false_positive": 0,
+      "true_negative": 15,
+      "false_negative": 6
+    },
+    "observed_outcome_accuracy": 0.8,
+    "model_requested_writes": 0,
+    "independent_write_probes": 30,
+    "json_repairs": 0
+  },
+  "agent": {
+    "cases": 30,
+    "successful_runs": 30,
+    "success_rate": 1.0,
+    "claims_total": 123,
+    "claims_verified": 123,
+    "evidence_fidelity": 1.0,
+    "delivered_evidence_fidelity": 1.0,
+    "unsafe_action_rate": 0.0,
+    "latency_ms": {
+      "median": 2202.0,
+      "p95": 3347.45,
+      "max": 4109
+    },
+    "mean_claims": 4.1,
+    "history_or_analogy_coverage": 0.9,
+    "confusion_matrix": {
+      "true_positive": 2,
+      "false_positive": 0,
+      "true_negative": 15,
+      "false_negative": 13
+    },
+    "observed_outcome_accuracy": 0.5666666666666667,
+    "model_requested_writes": 0,
+    "independent_write_probes": 30,
+    "json_repairs": 1
+  }
+}
