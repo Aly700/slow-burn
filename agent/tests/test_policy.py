@@ -83,3 +83,21 @@ def test_no_unverified_or_empty_proposal(tmp_path):
         s.propose(r["run_id"], b)
     with pytest.raises(ValueError):
         s.transition(r["run_id"], "TICKET_FILED")
+
+
+def test_decision_cannot_race_a_committed_ticket_intent(tmp_path, monkeypatch):
+    s, rid = ready(tmp_path)
+    r = s.get(rid)
+    token = s.approve(rid, True)
+    original = s.flush_tickets
+    def interrupted():
+        raise OSError('simulated crash before file append')
+    monkeypatch.setattr(s, 'flush_tickets', interrupted)
+    with pytest.raises(OSError):
+        s.file_ticket(r['cve_id'], r['briefing_hash'], token)
+    with pytest.raises(ValueError):
+        s.approve(rid, False)
+    monkeypatch.setattr(s, 'flush_tickets', original)
+    s.recover()
+    assert s.get(rid)['state'] == 'TICKET_FILED'
+    assert len((tmp_path / 'tickets.jsonl').read_text().splitlines()) == 1

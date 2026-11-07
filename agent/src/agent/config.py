@@ -16,6 +16,7 @@ class Settings:
     max_turns: int = 4
     max_tool_calls: int = 10
     snapshot_month: str | None = field(default_factory=lambda: os.getenv("TRIAGE_SNAPSHOT_MONTH"))
+    score_path: Path | None = field(default_factory=lambda: Path(os.environ["TRIAGE_SCORES"]) if os.getenv("TRIAGE_SCORES") else None)
 
     @property
     def data(self):
@@ -31,7 +32,7 @@ class Settings:
 
     @property
     def scores(self):
-        return self.artifacts / "scores_2026_top5000.csv"
+        return self.score_path or self.artifacts / "scores_2026_top5000.csv"
 
     @property
     def state(self):

@@ -19,6 +19,7 @@ class ToolClient:
     async def __aenter__(self):
         env = dict(os.environ)
         env.update({"TRIAGE_ROOT": str(self.settings.root), "TRIAGE_STATE_DB": str(self.settings.state), "TRIAGE_TICKETS": str(self.settings.tickets), "TOKENIZERS_PARALLELISM": "false"})
+        env["TRIAGE_SCORES"] = str(self.settings.scores)
         if self.settings.snapshot_month:
             env["TRIAGE_SNAPSHOT_MONTH"] = self.settings.snapshot_month
         else:

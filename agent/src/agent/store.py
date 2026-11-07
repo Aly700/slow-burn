@@ -123,6 +123,8 @@ class Store:
                 raise ValueError("only a waiting run can receive a decision")
             if digest(run["briefing"]) != run["briefing_hash"]:
                 raise PermissionError("briefing changed since verification")
+            if not approve and run.get("ticket_intent"):
+                raise ValueError("the approved ticket is already committed to the delivery outbox")
             db.execute("UPDATE approvals SET revoked=1 WHERE run_id=?", (run_id,))
             run["approval"] = {"approved": approve, "at": now(), "briefing_hash": run["briefing_hash"]}
             token = None
@@ -156,6 +158,8 @@ class Store:
                 "cve_id": cve_id, "briefing_hash": briefing_hash, "run_id": run["run_id"],
                 "created_at": now(), "briefing": run["briefing"], "destination": "local tickets.jsonl"}
             db.execute("INSERT OR IGNORE INTO tickets VALUES (?,?)", (key, canonical(ticket)))
+            run["ticket_intent"] = key
+            self._put(db, run)
         self.flush_tickets()
         with self.db() as db:
             db.execute("BEGIN IMMEDIATE")
@@ -205,7 +209,7 @@ class Store:
                 elif run["state"] == "WAITING_APPROVAL":
                     key = run["cve_id"] + ":" + run["briefing_hash"]
                     ticket = db.execute("SELECT body FROM tickets WHERE idempotency_key=?", (key,)).fetchone()
-                    if ticket and run.get("approval", {}).get("approved"):
+                    if ticket and run.get("ticket_intent") and run.get("approval", {}).get("approved"):
                         self._transition(run, "TICKET_FILED")
                         run["ticket"] = json.loads(ticket[0])
                         run["policy"] = {"write_requested": True, "write_allowed": True, "reason": "recovered approved ticket from durable outbox"}
