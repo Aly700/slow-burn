@@ -1,4 +1,4 @@
-# Before the Breach · web
+# Slow Burn · web
 
 A static Vite, React and TypeScript interface for the IBM track at Sheridan Datathon 2026. IBM Plex fonts ship locally. Charts use native SVG and CSS; there is no frontend backend or UI kit.
 

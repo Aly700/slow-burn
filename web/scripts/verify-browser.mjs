@@ -2,282 +2,173 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { readFile, mkdir } from "node:fs/promises";
 import assert from "node:assert/strict";
-const require = createRequire(
-  path.resolve(process.env.PLAYWRIGHT_ROOT ?? process.cwd(), "package.json"),
-);
+const require = createRequire(path.resolve(process.env.PLAYWRIGHT_ROOT ?? process.cwd(), "package.json"));
 const { chromium } = require("playwright-core");
 const base = process.env.PREVIEW_URL ?? "http://localhost:4317";
-const bundle = JSON.parse(
-  await readFile(
-    new URL("../public/data/bundle.json", import.meta.url),
-    "utf8",
-  ),
-);
+const bundle = JSON.parse(await readFile(new URL("../public/data/bundle.json", import.meta.url), "utf8"));
 const shots = new URL("../../shots/checks/", import.meta.url);
 await mkdir(shots, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });
-const errors = [],
-  passed = [];
+const errors = [], passed = [];
 async function check(name, fn) {
-  const page = await browser.newPage({
-    viewport: { width: 1440, height: 900 },
-    deviceScaleFactor: 2,
-  });
-  page.on("pageerror", (e) => errors.push(`${name}: ${e.message}`));
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
+  page.on("pageerror", error => errors.push(`${name}: ${error.message}`));
   await page.emulateMedia({ reducedMotion: "reduce" });
-  try {
-    await fn(page);
-    passed.push(name);
-  } finally {
-    await page.close();
-  }
+  try { await fn(page); passed.push(name); } finally { await page.close(); }
 }
 async function load(page, data) {
-  if (data !== undefined)
-    await page.route("**/data/bundle.json", (r) => r.fulfill({ json: data }));
+  if (data !== undefined) await page.route("**/data/bundle.json", route => route.fulfill({ json: data }));
   await page.goto(base);
-  await page.waitForFunction(
-    () => document.querySelector("main")?.getAttribute("aria-busy") === "false",
-  );
+  await page.waitForFunction(() => document.querySelector("main")?.getAttribute("aria-busy") === "false");
   await page.evaluate(() => document.fonts.ready);
 }
-async function queue(page) {
-  await page
-    .locator("#queue")
-    .evaluate((node) =>
-      window.scrollTo({ top: node.offsetTop - 90, behavior: "instant" }),
-    );
+async function present(page, slide = 1) {
+  await page.keyboard.press("p");
+  for (let index = 1; index < slide; index++) await page.keyboard.press("ArrowRight");
 }
-const open = (page, id = "CVE-2026-8037") =>
-  page.getByRole("button", { name: id, exact: true }).click();
+const visibleSlide = page => page.getByRole("region", { name: /^Slide/ });
+const openFeatured = page => page.getByRole("button", { name: "Inspect the briefing" }).click();
 try {
-  await check(
-    "search, empty state, filters, pagination, keyboard",
-    async (page) => {
-      await load(page);
-      await queue(page);
-      assert.equal(await page.locator("tbody tr").count(), 10);
-      await page
-        .getByRole("textbox", { name: "Search queue" })
-        .fill("no-such-record");
-      assert.equal(await page.locator("tbody tr").count(), 0);
-      await page.screenshot({
-        path: new URL("empty-search.png", shots).pathname,
-      });
-      await page.getByRole("button", { name: "Clear filters" }).click();
-      await page
-        .getByRole("button", { name: /2 illustrative briefings/ })
-        .click();
-      assert.equal(await page.locator("tbody tr").count(), 2);
-      await page
-        .getByRole("combobox", { name: "Snapshot month" })
-        .selectOption("2026-01");
-      assert.equal(await page.locator("tbody tr").count(), 0);
-      await page.getByRole("button", { name: "Clear filters" }).click();
-      await page.getByRole("button", { name: "Next", exact: true }).click();
-      assert.match(await page.locator("tbody tr").first().innerText(), /^011/);
-      await page.getByRole("button", { name: "Previous", exact: true }).click();
-      await queue(page);
-      await page
-        .getByRole("button", { name: "CVE-2026-8037", exact: true })
-        .focus();
-      await page.keyboard.press("j");
-      await page.waitForFunction(
-        () => document.activeElement?.textContent === "CVE-2022-25369",
-      );
-      await page.keyboard.press("Enter");
-      assert.match(
-        await page.getByRole("dialog").innerText(),
-        /No recorded briefing/,
-      );
-      await page.keyboard.press("Escape");
-      await page.keyboard.press("k");
-      await page.keyboard.press("Enter");
-      assert.match(
-        await page.getByRole("dialog").innerText(),
-        /Illustrative fixture/,
-      );
-    },
-  );
-  await check(
-    "evidence, trace, focus trap, approval persistence",
-    async (page) => {
-      await load(page);
-      await queue(page);
-      await open(page);
-      await page.keyboard.press("Shift+Tab");
-      assert.equal(
-        await page.evaluate(() =>
-          document.activeElement?.textContent?.includes("Approve ticket"),
-        ),
-        true,
-      );
-      await page.keyboard.press("Tab");
-      assert.equal(
-        await page.evaluate(() =>
-          document.activeElement?.getAttribute("aria-label"),
-        ),
-        "Close briefing",
-      );
-      await page.locator(".evidence-chip summary").first().click();
-      assert.match(
-        await page.locator(".evidence-chip[open]").innerText(),
-        /cve_lookup/,
-      );
-      assert.equal(await page.locator(".dropped-claims s").count(), 1);
-      await page.getByRole("tab", { name: /Trace/ }).click();
-      assert.equal(await page.locator(".trace-event").count(), 6);
-      await page.getByRole("button", { name: "Approve ticket" }).click();
-      assert.match(
-        await page.getByRole("status").innerText(),
-        /Simulated approval/,
-      );
-      await page.screenshot({ path: new URL("approved.png", shots).pathname });
-      await page.getByRole("button", { name: "Close briefing" }).click();
-      await open(page);
-      assert.equal(
-        await page.getByRole("button", { name: "Approve ticket" }).count(),
-        0,
-      );
-    },
-  );
-  await check("injection and rejection", async (page) => {
+  await check("presentation keyboard, focus and all six viewport slides", async page => {
     await load(page);
-    await queue(page);
-    await open(page, "CVE-2026-10523");
-    assert.match(
-      await page.locator(".injection-warning").innerText(),
-      /Human approval remains required/,
-    );
-    await page.locator(".injection-warning summary").click();
-    assert.match(
-      await page.locator(".injection-warning code").innerText(),
-      /Ignore previous instructions/,
-    );
-    await page.getByRole("button", { name: "Reject", exact: true }).click();
-    assert.match(
-      await page.getByRole("status").innerText(),
-      /Simulated rejection/,
-    );
-    assert.match(
-      await page.locator(".state-machine .current").innerText(),
-      /rejected/i,
-    );
+    assert.match(await page.title(), /Slow Burn/);
+    await page.getByRole("button", { name: /Present P/ }).focus();
+    await present(page);
+    for (let slide = 1; slide <= 6; slide++) {
+      assert.match(await visibleSlide(page).getAttribute("aria-label"), new RegExp(`^Slide ${slide}:`));
+      const box = await page.locator(".present-slide").evaluate(node => ({ width: node.scrollWidth <= node.clientWidth + 2, height: node.scrollHeight <= node.clientHeight + 2 }));
+      assert.deepEqual(box, { width: true, height: true }, `Slide ${slide} must fit the viewport`);
+      if (slide < 6) await page.keyboard.press("Space");
+    }
+    await page.keyboard.press("ArrowLeft");
+    assert.match(await visibleSlide(page).getAttribute("aria-label"), /^Slide 5:/);
+    await page.keyboard.press("Escape");
+    assert.equal(await page.getByRole("dialog").count(), 0);
+    assert.match(await page.evaluate(() => document.activeElement.textContent), /Present/);
+    assert.equal(await page.evaluate(() => document.body.style.overflow), "");
   });
-  await check("missing bundle and null nested fields", async (page) => {
-    await page.route("**/data/bundle.json", (r) =>
-      r.fulfill({ status: 404, body: "missing" }),
-    );
+  await check("queue search, pagination, filters and j/k navigation", async page => {
     await load(page);
-    assert.match(await page.locator(".data-banner").innerText(), /unavailable/);
-    assert.equal(await page.locator(".result-number").innerText(), "pending");
-    await page.unroute("**/data/bundle.json");
-    await page.route("**/data/bundle.json", (r) =>
-      r.fulfill({
-        json: {
-          findings: {
-            headline: { benchmark_2026_reference: { cvss_first: null } },
-            two_clocks: null,
-            signals: null,
-            deprioritize: null,
-          },
-          backtest: { methods: null },
-          model_card: {
-            features_used: null,
-            features_excluded: null,
-            ibm_technology: null,
-          },
-          scores: null,
-          runs: null,
-          meta: null,
-        },
-      }),
-    );
-    await page.reload();
-    await page.waitForFunction(
-      () =>
-        document.querySelector("main")?.getAttribute("aria-busy") === "false",
-    );
-    assert.doesNotMatch(
-      await page.locator("body").innerText(),
-      /Infinity|NaN|undefined/,
-    );
-    await page.screenshot({
-      path: new URL("missing-data.png", shots).pathname,
-    });
+    await page.locator("#queue").scrollIntoViewIfNeeded();
+    const search = page.getByRole("textbox", { name: "Search queue" });
+    await search.fill("no-such-record");
+    assert.equal(await page.locator("tbody tr").count(), 0);
+    await page.getByRole("button", { name: "Clear filters" }).click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    assert.equal(await page.locator("tbody tr").count(), 10);
+    await page.getByRole("button", { name: "Previous", exact: true }).click();
+    const first = page.locator("tbody .cve-button").first();
+    const initial = await first.textContent();
+    await first.focus();
+    await page.keyboard.press("j");
+    await page.waitForFunction(id => document.activeElement?.textContent !== id, initial);
+    await page.keyboard.press("k");
+    await page.waitForFunction(id => document.activeElement?.textContent === id, initial);
+    await page.keyboard.press("Enter");
+    assert.equal(await page.getByRole("dialog").count(), 1);
+    await page.keyboard.press("Escape");
+    await search.fill("p");
+    assert.equal(await page.locator(".presentation").count(), 0);
   });
-  await check("live approval request contract", async (page) => {
-    const live = structuredClone(bundle);
-    live.meta.runs_source = "recorded";
+  await check("recorded briefing evidence, trace and live hash payload", async page => {
     let posted;
-    await page.route("http://localhost:8765/**", async (route) => {
+    await page.route("http://localhost:8765/**", async route => {
       posted = route.request().postDataJSON();
-      await route.fulfill({
-        json: {
-          state: "TICKET_FILED",
-          states_seen: [
-            "RECEIVED",
-            "INVESTIGATING",
-            "VERIFIED",
-            "WAITING_APPROVAL",
-            "TICKET_FILED",
-          ],
-        },
-      });
+      await route.fulfill({ json: { state: "TICKET_FILED" } });
     });
-    await load(page, live);
-    await queue(page);
-    await open(page);
-    await page.getByRole("button", { name: "Approve ticket" }).click();
-    await page.waitForFunction(() =>
-      document
-        .querySelector(".approval-note")
-        ?.textContent?.includes("Service response"),
-    );
-    assert.deepEqual(posted, { approved: true });
-  });
-  await check("service rejection stays pending", async (page) => {
-    const live = structuredClone(bundle);
-    live.meta.runs_source = "recorded";
-    await page.route("http://localhost:8765/**", (route) =>
-      route.fulfill({ status: 409, json: { detail: "Briefing changed" } }),
-    );
-    await load(page, live);
-    await queue(page);
-    await open(page);
-    await page.getByRole("button", { name: "Approve ticket" }).click();
-    await page.waitForFunction(() =>
-      document.querySelector(".approval-note")?.textContent?.includes("409"),
-    );
-    assert.equal(
-      await page.getByRole("button", { name: "Approve ticket" }).count(),
-      1,
-    );
-  });
-  await check("mobile layout and briefing", async (page) => {
-    await page.setViewportSize({ width: 390, height: 844 });
     await load(page);
-    assert.equal(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth > innerWidth,
-      ),
-      false,
-    );
-    await page.screenshot({ path: new URL("mobile-hero.png", shots).pathname });
-    await queue(page);
-    await open(page);
-    assert.equal(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth > innerWidth,
-      ),
-      false,
-    );
-    await page.screenshot({
-      path: new URL("mobile-briefing.png", shots).pathname,
-    });
+    await openFeatured(page);
+    assert.match(await page.getByRole("dialog").innerText(), /Recorded investigation/);
+    await page.locator(".evidence-chip summary").first().click();
+    assert.match(await page.locator(".evidence-chip[open]").innerText(), /cve_lookup/);
+    await page.getByRole("tab", { name: /Trace/ }).click();
+    assert.ok(await page.locator(".trace-event").count() > 0);
+    await page.getByRole("button", { name: "Approve ticket" }).click();
+    await page.waitForFunction(() => document.querySelector(".approval-note")?.textContent?.includes("Service response"));
+    const featured = bundle.runs.find(run => run.cve_id === "CVE-2026-10523");
+    assert.deepEqual(posted, { approved: true, briefing_hash: featured.briefing_hash });
+    await page.keyboard.press("Escape");
+    await present(page, 6);
+    assert.match(await visibleSlide(page).innerText(), /ticket filed/);
+    assert.equal(await page.getByRole("button", { name: "Approve ticket" }).count(), 0);
+  });
+  await check("offline decisions are labelled simulations and persist", async page => {
+    await page.route("http://localhost:8765/**", route => route.abort("connectionrefused"));
+    await load(page);
+    await present(page, 6);
+    await page.getByRole("button", { name: "Reject", exact: true }).click();
+    await page.waitForFunction(() => document.querySelector(".approval-note")?.textContent?.includes("Simulated rejection"));
+    assert.match(await page.locator(".gate-control h2").innerText(), /Simulated: rejected/);
+    await page.keyboard.press("Escape");
+    await openFeatured(page);
+    assert.match(await page.locator(".approval-note").innerText(), /Simulated rejection/);
+    assert.equal(await page.getByRole("button", { name: "Approve ticket" }).count(), 0);
+  });
+  await check("HTTP conflict cannot fall back to a simulated success", async page => {
+    await page.route("http://localhost:8765/**", route => route.fulfill({ status: 409, json: { detail: "briefing changed" } }));
+    await load(page); await present(page, 6);
+    await page.getByRole("button", { name: "Approve ticket" }).click();
+    await page.waitForFunction(() => document.querySelector(".approval-note")?.textContent?.includes("409"));
+    assert.match(await page.locator(".gate-control h2").innerText(), /Ready/);
+  });
+  await check("optional findings, histogram, vendor buckets and dropped claim", async page => {
+    const data = structuredClone(bundle);
+    Object.assign(data.findings.headline, { later_kev_without_public_signal: 20, later_kev_with_public_signal: 10 });
+    data.findings.two_clocks.lag_hist = [{ bucket: "1–30", n: 8 }, { bucket: "31–60", n: 5 }, { bucket: "61–90", n: 2 }];
+    data.findings.vendor_history_within_poc = { pool: 100, positives: 10, base_rate: .1, buckets: [
+      { identity: "assigner", earlier_kev_bucket: "0", n: 50, hits: 1, rate: .02, lift_within_poc: .2 },
+      { identity: "assigner", earlier_kev_bucket: "1–4", n: 30, hits: 3, rate: .1, lift_within_poc: 1 },
+      { identity: "assigner", earlier_kev_bucket: "5+", n: 20, hits: 6, rate: .3, lift_within_poc: 3 },
+    ] };
+    data.findings.story = [{ title: "Test finding", sentence: "Synthetic rendering check, not a research result.", numbers: { test_count: 10 } }];
+    data.runs[0].verifier.dropped = [{ id: "test-drop", text: "Unsupported test claim", why: "No matching tool evidence" }];
+    await load(page, data);
+    assert.match(await page.locator(".blind-number").innerText(), /20.*of 30/s);
+    assert.equal(await page.locator(".vendor-row").count(), 3);
+    await present(page, 2);
+    assert.equal(await page.locator(".lag-bars > div").count(), 3);
+    await page.keyboard.press("ArrowRight"); await page.keyboard.press("ArrowRight");
+    assert.equal(await page.locator(".vendor-row:visible").count(), 6);
+    await page.screenshot({ path: new URL("optional-vendors.png", shots).pathname });
+    await page.keyboard.press("ArrowRight");
+    assert.match(await page.locator(".present-dropped s").innerText(), /Unsupported test claim/);
+    await page.screenshot({ path: new URL("optional-dropped.png", shots).pathname });
+  });
+  await check("missing and null data render all six slides without invented values", async page => {
+    await load(page, { findings: { headline: null, two_clocks: null, vendor_history_within_poc: null, signals: null, story: null }, agent_eval: { arms: null }, model_card: { features_used: null, features_excluded: null, ibm_technology: null }, scores: null, runs: null, meta: null });
+    await present(page);
+    for (let slide = 1; slide <= 6; slide++) {
+      const text = await visibleSlide(page).innerText();
+      assert.doesNotMatch(text, /NaN|Infinity|undefined/);
+      assert.match(text, /pending/i);
+      assert.equal(await page.locator(".present-slide").evaluate(node => node.scrollWidth <= node.clientWidth + 2), true);
+      if (slide < 6) await page.keyboard.press("ArrowRight");
+    }
+    await page.screenshot({ path: new URL("missing-presentation.png", shots).pathname });
+  });
+  await check("fixture injection and dropped claims remain available", async page => {
+    const fixture = JSON.parse(await readFile(new URL("../fixtures/CVE-2026-10523.json", import.meta.url), "utf8"));
+    await load(page, { ...bundle, runs: [fixture], meta: { ...bundle.meta, runs_source: "fixtures" } });
+    await openFeatured(page);
+    assert.equal(await page.locator(".dropped-claims s").count(), 1);
+    assert.match(await page.locator(".injection-warning").innerText(), /injection detected/);
+    await page.getByRole("button", { name: "Reject", exact: true }).click();
+    assert.match(await page.locator(".approval-note").innerText(), /Simulated rejection/);
+  });
+  if (process.env.LIVE_APPROVAL === "1") await check("real API approval and rejection with durable local ticket", async page => {
+    await load(page); await present(page, 6);
+    await page.getByRole("button", { name: "Approve ticket" }).click();
+    await page.waitForFunction(() => document.querySelector(".approval-note")?.textContent?.includes("Service response: ticket filed"));
+    await page.screenshot({ path: new URL("real-approved.png", shots).pathname });
+    const tickets = (await readFile(new URL("../.runtime/tickets.jsonl", import.meta.url), "utf8")).trim().split("\n").map(JSON.parse);
+    assert.ok(tickets.some(ticket => ticket.cve_id === "CVE-2026-10523"));
+    await page.keyboard.press("Escape");
+    await page.locator("#queue").scrollIntoViewIfNeeded();
+    await page.getByRole("button", { name: "CVE-2026-8037", exact: true }).click();
+    await page.getByRole("button", { name: "Reject", exact: true }).click();
+    await page.waitForFunction(() => document.querySelector(".approval-note")?.textContent?.includes("Service response: rejected"));
+    assert.equal((await readFile(new URL("../.runtime/tickets.jsonl", import.meta.url), "utf8")).trim().split("\n").length, tickets.length);
   });
   assert.deepEqual(errors, []);
   console.log(JSON.stringify({ passed, errors }, null, 2));
-} finally {
-  await browser.close();
-}
+} finally { await browser.close(); }

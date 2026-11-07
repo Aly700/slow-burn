@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Run, Score } from "../types";
 import { displayValue, list, number, percent, reasonLabel } from "../lib";
 import { Icon } from "./Icon";
-import { requestApproval } from "../approval";
+import { useApproval } from "../useApproval";
 
 const stages = ["RECEIVED", "INVESTIGATING", "VERIFIED", "WAITING_APPROVAL"];
 const stageLabel = (state: string) => state.toLowerCase().replaceAll("_", " ");
@@ -22,9 +22,12 @@ export function Briefing({
   onUpdate: (run: Run, notice: string) => void;
   onClose: () => void;
 }) {
-  const [currentRun, setCurrentRun] = useState(run);
-  const [notice, setNotice] = useState(initialNotice);
-  const [busy, setBusy] = useState(false);
+  const { currentRun, notice, busy, decide } = useApproval(
+    run,
+    fixture,
+    initialNotice,
+    onUpdate,
+  );
   const [tab, setTab] = useState("evidence");
   const panel = useRef<HTMLElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
@@ -64,53 +67,6 @@ export function Briefing({
   const pending = state === "WAITING_APPROVAL";
   const terminal = ["TICKET_FILED", "REJECTED", "FAILED"].includes(state);
   const steps = [...stages, terminal ? state : "TICKET_FILED / REJECTED"];
-  async function decide(approved: boolean) {
-    if (!currentRun || !pending || busy) return;
-    setBusy(true);
-    setNotice("");
-    const local = (offline = false) => {
-      const next = approved ? "TICKET_FILED" : "REJECTED";
-      const updated = {
-        ...currentRun,
-        state: next,
-        states_seen: [...list(currentRun.states_seen), next],
-        trace: [
-          ...list(currentRun.trace),
-          {
-            t_ms: currentRun.duration_ms ?? 0,
-            kind: "policy",
-            name: "local_decision_simulated",
-            input: { approved },
-            output_summary: `${approved ? "Approval" : "Rejection"} simulated locally. No service write confirmed.`,
-            duration_ms: 0,
-          },
-        ],
-      };
-      const message = offline
-        ? `Simulated ${approved ? "approval" : "rejection"} only. The service did not confirm a ticket.`
-        : approved
-          ? "Simulated approval recorded locally. No ticket was created."
-          : "Simulated rejection recorded locally. No ticket was created.";
-      setCurrentRun(updated);
-      setNotice(message);
-      onUpdate(updated, message);
-    };
-    if (fixture) {
-      local();
-      setBusy(false);
-      return;
-    }
-    const result = await requestApproval(currentRun.run_id, approved);
-    if (result.kind === "confirmed") {
-      const merged = { ...currentRun, ...result.run };
-      const message = `Service response: ${stageLabel(result.run.state)}.`;
-      setCurrentRun(merged);
-      setNotice(message);
-      onUpdate(merged, message);
-    } else if (result.kind === "offline") local(true);
-    else setNotice(result.message);
-    setBusy(false);
-  }
 
   return (
     <div className="drawer-layer">

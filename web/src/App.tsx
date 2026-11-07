@@ -4,6 +4,9 @@ import { list } from "./lib";
 import { Hero, Methods, Signals, Timing } from "./components/Story";
 import { Queue } from "./components/Queue";
 import { Briefing } from "./components/Briefing";
+import { Discovery, AgentSection } from "./components/Discovery";
+import { Presentation } from "./components/Presentation";
+import { strongestRun } from "./storyData";
 import { Icon } from "./components/Icon";
 
 export default function App() {
@@ -11,6 +14,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selected, setSelected] = useState<Score | null>(null);
+  const [presenting, setPresenting] = useState(false);
   const [active, setActive] = useState("overview");
   const [decisions, setDecisions] = useState<
     Record<string, { run: Run; notice: string }>
@@ -56,6 +60,35 @@ export default function App() {
       .forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, [loading]);
+  const closePresentation = useCallback(() => setPresenting(false), []);
+  useEffect(() => {
+    const key = (event: KeyboardEvent) => {
+      if (
+        event.key.toLowerCase() === "p" &&
+        !event.metaKey &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        !/INPUT|SELECT|TEXTAREA/.test((event.target as HTMLElement).tagName) &&
+        !document.querySelector('[role="dialog"]')
+      ) {
+        event.preventDefault();
+        setPresenting(true);
+      }
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, []);
+  const featured = strongestRun(data);
+  const openFeatured = () => {
+    if (!featured) return;
+    setSelected(
+      list(data.scores).find((score) => score.cve_id === featured.cve_id) ?? {
+        rank: 0,
+        cve_id: featured.cve_id,
+        snapshot_month: featured.snapshot_month,
+      },
+    );
+  };
   const close = useCallback(() => setSelected(null), []);
   return (
     <>
@@ -63,18 +96,14 @@ export default function App() {
         Skip to fix-first queue
       </a>
       <header className="site-header">
-        <a
-          className="brand"
-          href="#overview"
-          aria-label="Before the Breach overview"
-        >
+        <a className="brand" href="#overview" aria-label="Slow Burn overview">
           <span className="brand-mark">
             <span />
             <span />
             <span />
           </span>
           <strong>
-            Before the Breach<span> / </span>
+            Slow Burn<span> / </span>
           </strong>
         </a>
         <nav aria-label="Main navigation">
@@ -82,12 +111,13 @@ export default function App() {
             ["overview", "Overview"],
             ["timing", "Discovery"],
             ["queue", "Fix-first queue"],
+            ["agent", "Briefing"],
             ["methods", "Methods"],
           ].map(([id, label]) => (
             <a
               key={id}
               className={
-                active === id || (id === "timing" && active === "signals")
+                active === id || (id === "timing" && ["signals", "discovery"].includes(active))
                   ? "active"
                   : ""
               }
@@ -98,8 +128,15 @@ export default function App() {
           ))}
         </nav>
         <div className="header-end">
-          <span>SHERIDAN DATATHON 2026</span>
-          <span className="track-label">IBM TRACK</span>
+          <span className="track-subtitle">
+            IBM Before the Breach track · Sheridan Datathon 2026
+          </span>
+          <button
+            className="present-button"
+            onClick={() => setPresenting(true)}
+          >
+            Present <kbd>P</kbd>
+          </button>
         </div>
       </header>
       {error && (
@@ -112,16 +149,31 @@ export default function App() {
         <Hero data={data} />
         <Timing findings={data.findings} />
         <Signals findings={data.findings} />
+        <Discovery findings={data.findings} />
         <Queue data={data} onOpen={setSelected} />
+        <AgentSection data={data} run={featured} onOpen={openFeatured} />
         <Methods data={data} />
       </main>
       <footer className="site-footer">
         <a href="#overview">
-          Before the Breach <Icon name="arrow" size={16} />
+          Slow Burn <Icon name="arrow" size={16} />
         </a>
         <span>Know what to fix. Know why.</span>
         <span>Sheridan Datathon · 07–08 Nov 2026</span>
       </footer>
+      {presenting && (
+        <Presentation
+          data={{
+            ...data,
+            runs: list(data.runs).map(
+              (run) => decisions[run.cve_id]?.run ?? run,
+            ),
+          }}
+          initialNotice={featured ? decisions[featured.cve_id]?.notice : ""}
+          onClose={closePresentation}
+          onUpdate={updateRun}
+        />
+      )}
       {selected && (
         <Briefing
           key={selected.cve_id}

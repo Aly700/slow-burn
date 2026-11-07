@@ -50,3 +50,13 @@ test("only a network failure selects the labelled local fallback", async () => {
     "unconfirmed",
   );
 });
+
+test("binds approval to the exact displayed briefing when a hash exists", async () => {
+  let body;
+  const result = await requestApproval("recorded", true, async (_url, init) => {
+    body = JSON.parse(init.body);
+    return Response.json({ state: "TICKET_FILED" });
+  }, "displayed-hash");
+  assert.equal(result.kind, "confirmed");
+  assert.deepEqual(body, { approved: true, briefing_hash: "displayed-hash" });
+});

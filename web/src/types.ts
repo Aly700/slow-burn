@@ -34,6 +34,8 @@ export interface Findings {
     ours_hits_top500_2025_backtest?: Nullable;
     baselines_2025_backtest?: Record<string, Nullable>;
     benchmark_2026_reference?: Record<string, Nullable>;
+    later_kev_without_public_signal?: Nullable;
+    later_kev_with_public_signal?: Nullable;
     pool_2025?: Nullable;
     positives_2025?: Nullable;
   };
@@ -52,6 +54,24 @@ export interface Findings {
     share_of_pool?: Nullable;
   }[];
   base_rate_2025?: Nullable;
+  vendor_history_within_poc?: {
+    pool?: Nullable;
+    positives?: Nullable;
+    base_rate?: Nullable;
+    buckets?: {
+      identity?: string;
+      earlier_kev_bucket?: string;
+      n?: Nullable;
+      hits?: Nullable;
+      rate?: Nullable;
+      lift_within_poc?: Nullable;
+    }[];
+  };
+  story?: {
+    title?: string;
+    sentence?: string;
+    numbers?: Record<string, unknown>;
+  }[];
 }
 export interface Backtest {
   _status?: string;
@@ -81,6 +101,8 @@ export interface ModelCard {
 }
 export interface Run {
   run_id: string;
+  briefing_hash?: string;
+  snapshot_month?: string;
   cve_id: string;
   state: string;
   states_seen?: string[];
@@ -125,11 +147,33 @@ export interface Data {
   model_card?: ModelCard | null;
   scores?: Score[];
   runs?: Run[];
-  agent_eval?: Record<string, unknown> | null;
+  agent_eval?: AgentEval | null;
+  verifier_example?: Run | null;
   meta?: {
     synced_at?: string;
     runs_source?: string;
     score_mode?: string;
     warnings?: string[];
   };
+}
+
+export interface EvalArm {
+  id?: string;
+  name?: string;
+  cases?: Nullable;
+  observed_outcome_accuracy?: Nullable;
+  history_or_analogy_coverage?: Nullable;
+  evidence_fidelity?: Nullable;
+}
+export interface AgentEval {
+  cases?: Nullable;
+  model?: string;
+  active_arm?: string;
+  arms?: EvalArm[];
+  baseline?: EvalArm;
+  granite_decides?: EvalArm;
+  policy_granite?: EvalArm;
+  snapshot_end?: string;
+  outcome_end?: string;
+  limitations?: string[];
 }

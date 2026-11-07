@@ -93,7 +93,7 @@ export function Queue({
         ?.querySelector("tr.selected")
         ?.scrollIntoView({ block: "nearest", behavior: "instant" });
       root.current
-        ?.querySelector<HTMLButtonElement>('tr.selected .cve-button')
+        ?.querySelector<HTMLButtonElement>("tr.selected .cve-button")
         ?.focus({ preventScroll: true });
       keyboardMove.current = false;
     }

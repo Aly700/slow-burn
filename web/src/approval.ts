@@ -9,6 +9,7 @@ export async function requestApproval(
   runId: string,
   approved: boolean,
   request: typeof fetch = fetch,
+  briefingHash?: string,
 ): Promise<ApprovalResult> {
   let response: Response;
   try {
@@ -17,7 +18,10 @@ export async function requestApproval(
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ approved }),
+        body: JSON.stringify({
+          approved,
+          ...(briefingHash ? { briefing_hash: briefingHash } : {}),
+        }),
         signal: AbortSignal.timeout(5000),
       },
     );

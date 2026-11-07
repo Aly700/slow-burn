@@ -1,5 +1,6 @@
 import type { Data, Findings } from "../types";
 import { list, number, percent } from "../lib";
+import { standardRankings } from "../storyData";
 import { Icon } from "./Icon";
 
 export function SectionHeading({
@@ -25,7 +26,7 @@ export function SectionHeading({
 export function Hero({ data }: { data: Data }) {
   const findings = data.findings;
   const ours = findings?.headline?.ours_hits_top500_2025_backtest;
-  const baseline = list(data.backtest?.methods);
+  const baseline = standardRankings(data);
   const max = Math.max(
     1,
     ...baseline.map((item) => item.hits_at_500 ?? 0),
@@ -40,7 +41,7 @@ export function Hero({ data }: { data: Data }) {
   );
   const benchmarkRange = referenceHits.length
     ? `${Math.min(...referenceHits)}–${Math.max(...referenceHits)}`
-    : "6–8";
+    : "pending";
   const first = findings?.two_clocks?.first_month;
   const total = findings?.two_clocks?.kev_2025_total;
   const firstPercent =
@@ -102,7 +103,7 @@ export function Hero({ data }: { data: Data }) {
               {number(ours)}
             </div>
             <div>
-              <strong>Before the Breach</strong>
+              <strong>Slow Burn</strong>
               <span>later KEV entries in the top 500</span>
             </div>
           </div>
@@ -147,7 +148,7 @@ export function Hero({ data }: { data: Data }) {
           Standard rankings find <strong>{benchmarkRange}</strong>{" "}
           later-exploited CVEs in their top 500.
         </p>
-        <span className="mono">72,670 candidates</span>
+        <span className="mono">Snapshot-bound ranking</span>
       </div>
     </section>
   );
@@ -389,7 +390,7 @@ export function Methods({ data }: { data: Data }) {
   return (
     <section id="methods" className="story-section methods">
       <SectionHeading
-        index="04"
+        index="05"
         title="The boundary is part of the model."
         detail="Reproducible decisions · explicit limits"
       />
@@ -436,9 +437,9 @@ export function Methods({ data }: { data: Data }) {
             Evidence into action.
           </h3>
           <p>
-            Granite embeddings for prioritisation.
+            {data.agent_eval?.model ?? "Briefing model pending"}
             <br />
-            Granite language model for briefings.
+            Model technologies are listed from the current model card.
           </p>
           {list(card?.ibm_technology).length ? (
             <div className="feature-list">

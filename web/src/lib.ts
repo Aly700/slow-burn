@@ -6,7 +6,7 @@ export const number = (value: unknown, digits = 0) =>
 export const percent = (value: unknown, digits = 1) =>
   typeof value === "number" && Number.isFinite(value)
     ? `${(value * 100).toFixed(digits)}%`
-    : "—";
+    : "pending";
 export const list = <T>(value: T[] | undefined | null): T[] =>
   Array.isArray(value) ? value.filter((item) => item != null) : [];
 export function reasonLabel(reason: Reason) {
