@@ -40,13 +40,30 @@ def run():
         lines.extend([f"### Matched tiered ablations: {s['split']}", '',
                       'Same logistic regularization and public-tool-first policy; only the named feature family changes.', '',
                       metric_table(s['methods']), ''])
+    stability = b.get('seed_stability')
+    if stability:
+        lines.extend(['## Seed stability', '', stability['policy'], '', stability['randomness'], '',
+                      f"Production seeds: {stability['production_seeds']}; probability averaging required: {stability['average_required']}.", '',
+                      '| Split | Seed | Hits / 500 | Scaled budget | Hits at scaled budget |', '|---|---:|---:|---:|---:|'])
+        for s in stability['splits']:
+            for m in s['seeds']:
+                lines.append(f"| {s['split']} | {m['seed']} | {m['hits_at_500']} | {m['scaled_budget']} | {m['hits_at_scaled_budget']} |")
+        for s in stability['splits']:
+            lines.extend(['', f"{s['split']}: ranges {s['hit_ranges']}; any seed below rule: {s['any_seed_below_rule']}.", ''])
+    lines.extend(['## Per-month results', '', 'Monthly budgets partition 500 across months by pool size; each month is ranked separately, so their hits need not sum to the global top-500 count. Equal-workload budgets use the benchmark selection fraction.', ''])
+    for entry in b.get('monthly_by_split', []):
+        lines.extend([f"### {entry['split']}", '', '| Month | Pool | Positives | Budget | Ours | Rule | Scaled budget | Ours scaled | Rule scaled |',
+                      '|---|---:|---:|---:|---:|---:|---:|---:|---:|'])
+        for m in entry['months']:
+            lines.append(f"| {m['month']} | {m['pool']} | {m['positives']} | {m['budget']} | {m['ours_hits']} | {m['baseline_hits']} | {m['scaled_budget']} | {m['ours_hits_scaled']} | {m['baseline_hits_scaled']} |")
+        lines.append('')
     lines.extend(['## Censoring and uncertainty', '', b['censoring']['note'], ''])
     for s in b['censoring_sensitivity']:
         methods = [m for m in s['methods'] if m['name'] in [card['model'], 'CVSS first', 'EPSS first', 'Exploit code first, then EPSS']]
         lines.extend([f"### {s['name']}", '', metric_table(methods), ''])
     for entry in b.get('split_uncertainty', []):
         u = entry['bootstrap']
-        lines.extend([f"{entry['split']}: paired month bootstrap delta at literal 500 {u['literal_500']['delta_hits_95_percentile_interval']}; equal workload {u['delta_hits_95_percentile_interval']} (95% percentile intervals).", ''])
+        lines.extend([f"{entry['split']}: paired month bootstrap delta at literal 500 {u['literal_500']['delta_hits_95_percentile_interval']}; equal workload {u['delta_hits_95_percentile_interval']} (95% percentile intervals). Positive deltas occur in {u['literal_500']['fraction_delta_positive']:.1%} of literal-500 resamples and {u['fraction_delta_positive']:.1%} of equal-workload resamples; negative deltas occur in {u['literal_500']['fraction_delta_negative']:.1%} and {u['fraction_delta_negative']:.1%}, respectively.", ''])
     lines.extend([f"Paired month bootstrap, equal workload, selected model minus exploit-first: {b['uncertainty']['delta_hits_95_percentile_interval']} hits (95% percentile interval). {b['uncertainty']['limitation']}", '',
                   '## Leak audit', '', 'Each row adds one suspect block to the same strict model on the primary forward split. Values show hits@500 and signed change. No gain is not evidence of safety.', '',
                   '| Excluded block | Logistic hits (change) | LightGBM hits (change) |', '|---|---:|---:|'])
@@ -54,18 +71,10 @@ def run():
         if 'methods' in row:
             a, c = row['methods']
             lines.append(f"| {row['name']} | {a['hits_at_500']} ({a['delta_hits_at_500']:+}) | {c['hits_at_500']} ({c['delta_hits_at_500']:+}) |")
-    clock = f['two_clocks']
-    public = next(s for s in f['signals'] if s['name'] == 'any_exploit present at snapshot')
-    wp = f['deprioritize'][0]
-    enterprise = f['vendor_history_within_poc']['enterprise_comparison']
-    ea, eb = enterprise['groups']
-    recurrence = f['vendor_history_within_poc']['high_history_vs_zero']
-    ra, rb = recurrence['groups']
-    lines.extend(['', '## Three demo findings', '',
-                  f"1. Two catalog clocks: {clock['first_month']} of {clock['kev_2025_total']} 2025-published KEV entries ({clock['first_month_share']:.1%}) were already listed by publication-month end and cannot be won by this benchmark. The remaining {clock['later']} took a median {clock['later_lag_days']['median']:g} days after publication, or {clock['after_snapshot_lag_days']['median']:g} days after snapshot. This is listing delay, not first-attack delay.",
-                  f"2. Within the public-tool tier, vendors with at least 20 earlier KEV entries have {rb['hits']} later additions in {rb['n']} rows ({rb['rate']:.2%}), versus {ra['hits']} in {ra['n']} rows with no matched history ({ra['rate']:.2%}). This exploratory catalog-inclusion association retains text revision and identity-matching risk; it is not a causal claim about vendor safety.",
-                  f"3. Catalog scope matters: WordPress wording appears in {wp['n']:,} rows ({wp['share_of_pool']:.1%} of the pool), with {wp['hits']} observed later KEV additions. That is a task-specific queue distinction, not a claim that these vulnerabilities are harmless.", '',
-                  '## What the 2026 top 500 looks like', ''])
+    lines.extend(['', '## Three demo findings', '', 'Regenerated by `pipeline/findings.py`; exact numbers and upstream scripts are recorded in `findings.json`.', ''])
+    for i, story in enumerate(f['story'], 1):
+        lines.append(f"{i}. **{story['title']}:** {story['sentence']}")
+    lines.extend(['', '## What the 2026 top 500 looks like', ''])
     profile = f.get('top500_profile_2026', {})
     for title, key in [('Resolved vendors', 'vendors'), ('Vendors inferred from assigner only', 'vendors_from_assigner'), ('Current CWE display metadata', 'cwe_current_display_only'),
                        ('Snapshot tool flags', 'flags'), ('Snapshot months', 'snapshot_months')]:

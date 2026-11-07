@@ -1,5 +1,5 @@
 {
-  "model": "tiered_logistic_no_history",
+  "model": "tiered_lightgbm_description",
   "trained_on": "2024-published and Jan\u2013Sep 2025-published eligible CVEs, labels observed by 2025-12-31; minimum 90 days follow-up",
   "features_used": [
     "epss_log",
@@ -12,6 +12,10 @@
     "any_exploit",
     "id_year_gap",
     "days_at_snapshot",
+    "assigner_prior_kev",
+    "assigner_recent_kev",
+    "vendor_prior_kev",
+    "vendor_recent_kev",
     "text_remote_code",
     "text_unauthenticated",
     "text_traversal",
@@ -23,7 +27,35 @@
     "text_xss",
     "text_wordpress",
     "text_denial_service",
-    "text_upload"
+    "text_upload",
+    "text_vendor_prior_kev",
+    "text_product_prior_kev",
+    "text_vendor_recent_kev",
+    "text_product_recent_kev",
+    "description_emb_00",
+    "description_emb_01",
+    "description_emb_02",
+    "description_emb_03",
+    "description_emb_04",
+    "description_emb_05",
+    "description_emb_06",
+    "description_emb_07",
+    "description_emb_08",
+    "description_emb_09",
+    "description_emb_10",
+    "description_emb_11",
+    "description_emb_12",
+    "description_emb_13",
+    "description_emb_14",
+    "description_emb_15",
+    "description_emb_16",
+    "description_emb_17",
+    "description_emb_18",
+    "description_emb_19",
+    "description_emb_20",
+    "description_emb_21",
+    "description_emb_22",
+    "description_emb_23"
   ],
   "features_excluded": [
     {
@@ -628,17 +660,285 @@
     }
   ],
   "ibm_technology": [
-    "ibm-granite/granite-embedding-30m-english revision ae3da2ae1b16814b84c52deccd9aeee77727d044; sentence-transformers on Apple MPS; description and identity embedding ablations"
+    "ibm-granite/granite-embedding-30m-english revision ae3da2ae1b16814b84c52deccd9aeee77727d044; sentence-transformers on Apple MPS; selected description embeddings, 384 dimensions reduced to 24 by training-only PCA; identity and description ablations retained"
   ],
-  "ibm_in_selected_model": "Evaluated in ablations; a simpler qualifying recipe was selected",
+  "ibm_in_selected_model": "description embeddings are input features of the submitted model",
+  "seed_stability": {
+    "base_model": "tiered_lightgbm_description",
+    "seeds": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+    ],
+    "splits": [
+      {
+        "split": "2024_to_2025",
+        "rule": {
+          "name": "Exploit code first, then EPSS",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 19,
+          "precision_at_500": 0.038,
+          "recall_at_500": 0.34545454545454546,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 17,
+          "precision_at_scaled_budget": 0.0513595166163142,
+          "recall_at_scaled_budget": 0.3090909090909091,
+          "average_precision": 0.043579952382459784
+        },
+        "seeds": [
+          {
+            "seed": 2026,
+            "name": "tiered_lightgbm_description",
+            "pool": 48039,
+            "positives": 55,
+            "hits_at_500": 22,
+            "precision_at_500": 0.044,
+            "recall_at_500": 0.4,
+            "scaled_budget": 331,
+            "hits_at_scaled_budget": 21,
+            "precision_at_scaled_budget": 0.0634441087613293,
+            "recall_at_scaled_budget": 0.38181818181818183,
+            "average_precision": 0.0678711547032074,
+            "brier_score": 0.001114961814619276,
+            "mean_probability": 0.0009567149471121299
+          },
+          {
+            "seed": 2027,
+            "name": "tiered_lightgbm_description",
+            "pool": 48039,
+            "positives": 55,
+            "hits_at_500": 22,
+            "precision_at_500": 0.044,
+            "recall_at_500": 0.4,
+            "scaled_budget": 331,
+            "hits_at_scaled_budget": 21,
+            "precision_at_scaled_budget": 0.0634441087613293,
+            "recall_at_scaled_budget": 0.38181818181818183,
+            "average_precision": 0.0663998711583022,
+            "brier_score": 0.0011160655572720842,
+            "mean_probability": 0.0009607980873090637
+          },
+          {
+            "seed": 2028,
+            "name": "tiered_lightgbm_description",
+            "pool": 48039,
+            "positives": 55,
+            "hits_at_500": 22,
+            "precision_at_500": 0.044,
+            "recall_at_500": 0.4,
+            "scaled_budget": 331,
+            "hits_at_scaled_budget": 19,
+            "precision_at_scaled_budget": 0.05740181268882175,
+            "recall_at_scaled_budget": 0.34545454545454546,
+            "average_precision": 0.0664100859823897,
+            "brier_score": 0.0011189361114712195,
+            "mean_probability": 0.0009964592710034882
+          },
+          {
+            "seed": 2029,
+            "name": "tiered_lightgbm_description",
+            "pool": 48039,
+            "positives": 55,
+            "hits_at_500": 22,
+            "precision_at_500": 0.044,
+            "recall_at_500": 0.4,
+            "scaled_budget": 331,
+            "hits_at_scaled_budget": 20,
+            "precision_at_scaled_budget": 0.06042296072507553,
+            "recall_at_scaled_budget": 0.36363636363636365,
+            "average_precision": 0.0567583317727625,
+            "brier_score": 0.001122100969471318,
+            "mean_probability": 0.0009353012409344327
+          },
+          {
+            "seed": 2030,
+            "name": "tiered_lightgbm_description",
+            "pool": 48039,
+            "positives": 55,
+            "hits_at_500": 22,
+            "precision_at_500": 0.044,
+            "recall_at_500": 0.4,
+            "scaled_budget": 331,
+            "hits_at_scaled_budget": 22,
+            "precision_at_scaled_budget": 0.06646525679758308,
+            "recall_at_scaled_budget": 0.4,
+            "average_precision": 0.06846099997484793,
+            "brier_score": 0.0011179211745018,
+            "mean_probability": 0.0009739701921173307
+          }
+        ],
+        "hit_ranges": {
+          "hits_at_500": [
+            22,
+            22
+          ],
+          "hits_at_scaled_budget": [
+            19,
+            22
+          ]
+        },
+        "any_seed_below_rule": false,
+        "probability_average": {
+          "name": "tiered_lightgbm_description_seed_average",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 22,
+          "precision_at_500": 0.044,
+          "recall_at_500": 0.4,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 22,
+          "precision_at_scaled_budget": 0.06646525679758308,
+          "recall_at_scaled_budget": 0.4,
+          "average_precision": 0.06546901576464621,
+          "brier_score": 0.0011163996932336924,
+          "mean_probability": 0.0009646487476952891
+        }
+      },
+      {
+        "split": "forward_2025_h2",
+        "rule": {
+          "name": "Exploit code first, then EPSS",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 2,
+          "precision_at_scaled_budget": 0.024691358024691357,
+          "recall_at_scaled_budget": 0.15384615384615385,
+          "average_precision": 0.011283609613266132
+        },
+        "seeds": [
+          {
+            "seed": 2026,
+            "name": "tiered_lightgbm_description",
+            "pool": 11702,
+            "positives": 13,
+            "hits_at_500": 5,
+            "precision_at_500": 0.01,
+            "recall_at_500": 0.38461538461538464,
+            "scaled_budget": 81,
+            "hits_at_scaled_budget": 5,
+            "precision_at_scaled_budget": 0.06172839506172839,
+            "recall_at_scaled_budget": 0.38461538461538464,
+            "average_precision": 0.03326963421328935,
+            "brier_score": 0.0011099793117675591,
+            "mean_probability": 0.0017479630835840665
+          },
+          {
+            "seed": 2027,
+            "name": "tiered_lightgbm_description",
+            "pool": 11702,
+            "positives": 13,
+            "hits_at_500": 5,
+            "precision_at_500": 0.01,
+            "recall_at_500": 0.38461538461538464,
+            "scaled_budget": 81,
+            "hits_at_scaled_budget": 5,
+            "precision_at_scaled_budget": 0.06172839506172839,
+            "recall_at_scaled_budget": 0.38461538461538464,
+            "average_precision": 0.0315907042011848,
+            "brier_score": 0.0011141448552405631,
+            "mean_probability": 0.0017094639381123665
+          },
+          {
+            "seed": 2028,
+            "name": "tiered_lightgbm_description",
+            "pool": 11702,
+            "positives": 13,
+            "hits_at_500": 5,
+            "precision_at_500": 0.01,
+            "recall_at_500": 0.38461538461538464,
+            "scaled_budget": 81,
+            "hits_at_scaled_budget": 3,
+            "precision_at_scaled_budget": 0.037037037037037035,
+            "recall_at_scaled_budget": 0.23076923076923078,
+            "average_precision": 0.0282427156859041,
+            "brier_score": 0.0011211001922681045,
+            "mean_probability": 0.00174312813456882
+          },
+          {
+            "seed": 2029,
+            "name": "tiered_lightgbm_description",
+            "pool": 11702,
+            "positives": 13,
+            "hits_at_500": 5,
+            "precision_at_500": 0.01,
+            "recall_at_500": 0.38461538461538464,
+            "scaled_budget": 81,
+            "hits_at_scaled_budget": 5,
+            "precision_at_scaled_budget": 0.06172839506172839,
+            "recall_at_scaled_budget": 0.38461538461538464,
+            "average_precision": 0.03824009040645042,
+            "brier_score": 0.001104651922675831,
+            "mean_probability": 0.0016802758284846211
+          },
+          {
+            "seed": 2030,
+            "name": "tiered_lightgbm_description",
+            "pool": 11702,
+            "positives": 13,
+            "hits_at_500": 5,
+            "precision_at_500": 0.01,
+            "recall_at_500": 0.38461538461538464,
+            "scaled_budget": 81,
+            "hits_at_scaled_budget": 4,
+            "precision_at_scaled_budget": 0.04938271604938271,
+            "recall_at_scaled_budget": 0.3076923076923077,
+            "average_precision": 0.03182941110681813,
+            "brier_score": 0.0011115709428158175,
+            "mean_probability": 0.0017220869942670422
+          }
+        ],
+        "hit_ranges": {
+          "hits_at_500": [
+            5,
+            5
+          ],
+          "hits_at_scaled_budget": [
+            3,
+            5
+          ]
+        },
+        "any_seed_below_rule": false,
+        "probability_average": {
+          "name": "tiered_lightgbm_description_seed_average",
+          "pool": 11702,
+          "positives": 13,
+          "hits_at_500": 5,
+          "precision_at_500": 0.01,
+          "recall_at_500": 0.38461538461538464,
+          "scaled_budget": 81,
+          "hits_at_scaled_budget": 5,
+          "precision_at_scaled_budget": 0.06172839506172839,
+          "recall_at_scaled_budget": 0.38461538461538464,
+          "average_precision": 0.031930755857335055,
+          "brier_score": 0.0011106451648637261,
+          "mean_probability": 0.0017205835958033833
+        }
+      }
+    ],
+    "average_required": false,
+    "production_seeds": [
+      2026
+    ],
+    "policy": "If any seed falls below the rule at either budget on either required split, average all five probabilities before applying the tier policy.",
+    "randomness": "Refit both randomized training-only PCA and LightGBM; no row or feature subsampling is enabled.",
+    "limitation": "Seed variability measures fitting randomness, not new-data uncertainty or model-selection optimism."
+  },
+  "production_seed": 2026,
   "recipe": {
-    "name": "tiered_logistic_no_history",
-    "algorithm": "logistic",
+    "name": "tiered_lightgbm_description",
+    "algorithm": "lightgbm",
     "block": "text",
-    "embedding": "",
-    "no_history": true,
+    "embedding": "description",
+    "no_history": false,
     "blend": 0.0,
-    "variant": "standard",
+    "variant": "sparse",
     "tiered": true
   },
   "training_pool": 75148,
@@ -663,7 +963,7 @@
     "pool": 35277,
     "positives": 45,
     "minimum_test_followup_days": 35,
-    "selected_model": "tiered_logistic_no_history",
+    "selected_model": "tiered_lightgbm_description",
     "methods": [
       {
         "name": "CVSS first",
@@ -778,6 +1078,21 @@
         "average_precision": 0.0465756465964123,
         "brier_score": 0.0012601128173400883,
         "mean_probability": 0.0007412376156285103
+      },
+      {
+        "name": "tiered_lightgbm_description",
+        "pool": 35277,
+        "positives": 45,
+        "hits_at_500": 18,
+        "precision_at_500": 0.036,
+        "recall_at_500": 0.4,
+        "scaled_budget": 243,
+        "hits_at_scaled_budget": 13,
+        "precision_at_scaled_budget": 0.053497942386831275,
+        "recall_at_scaled_budget": 0.28888888888888886,
+        "average_precision": 0.036223584518854435,
+        "brier_score": 0.0012720915916745997,
+        "mean_probability": 0.0004040250004439712
       }
     ],
     "note": "Matches the benchmark calendar shape and November 4 endpoint. Training still requires 90 days follow-up. Reports the selected recipe and all other qualifying recipes without embeddings; does not select among them."
@@ -792,7 +1107,7 @@
   ],
   "metadata_display_note": "Current CVSS, attack vector and CWE serve the display contract only. The CSV exports sanitized current description text; description features enter only text recipes.",
   "publication_display": {
-    "technical_summaries": 60,
+    "technical_summaries": 40,
     "note": "Descriptions containing terms prohibited by the repository naming policy use neutral technical-feature summaries, marked in description_source. This display filter never changes feature inputs, scores, or rank."
   },
   "description_policy": {

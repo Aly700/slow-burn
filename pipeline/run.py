@@ -91,6 +91,8 @@ def run():
     audit = json.loads((CACHE / 'leak_audit.json').read_text())
     recipe = Recipe(**json.loads((CACHE / 'selected_recipe.json').read_text()))
     assert backtest['selection']['gates'][recipe.name]['passes_all_four'], 'Submitted recipe must pass all baseline gates'
+    assert backtest['seed_stability']['production_seeds'] == [2026]
+    assert not backtest['seed_stability']['average_required']
     rows, h, blocks = prepared()
     train = training_rows(rows.loc[rows.published.str[:4].isin(['2024', '2025'])], '2025-12-31')
     target = rows.loc[rows.published.str.startswith('2026')].copy()
@@ -139,8 +141,10 @@ def run():
     card = {
         'model': recipe.name, 'trained_on': '2024-published and Jan–Sep 2025-published eligible CVEs, labels observed by 2025-12-31; minimum 90 days follow-up',
         'features_used': names, 'features_excluded': exclusions,
-        'ibm_technology': [f'{MODEL_ID} revision {REVISION}; sentence-transformers on Apple MPS; description and identity embedding ablations'],
-        'ibm_in_selected_model': recipe.embedding or 'Evaluated in ablations; a simpler qualifying recipe was selected',
+        'ibm_technology': [f'{MODEL_ID} revision {REVISION}; sentence-transformers on Apple MPS; selected {recipe.embedding or "no"} embeddings, 384 dimensions reduced to 24 by training-only PCA; identity and description ablations retained'],
+        'ibm_in_selected_model': f'{recipe.embedding} embeddings are input features of the submitted model' if recipe.embedding else 'Evaluated in ablations only',
+        'seed_stability': backtest['seed_stability'],
+        'production_seed': 2026,
         'recipe': recipe.__dict__, 'training_pool': len(train), 'training_positives': int(train.label.sum()),
         'label': 'KEV addition after the row’s snapshot through the historical label cutoff',
         'score_interpretation': 'Estimated probability of later catalog inclusion under historical variable follow-up; not a 30-day exploitation probability.',

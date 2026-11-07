@@ -10,6 +10,18 @@ import pandas as pd
 
 
 class TemporalChecks(unittest.TestCase):
+    def test_selection_uses_margin_then_granite_within_one_point(self):
+        from pipeline.models import Recipe, select_recipe
+        recipes = [Recipe('plain', 'lightgbm'), Recipe('granite', 'lightgbm', embedding='description'),
+                   Recipe('simple'), Recipe('failed', embedding='description')]
+        gates = {name: {'margins': margins, 'passes_all_four': min(margins) >= 0}
+                 for name, margins in [('plain', [3, 4, 1, 2]), ('granite', [3, 3, 1, 2]),
+                                       ('simple', [0, 0, 1, 0]), ('failed', [30, -1, 30, 30])]}
+        complexity = {'plain': 30, 'granite': 54, 'simple': 10, 'failed': 20}
+        self.assertEqual(select_recipe(recipes, gates, complexity), 'granite')
+        gates['granite']['margins'] = [2, 3, 1, 2]
+        self.assertEqual(select_recipe(recipes, gates, complexity), 'plain')
+
     def test_snapshot_and_label_boundaries(self):
         from pipeline.data import assign_outcomes, snapshot_month
         self.assertEqual(snapshot_month(pd.Series(['2026-06-03']), june_shift=True).iloc[0], '2026-07')
@@ -253,6 +265,22 @@ def artifact_checks():
     b = json.loads((ARTIFACTS / 'backtest.json').read_text())
     assert b['selected_model'] == card['model']
     assert b['selection']['gates'][card['model']]['passes_all_four']
+    from pipeline.models import RECIPES, select_recipe
+    eligible = [r for r in RECIPES if r.name in b['selection']['gates']]
+    assert select_recipe(eligible, b['selection']['gates'], b['selection']['feature_counts']) == card['model']
+    assert b['seed_stability'] == card['seed_stability']
+    assert b['seed_stability']['production_seeds'] == [card['production_seed']]
+    assert not b['seed_stability']['average_required']
+    for split in b['seed_stability']['splits']:
+        assert len(split['seeds']) == 5
+        for key, bounds in split['hit_ranges'].items():
+            assert bounds[0] >= split['rule'][key]
+    findings = json.loads((ARTIFACTS / 'findings.json').read_text())
+    chosen = next(m for m in b['methods'] if m['name'] == card['model'])
+    assert findings['headline']['ours_hits_top500_2025_backtest'] == chosen['hits_at_500']
+    assert len(findings['story']) == 3
+    assert all({'title', 'sentence', 'numbers'} <= entry.keys() for entry in findings['story'])
+    assert findings['story'][2]['numbers']['selected_hits'] == chosen['hits_at_500']
     for name in ['backtest', 'findings']:
         json.loads((ARTIFACTS / f'{name}.json').read_text())
     print('Artifact contracts: passed (500 / 5000 rows, probabilities, reasons, membership, column order)')

@@ -162,6 +162,27 @@ def run():
                          'exploit_rule_hits_with_conservative_eligibility': baselines['exploit_then_epss'],
                          'difference': 'Exclude snapshot in_kev=1 even when the frozen catalog disagrees. This removes a high-ranked unlabelled row and changes the exploit-first top-500 cutoff.'},
     }
+    clock = findings['two_clocks']
+    rule = next(m for m in backtest['methods'] if m['name'] == BASELINES[-1])
+    findings['story'] = [
+        {'title': 'Two catalog clocks',
+         'sentence': f"Of {clock['kev_2025_total']} KEV-listed vulnerabilities published in 2025, {clock['first_month']} were already listed by publication-month end, while the other {clock['later']} took a median {clock['later_lag_days']['median']:g} days from publication to listing—a catalog delay, not a first-attack timestamp.",
+         'numbers': {'kev_total': clock['kev_2025_total'], 'already_listed_by_snapshot': clock['first_month'],
+                     'later_additions': clock['later'], 'median_publication_to_listing_days': clock['later_lag_days']['median']}},
+        {'title': 'Vendor history separates public-tool rows',
+         'sentence': f"Within the public-tool tier, vendors with at least 20 prior KEV entries had {rb['hits']} later additions among {rb['n']} rows ({rb['rate']:.2%}), versus {ra['hits']} among {ra['n']} with no matched history ({ra['rate']:.2%}), an exploratory association subject to text-revision and matching risk.",
+         'numbers': {'prior_kev_threshold': 20, 'high_history_rows': rb['n'], 'high_history_hits': rb['hits'],
+                     'high_history_rate': rb['rate'], 'zero_history_rows': ra['n'], 'zero_history_hits': ra['hits'],
+                     'zero_history_rate': ra['rate'], 'rate_ratio': recurrence_test['rate_ratio']}},
+        {'title': 'Learning to order the public-tool tier',
+         'sentence': f"In the 2025 development backtest, the selected ranking found {chosen['hits_at_500']} of {int(pool.label.sum())} later additions in its first 500 rows versus {rule['hits_at_500']} for exploit-first, and {chosen['hits_at_scaled_budget']} versus {rule['hits_at_scaled_budget']} at the equal-workload budget of {chosen['scaled_budget']}; its 2026 outcome remains unknown.",
+         'numbers': {'pool': len(pool), 'positives': int(pool.label.sum()), 'literal_budget': 500,
+                     'selected_hits': chosen['hits_at_500'], 'rule_hits': rule['hits_at_500'],
+                     'scaled_budget': chosen['scaled_budget'], 'selected_scaled_hits': chosen['hits_at_scaled_budget'],
+                     'rule_scaled_hits': rule['hits_at_scaled_budget']}},
+    ]
+    findings['story_provenance'] = {'script': 'pipeline/findings.py', 'ranking_source': 'pipeline/evaluate.py',
+                                   'history_source': 'pipeline/features.py', 'label_source': 'pipeline/data.py'}
     path = ARTIFACTS / 'scores_2026_top5000.csv'
     if path.exists():
         selected = pd.read_csv(path, keep_default_na=False).head(500)

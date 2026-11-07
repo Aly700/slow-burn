@@ -13,7 +13,7 @@ from sklearn.metrics import average_precision_score, brier_score_loss
 from pipeline.data import ARTIFACTS, CACHE, assign_outcomes, cohort, kev, training_rows, write_json
 from pipeline.embed import all_rows, embeddings
 from pipeline.features import history_features, make_features
-from pipeline.models import RECIPES, FittedModel
+from pipeline.models import RECIPES, FittedModel, select_recipe
 
 RATE = 500 / 72670
 BASELINES = ['CVSS first', 'EPSS first', 'Exploit code first, then EPSS']
@@ -182,16 +182,15 @@ def run(include_embeddings=True):
             reference = next(x for x in split['methods'] if x['name'] == BASELINES[-1])
             margins.extend([m[key] - reference[key] for key in ['hits_at_500', 'hits_at_scaled_budget']])
         gates[recipe.name] = {'margins': margins, 'passes_all_four': all(d >= 0 for d in margins),
+                              'total_margin': sum(margins),
                               'strict_improvement': any(d > 0 for d in margins)}
-    qualified = [r for r in eligible if r.algorithm != 'rule' and gates[r.name]['passes_all_four'] and gates[r.name]['strict_improvement']]
-    # No weak-budget tradeoff is allowed. Prefer the simplest qualifying learned recipe.
-    if qualified:
-        chosen = min(qualified, key=lambda r: (bool(r.embedding), r.algorithm != 'logistic',
-                                               complexity[r.name], bool(r.blend), r.tiered,
-                                               -sum(gates[r.name]['margins']), r.name)).name
-    else:
-        chosen = 'calibrated_exploit_rule'
+    chosen = select_recipe(eligible, gates, complexity)
     assert gates[chosen]['passes_all_four']
+    selected_recipe = next(r for r in eligible if r.name == chosen)
+    from pipeline.stability import assess
+    seed_stability, _ = assess(selected_recipe, rows, blocks,
+                               emb[selected_recipe.embedding] if selected_recipe.embedding else None)
+    assert not seed_stability['average_required'], 'Seed range crossed below the rule: validate a five-probability average before releasing artifacts'
     test = splits(rows)[0][2]
     ours = predictions['2024_to_2025'][chosen]
     baseline = predictions['2024_to_2025'][BASELINES[-1]]
@@ -230,13 +229,18 @@ def run(include_embeddings=True):
               'label': 'KEV date_added after snapshot month and through 2025-12-31; non-KEV is unobserved, not proven safe',
               'selected_model': chosen, 'methods': results[0]['methods'], 'splits': results,
               'monthly': monthly_metrics(test, ours, baseline), 'ablations': ablations,
+              'monthly_by_split': [{'split': name, 'months': monthly_metrics(part, predictions[name][chosen], predictions[name][BASELINES[-1]])}
+                                   for name, _, part, _, _ in splits(rows)[:2]],
+              'seed_stability': seed_stability,
               'matched_tiered_ablations': matched_ablations,
               'censoring_sensitivity': sensitivity,
-              'selection': {'rule': 'Must match or beat exploit-first at literal 500 and equal-workload budgets on both 2025 splits; prefer simpler qualifying learned models with at least one improvement, otherwise use the calibrated rule',
+              'selection': {'rule': 'Pass all four baseline gates, maximize total margin, then within one point of the best total prefer IBM Granite embeddings and finally simplicity',
                             'margin_order': ['primary_500', 'primary_scaled', 'h2_500', 'h2_scaled'],
                             'gates': gates, 'passed': True,
                             'feature_counts': complexity,
-                            'simplicity_order': 'No embeddings, logistic regression, fewer input features, no blend, no tier policy, then total margin',
+                            'best_total_margin': max(g['total_margin'] for g in gates.values() if g['passes_all_four']),
+                            'near_tie_points': 1,
+                            'simplicity_order': 'Within the one-point margin window, prefer Granite embeddings, then rule over logistic over trees, fewer features, no blend and no tier policy',
                             'warning': 'Development comparisons; test-year model selection is optimistic. H2 overlaps the primary test.'},
               'scaling': {'scoreboard_pool': 72670, 'scoreboard_budget': 500, 'fraction': RATE,
                           'formula': 'round(pool_size * 500 / 72670)',

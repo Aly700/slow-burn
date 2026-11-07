@@ -17,6 +17,7 @@ The first run downloads the pinned IBM Granite embedding weights. Subsequent run
 | Cached cohorts and input hashes | `uv run python -I pipeline/data.py` |
 | IBM identity and sanitized-description embeddings | `uv run python -I pipeline/embed.py` |
 | Main forward splits and ablations | `uv run python -I pipeline/evaluate.py` |
+| Five-seed refits of the margin-selected recipe | `uv run python -I pipeline/stability.py` |
 | Additional exact-calendar analog in `backtest.json` | `uv run python -I pipeline/analog.py` |
 | Leak audit cache, used by `model_card.json` | `uv run python -I pipeline/leak_audit.py` |
 | `top500.csv`, `scores_2026_top5000.csv`, `model_card.json`, and refreshed findings, using completed evaluation/audit | `uv run python -I pipeline/run.py` |
@@ -61,7 +62,9 @@ The model card contains the exact selected feature names and signed audit deltas
 
 ## Selection, probabilities and reasons
 
-The candidate family includes regularized logistic regression, small LightGBM trees, feature-block ablations, a 25% log-odds blend, a calibrated exploit-first rule, and explicit tiered variants. A submitted learned model must match or beat exploit-first at both literal 500 and equal-workload budgets on both 2025 splits, and improve at least one of the four counts. Among qualifiers, prefer no embeddings, then logistic over trees, then fewer input features, then no blend/tier policy; otherwise submit the calibrated rule. The scarce-positive tree variant reduces the minimum leaf Hessian from 2 to 0.05: at the training base rate, the original threshold prevented isolation of small signal groups. Both variants remain reported.
+The candidate family includes regularized logistic regression, small LightGBM trees, feature-block ablations, a 25% log-odds blend, a calibrated exploit-first rule, and explicit tiered variants. A submitted model must match or beat exploit-first at both literal 500 and equal-workload budgets on both 2025 splits. Among qualifiers, maximize the sum of the four margins; models within one point of the best total are tied, with preference for IBM Granite embeddings and then simplicity. The scarce-positive tree variant reduces the minimum leaf Hessian from 2 to 0.05: at the training base rate, the original threshold prevented isolation of small signal groups. Both variants remain reported.
+
+The selected model is refitted with fixed seeds 2026–2030, including randomized training-only PCA. No seed fell below the rule at either budget on either required split, so production retains seed 2026. The five-seed probability average is also reported as a diagnostic; no best-seed selection is performed. Release gates fail if a future rerun crosses the rule and requires a validated probability-average implementation. Both selected-model bootstrap intervals and monthly tables are recorded for the two required splits.
 
 Matched tiered logistic ablations use the same fit and ranking policy while removing all history, keywords, direct assigner-history columns, or all text. The direct-column ablation retains vendor/product entity history resolved using vendor PSIRT or description names; it is not independent of the assigner field. They are recorded separately for both 2025 splits. The calendar analog reports every qualifying recipe without embeddings as an additional robustness check; it does not silently redefine the selection gates.
 

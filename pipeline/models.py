@@ -52,6 +52,17 @@ RECIPES = [
 ]
 
 
+def select_recipe(recipes, gates, complexity):
+    qualified = [r for r in recipes if gates[r.name]['passes_all_four']]
+    if not qualified:
+        raise ValueError('No recipe passes the four baseline gates')
+    best = max(sum(gates[r.name]['margins']) for r in qualified)
+    near = [r for r in qualified if sum(gates[r.name]['margins']) >= best - 1]
+    return min(near, key=lambda r: (not bool(r.embedding), r.algorithm != 'rule',
+                                    r.algorithm == 'lightgbm', complexity[r.name],
+                                    bool(r.blend), r.tiered, -sum(gates[r.name]['margins']), r.name)).name
+
+
 class FittedModel:
     def __init__(self, recipe, seed=2026):
         self.recipe = recipe
