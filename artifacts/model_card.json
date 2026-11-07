@@ -1,5 +1,5 @@
 {
-  "model": "tiered_logistic_text",
+  "model": "tiered_logistic_no_history",
   "trained_on": "2024-published and Jan\u2013Sep 2025-published eligible CVEs, labels observed by 2025-12-31; minimum 90 days follow-up",
   "features_used": [
     "epss_log",
@@ -12,10 +12,6 @@
     "any_exploit",
     "id_year_gap",
     "days_at_snapshot",
-    "assigner_prior_kev",
-    "assigner_recent_kev",
-    "vendor_prior_kev",
-    "vendor_recent_kev",
     "text_remote_code",
     "text_unauthenticated",
     "text_traversal",
@@ -27,11 +23,7 @@
     "text_xss",
     "text_wordpress",
     "text_denial_service",
-    "text_upload",
-    "text_vendor_prior_kev",
-    "text_product_prior_kev",
-    "text_vendor_recent_kev",
-    "text_product_recent_kev"
+    "text_upload"
   ],
   "features_excluded": [
     {
@@ -344,7 +336,7 @@
           "hits_at_scaled_budget": 14,
           "precision_at_scaled_budget": 0.04229607250755287,
           "recall_at_scaled_budget": 0.2545454545454545,
-          "average_precision": 0.03543115145628163,
+          "average_precision": 0.03543028130783912,
           "delta_hits_at_500": 0,
           "delta_hits_at_scaled_budget": 0
         },
@@ -365,9 +357,9 @@
         }
       ],
       "nonzero_coverage_2025": {
-        "n": 213,
+        "n": 216,
         "positives": 6,
-        "rate": 0.028169014084507043
+        "rate": 0.027777777777777776
       }
     },
     {
@@ -638,13 +630,13 @@
   "ibm_technology": [
     "ibm-granite/granite-embedding-30m-english revision ae3da2ae1b16814b84c52deccd9aeee77727d044; sentence-transformers on Apple MPS; description and identity embedding ablations"
   ],
-  "ibm_in_selected_model": "Evaluated in research; not selected by baseline-protection gate",
+  "ibm_in_selected_model": "Evaluated in ablations; a simpler qualifying recipe was selected",
   "recipe": {
-    "name": "tiered_logistic_text",
+    "name": "tiered_logistic_no_history",
     "algorithm": "logistic",
     "block": "text",
     "embedding": "",
-    "no_history": false,
+    "no_history": true,
     "blend": 0.0,
     "variant": "standard",
     "tiered": true
@@ -671,6 +663,7 @@
     "pool": 35277,
     "positives": 45,
     "minimum_test_followup_days": 35,
+    "selected_model": "tiered_logistic_no_history",
     "methods": [
       {
         "name": "CVSS first",
@@ -712,6 +705,21 @@
         "average_precision": 0.045796438171101544
       },
       {
+        "name": "calibrated_exploit_rule",
+        "pool": 35277,
+        "positives": 45,
+        "hits_at_500": 16,
+        "precision_at_500": 0.032,
+        "recall_at_500": 0.35555555555555557,
+        "scaled_budget": 243,
+        "hits_at_scaled_budget": 14,
+        "precision_at_scaled_budget": 0.05761316872427984,
+        "recall_at_scaled_budget": 0.3111111111111111,
+        "average_precision": 0.045796438171101544,
+        "brier_score": 0.0012628323296602151,
+        "mean_probability": 0.0006934050410767886
+      },
+      {
         "name": "tiered_logistic_text",
         "pool": 35277,
         "positives": 45,
@@ -719,15 +727,60 @@
         "precision_at_500": 0.036,
         "recall_at_500": 0.4,
         "scaled_budget": 243,
-        "hits_at_scaled_budget": 10,
-        "precision_at_scaled_budget": 0.0411522633744856,
-        "recall_at_scaled_budget": 0.2222222222222222,
-        "average_precision": 0.038011190841337215,
-        "brier_score": 0.001308872634970871,
-        "mean_probability": 0.0010442651888935093
+        "hits_at_scaled_budget": 12,
+        "precision_at_scaled_budget": 0.04938271604938271,
+        "recall_at_scaled_budget": 0.26666666666666666,
+        "average_precision": 0.03735850336781067,
+        "brier_score": 0.0013186473712236588,
+        "mean_probability": 0.0010522161760544966
+      },
+      {
+        "name": "tiered_logistic_no_history",
+        "pool": 35277,
+        "positives": 45,
+        "hits_at_500": 15,
+        "precision_at_500": 0.03,
+        "recall_at_500": 0.3333333333333333,
+        "scaled_budget": 243,
+        "hits_at_scaled_budget": 13,
+        "precision_at_scaled_budget": 0.053497942386831275,
+        "recall_at_scaled_budget": 0.28888888888888886,
+        "average_precision": 0.032469028782000836,
+        "brier_score": 0.0012811777837585258,
+        "mean_probability": 0.0007984322451639098
+      },
+      {
+        "name": "tiered_lightgbm_strict",
+        "pool": 35277,
+        "positives": 45,
+        "hits_at_500": 17,
+        "precision_at_500": 0.034,
+        "recall_at_500": 0.37777777777777777,
+        "scaled_budget": 243,
+        "hits_at_scaled_budget": 13,
+        "precision_at_scaled_budget": 0.053497942386831275,
+        "recall_at_scaled_budget": 0.28888888888888886,
+        "average_precision": 0.0412366683609685,
+        "brier_score": 0.0012586725079795807,
+        "mean_probability": 0.0007377310481523331
+      },
+      {
+        "name": "tiered_lightgbm_text",
+        "pool": 35277,
+        "positives": 45,
+        "hits_at_500": 18,
+        "precision_at_500": 0.036,
+        "recall_at_500": 0.4,
+        "scaled_budget": 243,
+        "hits_at_scaled_budget": 14,
+        "precision_at_scaled_budget": 0.05761316872427984,
+        "recall_at_scaled_budget": 0.3111111111111111,
+        "average_precision": 0.0465756465964123,
+        "brier_score": 0.0012601128173400883,
+        "mean_probability": 0.0007412376156285103
       }
     ],
-    "note": "Matches the benchmark calendar shape and November 4 endpoint. Training still requires 90 days follow-up."
+    "note": "Matches the benchmark calendar shape and November 4 endpoint. Training still requires 90 days follow-up. Reports the selected recipe and all other qualifying recipes without embeddings; does not select among them."
   },
   "calendar_analog_caveat": "This additional calendar-shaped sensitivity is reported separately from the two required selection splits; the learned recipe may lose to the rule at one of its budgets.",
   "history_cutoff": "KEV entries date_added <= snapshot end and <= 2025-12-31; 2026 history is frozen at 2025 year-end.",
@@ -738,10 +791,14 @@
     "description"
   ],
   "metadata_display_note": "Current CVSS, attack vector and CWE serve the display contract only. The CSV exports sanitized current description text; description features enter only text recipes.",
+  "publication_display": {
+    "technical_summaries": 60,
+    "note": "Descriptions containing terms prohibited by the repository naming policy use neutral technical-feature summaries, marked in description_source. This display filter never changes feature inputs, scores, or rank."
+  },
   "description_policy": {
     "enabled_in_selected_model": true,
     "sanitization": "Remove entire incident-claim sentences, then URLs, CVE identifiers and dates, before entities/keywords/embeddings.",
-    "residual_risk": "Current technical descriptions may have changed after the snapshot. Sanitization cannot establish original wording; identity matching is heuristic.",
+    "residual_risk": "Current technical descriptions may have changed after the snapshot. Heuristic sanitization cannot establish original wording or guarantee removal of every incident claim; identity matching is also heuristic.",
     "strict_reference": "logistic_strict and lightgbm_sparse_strict remain in every eligible split."
   },
   "limitations": [

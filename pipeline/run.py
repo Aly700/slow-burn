@@ -15,6 +15,7 @@ from pipeline.embed import MODEL_ID, REVISION, embeddings
 from pipeline.evaluate import prepared, ranked_indices
 from pipeline.features import production_allowlist, KEYWORDS, clean_description
 from pipeline.models import Recipe, FittedModel
+from pipeline.publication import display_description
 
 CONTRACT_COLUMNS = ['rank', 'cve_id', 'published', 'snapshot_month', 'score', 'epss', 'any_exploit',
                     *FLAGS, 'cvss3_score', 'attack_vector', 'cwe_ids', 'assigner', 'description', 'reasons']
@@ -31,14 +32,16 @@ def explanation_label(name, row, h, value):
         return name, f'{noun} {"present" if row[name] else "not recorded"} on {source} at snapshot', int(row[name])
     if name in {'any_exploit', 'exploit_count'}:
         count = int(row[FLAGS].sum())
-        return name, f'{count} public exploit or detection-tool signals at snapshot', count
+        value = int(row.any_exploit) if name == 'any_exploit' else count
+        return name, f'{count} public exploit or detection-tool signals at snapshot', value
     if name in {'assigner_prior_kev', 'vendor_prior_kev', 'assigner_recent_kev', 'vendor_recent_kev'}:
         count = int(h[name])
         entity = 'Assigning organization' if name.startswith('assigner') else 'Vendor'
         period = ' in the preceding year' if 'recent' in name else ''
         return name, f'{entity} has {count} earlier KEV entries{period}', count
     if name == 'id_year_gap':
-        return name, f'CVE identifier predates publication by {int(value)} years', int(value)
+        years = f'at least {int(value)}' if value >= 20 else str(int(value))
+        return name, f'CVE identifier predates publication by {years} years', int(value)
     if name == 'days_at_snapshot':
         return name, f'{int(value)} days between publication and snapshot', int(value)
     if name == 'identity_embedding':
@@ -104,7 +107,9 @@ def run():
     best = target.iloc[order[:5000]].copy()
     best['rank'] = np.arange(1, 5001)
     best['reasons'] = reasons_for(best, h, x, terms[order[:5000]], names)
-    best['description'] = best.description.map(clean_description)
+    display = best.description.map(clean_description).map(display_description)
+    best['description'] = display.map(lambda pair: pair[0])
+    best['description_source'] = display.map(lambda pair: pair[1])
     vendor_key = 'text_vendor_identity' if recipe.block == 'text' else 'vendor_identity'
     history_key = 'text_vendor_prior_kev' if recipe.block == 'text' else 'vendor_prior_kev'
     best['vendor_identity'] = h.loc[best.index, vendor_key]
@@ -120,7 +125,7 @@ def run():
                                            for p, reason in zip(order[:5000], best.reasons)]
     extras = ['vendor_identity', 'vendor_prior_kev', 'assigner_prior_kev', 'score_horizon',
               'explanation_base_log_odds', 'explanation_omitted_log_odds', 'product_identity',
-              'product_prior_kev', 'entity_source', 'ranking_tier']
+              'product_prior_kev', 'entity_source', 'ranking_tier', 'description_source']
     best[CONTRACT_COLUMNS + extras].to_csv(ARTIFACTS / 'scores_2026_top5000.csv', index=False)
     best[['cve_id']].head(500).to_csv(ARTIFACTS / 'top500.csv', index=False)
     target[['cve_id', 'score']].iloc[order].to_parquet(CACHE / 'scores_2026_full.parquet', index=False)
@@ -135,7 +140,7 @@ def run():
         'model': recipe.name, 'trained_on': '2024-published and Jan–Sep 2025-published eligible CVEs, labels observed by 2025-12-31; minimum 90 days follow-up',
         'features_used': names, 'features_excluded': exclusions,
         'ibm_technology': [f'{MODEL_ID} revision {REVISION}; sentence-transformers on Apple MPS; description and identity embedding ablations'],
-        'ibm_in_selected_model': recipe.embedding or 'Evaluated in research; not selected by baseline-protection gate',
+        'ibm_in_selected_model': recipe.embedding or 'Evaluated in ablations; a simpler qualifying recipe was selected',
         'recipe': recipe.__dict__, 'training_pool': len(train), 'training_positives': int(train.label.sum()),
         'label': 'KEV addition after the row’s snapshot through the historical label cutoff',
         'score_interpretation': 'Estimated probability of later catalog inclusion under historical variable follow-up; not a 30-day exploitation probability.',
@@ -150,9 +155,11 @@ def run():
         'history_cutoff': 'KEV entries date_added <= snapshot end and <= 2025-12-31; 2026 history is frozen at 2025 year-end.',
         'metadata_display': ['cvss3_score', 'attack_vector', 'cwe_ids', 'description'],
         'metadata_display_note': 'Current CVSS, attack vector and CWE serve the display contract only. The CSV exports sanitized current description text; description features enter only text recipes.',
+        'publication_display': {'technical_summaries': int(best.description_source.eq('technical feature summary').sum()),
+                                'note': 'Descriptions containing terms prohibited by the repository naming policy use neutral technical-feature summaries, marked in description_source. This display filter never changes feature inputs, scores, or rank.'},
         'description_policy': {'enabled_in_selected_model': recipe.block == 'text',
                                'sanitization': 'Remove entire incident-claim sentences, then URLs, CVE identifiers and dates, before entities/keywords/embeddings.',
-                               'residual_risk': 'Current technical descriptions may have changed after the snapshot. Sanitization cannot establish original wording; identity matching is heuristic.',
+                               'residual_risk': 'Current technical descriptions may have changed after the snapshot. Heuristic sanitization cannot establish original wording or guarantee removal of every incident claim; identity matching is also heuristic.',
                                'strict_reference': 'logistic_strict and lightgbm_sparse_strict remain in every eligible split.'},
         'limitations': ['Historical labels are KEV inclusion, not first attack.', 'All-2025 results include right censoring; mature and fixed-horizon sensitivity are separate.',
                         'Model selection uses historical development splits; no untouched validation of the selected recipe.',

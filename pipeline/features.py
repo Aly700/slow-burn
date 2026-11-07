@@ -24,13 +24,14 @@ KEYWORDS = {
     'upload': r'arbitrary file upload|unrestricted upload|upload.*executable',
 }
 EXPLOIT_CLAIM = re.compile(
-    r'in.the.wild|actively exploited|has been exploited|have been exploited|may have been exploited|'
+    r'in.the.wild|actively exploit(?:ed|ing)|has been exploited|have been exploited|may have been exploited|'
     r'known exploitation|known exploited|exploitation (?:has|was|is) (?:been|observed|detected)|ransomware|zero.day|'
     r'threat actor|attack campaign|cisa|\bkev\b|observed attack|exploited in|'
     r'aware of reports|aware of.*(?:exploitation|attacks)|reports of.*(?:exploitation|attacks)|'
     r'(?:was|were|being|already|previously) exploited|evidence of.*exploitation|exploitation evidence|'
-    r'(?:has|have|had) (?:been )?(?:actively )?exploited|used in (?:targeted |active )?attacks', re.I)
-INCIDENT_SUBJECT = re.compile(r'\b(?:exploit(?:ation|ed|s)?|attack(?:s|ing)?)\b', re.I)
+    r'(?:has|have|had) (?:been )?(?:actively )?exploited|used in (?:targeted |active )?attacks|'
+    r'\b(?:is|are|was|were|been|being) (?:actively )?exploiting\b', re.I)
+INCIDENT_SUBJECT = re.compile(r'\b(?:exploit(?:ation|ed|s|ing)?|attack(?:s|ing)?)\b', re.I)
 INCIDENT_OBSERVATION = re.compile(r'\b(?:observed|reported|confirmed|detected|evidence|reports|aware|campaign|activity)\b', re.I)
 DOMAIN_ALIASES = {'fb': 'meta', 'facebook': 'meta', 'paloaltonetworks': 'paloaltonetworks',
                   'redhat': 'redhat', 'msrc': 'microsoft', '3ds': 'dassaultsystemes'}
@@ -53,7 +54,7 @@ def assigner_vendor(assigner):
 
 def clean_description(text):
     # Incident claims are excluded even from exploratory semantic features.
-    sentences = re.split(r'(?<=[.!?])\s+|\n+', str(text))
+    sentences = re.split(r'(?<=[.!?])\s+', re.sub(r'\s+', ' ', str(text)))
     text = ' '.join(s for s in sentences if not (EXPLOIT_CLAIM.search(s) or
                    (INCIDENT_SUBJECT.search(s) and INCIDENT_OBSERVATION.search(s))))
     text = re.sub(r'https?://\S+|CVE-\d{4}-\d+|\b20\d{2}[-/]\d{1,2}[-/]\d{1,2}\b', ' ', text, flags=re.I)
@@ -82,6 +83,16 @@ def entity_matches(content, matcher):
     for end, (term, value) in matcher.iter(content):
         start = end - len(term) + 1
         if (start == 0 or not content[start-1].isalnum()) and (end+1 == len(content) or not content[end+1].isalnum()):
+            if start and content[start-1] == '.':
+                continue
+            # Language names commonly describe an unrelated application's code.
+            # Require an explicit versioned subject; a vendor PSIRT can still
+            # establish identity independently of this conservative text rule.
+            if term in {'php', 'perl'}:
+                if content[:start].strip() not in {'', 'in', 'the', 'in the'}:
+                    continue
+                if not re.match(r'\s+(?:v?\d|versions?\b|before\b|prior to\b|through\b)', content[end+1:]):
+                    continue
             matches.append((start, -len(term), term, value))
     return sorted(matches, key=lambda m: (m[0], m[1], m[2]))
 

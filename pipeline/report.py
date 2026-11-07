@@ -21,8 +21,10 @@ def run():
     card = json.loads((ARTIFACTS / 'model_card.json').read_text())
     lines = ['# Model lane report', '', f"Selected recipe: **{card['model']}**. Final fit: {card['training_pool']:,} mature rows and {card['training_positives']} later KEV additions.", '',
              'The production feature allowlist excludes CPEs, severity/weakness enrichment, missingness, references and undated ransomware annotations. Sanitized text is eligible with disclosed residual revision risk, and no-text models remain audit references. Historical labels are available at each training cutoff. The assigning organization is assumed stable; no field-level source history can prove this assumption.', '',
-             f"Ranking policy: {b['ranking_policy']}. Selection: {b['selection']['rule']}.", '',
+             f"Ranking policy: {b['ranking_policy']}. Selection: {b['selection']['rule']}. Simplicity order: {b['selection']['simplicity_order']}.", '',
              '## Results', '', 'These are historical development results, not a measured 2026 score. The selected-model comparison is optimistic because recipe selection used these forward evaluations.', '']
+    if card['recipe']['no_history']:
+        lines.extend(['The selected recipe excludes all numeric vendor, product and assigner history. It uses snapshot signals, publication timing and sanitized description features. Vendor history remains a contextual finding and a reported alternative, rather than a term in this ranking.', ''])
     for s in b['splits']:
         lines.extend([f"### {s['name']}", '',
                       f"Training: {s['train_pool']:,} rows, {s['train_positives']} positives, labels through {s['train_label_cutoff']}. Test: {s['test_pool']:,} rows, {s['test_positives']} positives, labels through {s['test_label_cutoff']}.", '',
@@ -30,7 +32,15 @@ def run():
     if 'exact_calendar_analog' in b:
         s = b['exact_calendar_analog']
         lines.extend(['### Exact calendar analog', '', s['snapshot_rule'] + '; outcomes through ' + s['test_label_cutoff'] + '.', '', metric_table(s['methods']), ''])
-    lines.extend(['## Ablations', '', metric_table(b['ablations']), '', '## Censoring and uncertainty', '', b['censoring']['note'], ''])
+        a = next(m for m in s['methods'] if m['name'] == card['model'])
+        r = next(m for m in s['methods'] if m['name'] == 'Exploit code first, then EPSS')
+        lines.extend([f"Selected recipe versus rule: {a['hits_at_500']} versus {r['hits_at_500']} at literal 500, and {a['hits_at_scaled_budget']} versus {r['hits_at_scaled_budget']} at the scaled budget of {a['scaled_budget']}. This additional sensitivity is outside the two required selection splits; it must be disclosed alongside their results.", ''])
+    lines.extend(['## Ablations', '', metric_table(b['ablations']), ''])
+    for s in b.get('matched_tiered_ablations', []):
+        lines.extend([f"### Matched tiered ablations: {s['split']}", '',
+                      'Same logistic regularization and public-tool-first policy; only the named feature family changes.', '',
+                      metric_table(s['methods']), ''])
+    lines.extend(['## Censoring and uncertainty', '', b['censoring']['note'], ''])
     for s in b['censoring_sensitivity']:
         methods = [m for m in s['methods'] if m['name'] in [card['model'], 'CVSS first', 'EPSS first', 'Exploit code first, then EPSS']]
         lines.extend([f"### {s['name']}", '', metric_table(methods), ''])

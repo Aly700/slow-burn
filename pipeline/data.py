@@ -33,7 +33,7 @@ def ensure_cache():
     CACHE.mkdir(parents=True, exist_ok=True)
     files = input_hashes()
     source = {}
-    for name in ['data.py', 'features.py']:
+    for name in ['data.py', 'features.py', 'leak_audit.py']:
         source[name] = hashlib.sha256((ROOT / 'pipeline' / name).read_bytes()).hexdigest()
     expected = {'schema': CACHE_SCHEMA, 'inputs': files, 'preprocessing': source}
     path = CACHE / 'provenance.json'
@@ -105,6 +105,7 @@ def kev():
 
 
 def historical_signals():
+    ensure_cache()
     path = CACHE / 'historical_signals.parquet'
     if not path.exists():
         v = vulnerabilities()

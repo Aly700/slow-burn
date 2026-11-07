@@ -42,6 +42,10 @@ RECIPES = [
     Recipe('tiered_logistic_strict', tiered=True),
     Recipe('tiered_logistic_text', block='text', tiered=True),
     Recipe('tiered_logistic_description', block='text', embedding='description', tiered=True),
+    Recipe('tiered_logistic_signals', block='signals', tiered=True),
+    Recipe('tiered_logistic_no_history', block='text', no_history=True, tiered=True),
+    Recipe('tiered_logistic_entities', block='text', variant='entities_only', tiered=True),
+    Recipe('tiered_logistic_no_assigner', block='text', variant='no_assigner', tiered=True),
     Recipe('tiered_lightgbm_strict', 'lightgbm', variant='sparse', tiered=True),
     Recipe('tiered_lightgbm_text', 'lightgbm', 'text', variant='sparse', tiered=True),
     Recipe('tiered_lightgbm_description', 'lightgbm', 'text', 'description', variant='sparse', tiered=True),
@@ -66,6 +70,10 @@ class FittedModel:
         x = x.copy()
         if self.recipe.no_history:
             x = x.drop(columns=[c for c in x if 'prior_' in c or 'recent_' in c])
+        if self.recipe.variant == 'no_assigner':
+            x = x.drop(columns=[c for c in x if c.startswith(('assigner_', 'vendor_'))])
+        if self.recipe.variant == 'entities_only':
+            x = x.drop(columns=[c for c in x if c.startswith('text_') and 'prior_' not in c and 'recent_' not in c])
         if self.recipe.embedding:
             if embedding is None:
                 raise ValueError('Embedding inputs required')

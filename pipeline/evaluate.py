@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import hashlib
 import sys
+from functools import lru_cache
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import numpy as np
@@ -49,6 +50,7 @@ def baseline_scores(rows):
             'EPSS first': epss, 'Exploit code first, then EPSS': rows.any_exploit.to_numpy() + epss}
 
 
+@lru_cache(maxsize=1)
 def prepared():
     rows = all_rows()
     path = CACHE / 'history_features.parquet'
@@ -144,7 +146,7 @@ def run(include_embeddings=True):
     rows, history, blocks = prepared()
     emb = {kind: embeddings(rows, kind) for kind in ['identity', 'description']} if include_embeddings else {}
     recipes = [r for r in RECIPES if not r.embedding or include_embeddings]
-    results, predictions, probability_predictions = [], {}, {}
+    results, predictions, probability_predictions, complexity = [], {}, {}, {}
     for name, train, test, cutoff, endpoint in splits(rows):
         assert set(train.cve_id).isdisjoint(test.cve_id)
         assert train.snapshot_month.max() < test.snapshot_month.min()
@@ -160,6 +162,7 @@ def run(include_embeddings=True):
             train_emb = emb[recipe.embedding][train.index] if recipe.embedding else None
             test_emb = emb[recipe.embedding][test.index] if recipe.embedding else None
             fitted = FittedModel(recipe).fit(x.loc[train.index], train.label, train_emb)
+            complexity[recipe.name] = len(fitted.columns)
             probability = fitted.predict(x.loc[test.index], test_emb)
             scores = fitted.ranking_score(x.loc[test.index], probability)
             predictions[name][recipe.name] = scores
@@ -184,7 +187,7 @@ def run(include_embeddings=True):
     # No weak-budget tradeoff is allowed. Prefer the simplest qualifying learned recipe.
     if qualified:
         chosen = min(qualified, key=lambda r: (bool(r.embedding), r.algorithm != 'logistic',
-                                               r.block == 'text', bool(r.blend),
+                                               complexity[r.name], bool(r.blend), r.tiered,
                                                -sum(gates[r.name]['margins']), r.name)).name
     else:
         chosen = 'calibrated_exploit_rule'
@@ -211,14 +214,29 @@ def run(include_embeddings=True):
         m = next((m for m in results[0]['methods'] if m['name'] == method), None)
         if m:
             ablations.append({**m, 'name': label, 'recipe': method})
+    matched_names = {'tiered keywords and history': 'tiered_logistic_text',
+                     'tiered signals only': 'tiered_logistic_signals',
+                     'tiered no text': 'tiered_logistic_strict',
+                     'tiered no history': 'tiered_logistic_no_history',
+                     'tiered entities without keywords': 'tiered_logistic_entities',
+                     'tiered without direct assigner-history columns': 'tiered_logistic_no_assigner',
+                     'tiered with Granite description embeddings': 'tiered_logistic_description'}
+    matched_ablations = [{'split': split['name'], 'methods':
+                         [{**m, 'name': label, 'recipe': method, 'feature_count': complexity[method]}
+                          for label, method in matched_names.items()
+                          for m in split['methods'] if m['name'] == method]}
+                        for split in results[:2]]
     result = {'pool': '2025-published CVEs; publication-month end; exclude prior KEV from catalog or snapshot flag',
               'label': 'KEV date_added after snapshot month and through 2025-12-31; non-KEV is unobserved, not proven safe',
               'selected_model': chosen, 'methods': results[0]['methods'], 'splits': results,
               'monthly': monthly_metrics(test, ours, baseline), 'ablations': ablations,
+              'matched_tiered_ablations': matched_ablations,
               'censoring_sensitivity': sensitivity,
               'selection': {'rule': 'Must match or beat exploit-first at literal 500 and equal-workload budgets on both 2025 splits; prefer simpler qualifying learned models with at least one improvement, otherwise use the calibrated rule',
                             'margin_order': ['primary_500', 'primary_scaled', 'h2_500', 'h2_scaled'],
                             'gates': gates, 'passed': True,
+                            'feature_counts': complexity,
+                            'simplicity_order': 'No embeddings, logistic regression, fewer input features, no blend, no tier policy, then total margin',
                             'warning': 'Development comparisons; test-year model selection is optimistic. H2 overlaps the primary test.'},
               'scaling': {'scoreboard_pool': 72670, 'scoreboard_budget': 500, 'fraction': RATE,
                           'formula': 'round(pool_size * 500 / 72670)',

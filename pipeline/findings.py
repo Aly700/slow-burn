@@ -10,7 +10,7 @@ from scipy.stats import fisher_exact
 
 from pipeline.data import ARTIFACTS, CACHE, FLAGS, cohort, kev, month_end, vulnerabilities, historical_signals, write_json
 from pipeline.evaluate import BASELINES, prepared
-from pipeline.features import EXPLOIT_CLAIM, KEYWORDS
+from pipeline.features import EXPLOIT_CLAIM, KEYWORDS, clean_description
 
 
 def rate_interval(hits, n):
@@ -43,13 +43,22 @@ def run():
     signal('CVE reserved before publication year', pool.cve_id.str[4:8].lt('2025'), 'low')
     text = pool.description.fillna('')
     signal('Current description mentions exploitation', text.str.contains(EXPLOIT_CLAIM), 'high', 'Excluded from production; text has no historical timestamp.')
+    text = text.map(clean_description)
     labels = {'remote_code': 'Remote code or command execution wording', 'unauthenticated': 'Unauthenticated access wording',
               'traversal': 'Path traversal wording', 'deserialization': 'Deserialization wording',
               'edge_device': 'Edge device wording', 'privilege_escalation': 'Privilege escalation wording',
               'wordpress': 'WordPress wording', 'xss': 'Cross-site scripting wording'}
     for feature, label in labels.items():
         signal(label, text.str.contains(KEYWORDS[feature], case=False, regex=True), 'medium',
-               'Descriptive analysis only; current text may differ from publication text.')
+               'Sanitized wording; current technical text may still differ from publication text.')
+    audit = json.loads((CACHE / 'leak_audit.json').read_text())
+    cpe_audit = next(row for row in audit['features_excluded'] if row['name'] == 'affected_products_coverage')
+    coverage = cpe_audit['nonzero_coverage_2025']
+    signals.append({'name': 'Current affected-product coverage (excluded audit feature)',
+                    'n': coverage['n'], 'hits': coverage['positives'], 'rate': coverage['rate'],
+                    'lift': coverage['rate']/base, 'leak_risk': 'high',
+                    'rate_95_wilson_interval': rate_interval(coverage['positives'], coverage['n']),
+                    'note': 'Current CPE availability has no historical timestamp. The association may reflect post-incident analysis; it cannot enter production.'})
     all_2025 = vulnerabilities().loc[lambda f: f.published.str.startswith('2025')]
     linked = all_2025.merge(kev()[['cve_id', 'date_added']], on='cve_id', how='inner')
     end = month_end(linked.published.str[:7])
@@ -139,6 +148,13 @@ def run():
                           'rate_95_wilson_interval': wordpress['rate_95_wilson_interval'],
                           'note': 'Zero observed later additions is not zero exploitation risk. Do not defer exposed business-critical assets on this finding alone.'}],
         'base_rate_2025': base,
+        'leak_audit': {'baseline': audit['baseline'],
+                       'features': [{'name': row['name'], 'why': row['why'],
+                                     'methods': [{'name': m['name'], 'delta_hits_at_500': m['delta_hits_at_500'],
+                                                  'delta_hits_at_scaled_budget': m['delta_hits_at_scaled_budget']}
+                                                 for m in row['methods']]}
+                                    for row in audit['features_excluded']],
+                       'interpretation': audit['interpretation']},
         'censoring': backtest['censoring'],
         'data_quality': {'seed_pool': len(original_pool), 'current_pool': len(pool),
                          'snapshot_catalog_disagreements': mismatches,

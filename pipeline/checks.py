@@ -60,6 +60,10 @@ class TemporalChecks(unittest.TestCase):
         self.assertNotIn('reports', clean_description('The vendor is aware of reports of active attacks.'))
         self.assertEqual(clean_description('Exploitation evidence was first observed by the Shadowserver Foundation on 2025-08-30.'), '')
         self.assertEqual(clean_description('Attacks targeting the issue were reported during the campaign.'), '')
+        self.assertEqual(clean_description('Attackers were actively exploiting this vulnerability with the WP_Theme() class to create backdoors.'), '')
+        self.assertEqual(clean_description('Attackers are exploiting this issue to create backdoors.'), '')
+        self.assertEqual(clean_description('Attackers were actively\nexploiting this issue.'), '')
+        self.assertEqual(clean_description('The vendor is aware  of\treports of exploitation.'), '')
         self.assertIn('remote', clean_description('A remote attacker can exploit this flaw to execute arbitrary code.'))
         history = pd.DataFrame({'cve_id': ['CVE-2020-1'], 'date_added': ['2023-12-31'],
                                 'assigner': ['secure@microsoft.com'], 'vendor': ['Microsoft'],
@@ -80,6 +84,24 @@ class TemporalChecks(unittest.TestCase):
         close = model.ranking_score(pd.DataFrame({'any_exploit': [1, 1]}), np.array([.3, np.nextafter(.3, 1.)]))
         self.assertGreater(close[1], close[0])
 
+    def test_ablation_predictions_ignore_removed_feature_families(self):
+        from pipeline.models import FittedModel, Recipe
+        rng = np.random.default_rng(7)
+        x = pd.DataFrame({'any_exploit': rng.binomial(1, .3, 100),
+                          'epss_log': rng.uniform(-5, -.1, 100),
+                          'assigner_prior_kev': rng.uniform(0, 6, 100),
+                          'vendor_recent_kev': rng.uniform(0, 6, 100),
+                          'text_vendor_prior_kev': rng.uniform(0, 6, 100),
+                          'text_remote_code': rng.binomial(1, .5, 100)})
+        y = rng.binomial(1, .2, 100)
+        for variant, removed in [('no_assigner', ['assigner_prior_kev', 'vendor_recent_kev']),
+                                 ('entities_only', ['text_remote_code'])]:
+            model = FittedModel(Recipe('ablation_check', block='text', variant=variant)).fit(x, y)
+            changed = x.copy()
+            changed[removed] += 100
+            np.testing.assert_array_equal(model.predict(x), model.predict(changed))
+            self.assertIn('text_vendor_prior_kev', model.columns)
+
     def test_generic_product_words_do_not_assign_a_vendor(self):
         from pipeline.features import history_features
         history = pd.DataFrame({'cve_id': ['CVE-2020-1', 'CVE-2020-2', 'CVE-2020-3'],
@@ -93,6 +115,38 @@ class TemporalChecks(unittest.TestCase):
         h = history_features(rows, history)
         self.assertEqual(h.text_vendor_prior_kev.iloc[0], 0)
         self.assertEqual(h.text_product_prior_kev.iloc[0], 0)
+
+    def test_programming_language_mentions_do_not_assign_product_identity(self):
+        from pipeline.features import history_features
+        history = pd.DataFrame({'cve_id': ['CVE-2020-1'], 'date_added': ['2023-12-31'],
+                                'assigner': ['security@php.net'], 'vendor': ['PHP'],
+                                'product': ['PHP'], 'known_ransomware_use': ['Unknown']})
+        descriptions = ['An unrelated CMS contains PHP code injection in document.php.',
+                        'An unrelated CMS uses PHP versions 7 and 8.',
+                        'PHP before 8.3 contains a buffer overflow.']
+        rows = pd.DataFrame({'cve_id': ['CVE-2024-1', 'CVE-2024-2', 'CVE-2024-3'],
+                             'snapshot_month': ['2024-01'] * 3,
+                             'assigner': ['cve@mitre.org'] * 3, 'description': descriptions})
+        h = history_features(rows, history)
+        self.assertEqual(h.text_vendor_prior_kev.tolist(), [0., 0., 1.])
+
+    def test_publication_filter_changes_display_only(self):
+        import hashlib
+        from pipeline.publication import display_description
+        blocked = {hashlib.sha256(b'privateproduct').hexdigest()}
+        original = 'PrivateProduct allows unauthenticated remote code execution.'
+        displayed, source = display_description(original, blocked)
+        self.assertNotIn('PrivateProduct', displayed)
+        self.assertIn('remote code', displayed)
+        self.assertEqual(source, 'technical feature summary')
+        self.assertEqual(display_description('A buffer overflow.', blocked), ('A buffer overflow.', 'sanitized description'))
+
+    def test_any_signal_reason_reports_the_binary_feature_value(self):
+        from pipeline.run import explanation_label
+        row = pd.Series({'any_exploit': 1, 'exploitdb': 0, 'metasploit': 1, 'nuclei': 1, 'poc_github': 0})
+        name, label, value = explanation_label('any_exploit', row, pd.Series(dtype=float), 1.)
+        self.assertEqual(value, 1)
+        self.assertIn('2 public', label)
 
     def test_censoring_excludes_immature_training_rows(self):
         from pipeline.data import training_rows
@@ -108,7 +162,7 @@ class TemporalChecks(unittest.TestCase):
                 root = Path(directory)
                 (root / 'pipeline').mkdir()
                 (root / 'inputs').mkdir()
-                for name in ['data.py', 'features.py']:
+                for name in ['data.py', 'features.py', 'leak_audit.py']:
                     (root / 'pipeline' / name).write_text('version one')
                 source = root / 'inputs' / 'source.csv'
                 source.write_text('id\n1\n')
@@ -121,6 +175,11 @@ class TemporalChecks(unittest.TestCase):
                 data.ensure_cache.cache_clear()
                 second = data.ensure_cache()
                 self.assertNotEqual(first, second)
+                self.assertFalse(derived.exists())
+                derived.write_text('stale after audit change')
+                (root / 'pipeline' / 'leak_audit.py').write_text('version two')
+                data.ensure_cache.cache_clear()
+                data.ensure_cache()
                 self.assertFalse(derived.exists())
         finally:
             data.ROOT, data.DATA, data.CACHE = original
@@ -161,6 +220,8 @@ def artifact_checks():
     assert scores.cve_id.is_unique and top.cve_id.tolist() == scores.cve_id.head(500).tolist()
     from pipeline.features import clean_description
     assert scores.description.map(clean_description).eq(scores.description).all()
+    from pipeline.publication import display_description
+    assert scores.description.map(lambda text: display_description(text)[0]).eq(scores.description).all()
     assert set(scores.cve_id) <= set(board.cve_id)
     assert scores['rank'].tolist() == list(range(1, 5001))
     assert scores.score.between(0, 1).all()
@@ -173,12 +234,14 @@ def artifact_checks():
     assert source.snapshot_month.tolist() == scores.snapshot_month.tolist()
     for flag in ['exploitdb', 'metasploit', 'nuclei', 'poc_github']:
         assert source[flag].astype(int).tolist() == scores[flag].astype(int).tolist()
-    for text in scores.reasons:
-        reasons = json.loads(text)
+    for row in scores.itertuples():
+        reasons = json.loads(row.reasons)
         assert 1 <= len(reasons) <= 5
         for r in reasons:
             assert {'feature', 'label', 'value', 'contribution'} <= r.keys()
             assert np.isfinite(r['contribution']) and isinstance(r['label'], str)
+            if r['feature'] in ['any_exploit', 'exploitdb', 'metasploit', 'nuclei', 'poc_github']:
+                assert r['value'] == int(getattr(row, r['feature']))
     from scipy.special import expit
     reconstructed = expit(scores.explanation_base_log_odds.to_numpy() +
                          scores.explanation_omitted_log_odds.to_numpy() +
@@ -197,9 +260,12 @@ def artifact_checks():
 
 def historical_checks():
     from pipeline.data import cohort, historical_signals, FLAGS
+    from pipeline.features import clean_description
     signals = historical_signals().rename(columns={'month': 'snapshot_month'})
     for year in [2024, 2025]:
         rows = cohort(year)
+        cleaned = rows.description.fillna('').map(clean_description)
+        assert cleaned.map(clean_description).eq(cleaned).all(), 'Sanitization must be idempotent across historical text'
         actual = rows[['cve_id', 'snapshot_month', 'epss', *FLAGS, 'epss_first_month']]
         joined = actual.merge(signals, on=['cve_id', 'snapshot_month'], how='left', suffixes=('', '_source'), validate='one_to_one')
         assert np.allclose(joined.epss, joined.epss_source, equal_nan=True)
@@ -207,7 +273,7 @@ def historical_checks():
             assert joined[flag].eq(joined[flag + '_source'].fillna(0)).all()
         first = joined.epss_first_month.fillna('')
         assert first.le(joined.snapshot_month).all()
-    print('Historical checks: exact monthly signals; no future first EPSS observation')
+    print('Historical checks: exact monthly signals; no future first EPSS observation; stable text sanitization')
 
 
 if __name__ == '__main__':
