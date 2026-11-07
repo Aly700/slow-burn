@@ -1,0 +1,2 @@
+{"_status": "seed; the model lane regenerates", "pool": "CVEs published in 2025, not on KEV by end of publish month; label = added to KEV later, by 2025-12-31", "methods": [
+ {"name": "CVSS first", "hits_at_500": 5}, {"name": "EPSS first", "hits_at_500": 10}, {"name": "Exploit code first, then EPSS", "hits_at_500": 18}], "monthly": []}
