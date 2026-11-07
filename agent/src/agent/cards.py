@@ -56,7 +56,8 @@ def evidence_cards(calls):
             if out['prior_kev']:
                 latest = f"{out['latest_cve']} on {out['last_added']}" if out.get('latest_cve') else out['last_added']
                 fields = ['vendor','prior_kev','catalog_cutoff','last_added','match_method'] + (['latest_cve'] if out.get('latest_cve') else [])
-                add(f"{out['vendor']} has {out['prior_kev']} earlier confirmed-exploitation entries through {out['catalog_cutoff']}; the latest was {latest}. The count uses exact normalized vendor-name matching.", fields, 'history')
+                vname = out['vendor'] if any(ch.isupper() for ch in str(out['vendor'])) else str(out['vendor']).replace('_', ' ').title()
+                add(f"{vname} has {out['prior_kev']} earlier entries on CISA's exploited list through {out['catalog_cutoff']}; the latest was {latest}.", fields, 'history')
             else:
                 add(f"No earlier KEV entry matched the vendor name {out['vendor']} through {out['catalog_cutoff']}; aliases and acquisitions are not resolved, so this does not establish a clean history.", ['vendor','prior_kev','catalog_cutoff','match_method'], 'history')
             if out['ransomware_known']:

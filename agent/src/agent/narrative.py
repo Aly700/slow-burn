@@ -34,8 +34,10 @@ def describe(row):
         return result
     patterns = [
         r'^In the (?P<product>Linux kernel),',
+        r'^(?:In\s+)?(?P<product>[A-Z][A-Za-z0-9() /+_-]{1,65}?)\s+(?:is|are)\s+affected\b',
+        r'^(?P<product>(?!An?\b)[A-Za-z][A-Za-z0-9() /+._-]{1,65}?)\s+(?:through|contains|allows|has addressed|was reported|is an?)\b',
         r'\bin (?P<product>[A-Z][A-Za-z0-9() /+_-]{1,65}?)\s+(?:before|versions?\b)',
-        r'^(?P<product>[A-Z][A-Za-z0-9() /+_-]{1,65}?)\s+(?:before|versions?\b|is a\b|is vulnerable\b|Docker image\b)',
+        r'^(?:In\s+)?(?P<product>[A-Z][A-Za-z0-9() /+_-]{1,65}?)\s+(?:before|versions?\b|is a\b|is vulnerable\b|Docker image\b)',
         r'\bin (?P<product>[A-Z](?:(?!\bin\b)[A-Za-z0-9() /+_-]){1,65}?\s+(?:Products|Gateway|Server|Appliance))\s+allows\b',
         r'\bin (?P<product>[A-Z][A-Za-z0-9() /+_-]{1,65}?)\s+\d+(?:\.\d+)+\s+allows\b',
         r'\bin (?P<product>[A-Z][A-Za-z0-9./()+_-]+)\s+allows\b',
@@ -44,7 +46,14 @@ def describe(row):
     for pattern in patterns:
         m = re.search(pattern, text)
         if m and len(m.group('product').split()) <= 9:
-            result['product'] = excerpt(text, *m.span('product'))
+            a0, b0 = m.span('product')
+            tail = re.search(r'(?:\s+(?:v?\d[\w.]*|before|through|and|earlier|version|versions|affecting|all))+$', text[a0:b0])
+            if tail and tail.start() > 0:
+                b0 = a0 + tail.start()
+            inner = text[a0:b0].rfind(' in ')
+            if inner > 0:
+                a0 = a0 + inner + 4
+            result['product'] = excerpt(text, a0, b0)
             break
     if not result['product']:
         for item in row.get('products', []):
