@@ -62,8 +62,14 @@ test("sync handles absent inputs, then replaces fixtures with recorded runs with
       path.join(root, "artifacts/scores_2026_top5000.csv"),
       "rank,cve_id,score,epss,reasons\n1,CVE-2026-2,0.2,,[]\n",
     );
+    await mkdir(path.join(root, "artifacts/agent_runs/eval"));
+    await writeFile(path.join(root, "artifacts/agent_runs/eval/review.json"), JSON.stringify({
+      run_id: "verifier-example", cve_id: "CVE-2025-3",
+      verifier: { dropped: [{ id: "unsupported", text: "Unsupported example", why: "No evidence" }] },
+    }));
     sync();
     const result = await bundle();
+    assert.equal(result.verifier_example.run_id, "verifier-example");
     assert.equal(result.meta.runs_source, "recorded");
     assert.equal(result.meta.score_mode, "probability");
     assert.equal(result.scores[0].epss, null);

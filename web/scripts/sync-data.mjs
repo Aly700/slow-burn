@@ -65,12 +65,19 @@ async function findVerifierExample(directory) {
     const file = path.join(directory, name);
     if (name.endsWith(".json")) {
       const run = await json(file);
-      if (run?.run_id && Array.isArray(run.verifier?.dropped) && run.verifier.dropped.length) return run;
+      if (
+        run?.run_id &&
+        Array.isArray(run.verifier?.dropped) &&
+        run.verifier.dropped.length
+      )
+        return run;
     } else {
       try {
         const found = await findVerifierExample(file);
         if (found) return found;
-      } catch (error) { if (error.code !== "ENOTDIR") throw error; }
+      } catch (error) {
+        if (error.code !== "ENOTDIR") throw error;
+      }
     }
   }
   return null;

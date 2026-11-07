@@ -248,7 +248,9 @@ export function Queue({
                     {row.cve_id}
                   </button>
                   <span className="assigner" title={row.assigner}>
-                    {row.vendor_identity && row.vendor_identity !== "unmapped" ? row.vendor_identity : row.assigner || "Assigner unavailable"}
+                    {row.vendor_identity && row.vendor_identity !== "unmapped"
+                      ? row.vendor_identity
+                      : row.assigner || "Assigner unavailable"}
                   </span>
                 </td>
                 <td className="mono snapshot">{row.snapshot_month || "—"}</td>

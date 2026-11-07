@@ -194,7 +194,11 @@ export function Presentation({
                         }}
                       />
                     </div>
-                    <strong className={method.hits_at_500 == null ? "is-pending" : ""}>{number(method.hits_at_500)}</strong>
+                    <strong
+                      className={method.hits_at_500 == null ? "is-pending" : ""}
+                    >
+                      {number(method.hits_at_500)}
+                    </strong>
                   </div>
                 ))}
               </div>
@@ -213,7 +217,9 @@ export function Presentation({
         {step === 1 && (
           <>
             <h1>Two clocks. Two defences.</h1>
-            <div className={`present-clocks ${firstShare == null ? "clocks-pending" : ""}`}>
+            <div
+              className={`present-clocks ${firstShare == null ? "clocks-pending" : ""}`}
+            >
               <div>
                 <strong className="accent">{percent(firstShare, 0)}</strong>
                 <h2>In the publication month.</h2>

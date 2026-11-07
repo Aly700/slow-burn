@@ -18,7 +18,12 @@ export function standardRankings(data: Data) {
   }));
 }
 export function strongestRun(data: Data): Run | undefined {
-  const evidenceBreadth = (run: Run) => new Set(list(run.briefing?.claims).flatMap(claim => list(claim.evidence).map(evidence => evidence.field))).size;
+  const evidenceBreadth = (run: Run) =>
+    new Set(
+      list(run.briefing?.claims).flatMap((claim) =>
+        list(claim.evidence).map((evidence) => evidence.field),
+      ),
+    ).size;
   const runs = list(data.runs);
   const candidates = runs.filter(
     (run) =>
@@ -29,7 +34,9 @@ export function strongestRun(data: Data): Run | undefined {
     candidates.find((run) => run.cve_id === "CVE-2026-10523") ??
     candidates.sort(
       (a, b) =>
-        (b.verifier?.claims_verified ?? 0) - (a.verifier?.claims_verified ?? 0) || evidenceBreadth(b) - evidenceBreadth(a),
+        (b.verifier?.claims_verified ?? 0) -
+          (a.verifier?.claims_verified ?? 0) ||
+        evidenceBreadth(b) - evidenceBreadth(a),
     )[0] ??
     runs[0]
   );

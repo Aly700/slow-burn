@@ -102,7 +102,11 @@ export interface ModelCard {
   note?: string;
   limitations?: string[];
   score_interpretation?: string;
-  description_policy?: { enabled_in_selected_model?: boolean; sanitization?: string; residual_risk?: string };
+  description_policy?: {
+    enabled_in_selected_model?: boolean;
+    sanitization?: string;
+    residual_risk?: string;
+  };
 }
 export interface Run {
   run_id: string;

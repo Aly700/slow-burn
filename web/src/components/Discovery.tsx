@@ -52,14 +52,32 @@ export function BlindSpot({ findings }: { findings?: Findings | null }) {
 export function VendorHistory({ findings }: { findings?: Findings | null }) {
   const cohort = findings?.vendor_history_within_poc;
   const allBuckets = list(cohort?.buckets);
-  const identities = [...new Set(allBuckets.map(bucket => bucket.identity ?? "vendor"))];
+  const identities = [
+    ...new Set(allBuckets.map((bucket) => bucket.identity ?? "vendor")),
+  ];
   const [selectedIdentity, setSelectedIdentity] = useState("vendor");
-  const identity = identities.includes(selectedIdentity) ? selectedIdentity : identities[0];
-  const buckets = allBuckets.filter(bucket => (bucket.identity ?? "vendor") === identity);
+  const identity = identities.includes(selectedIdentity)
+    ? selectedIdentity
+    : identities[0];
+  const buckets = allBuckets.filter(
+    (bucket) => (bucket.identity ?? "vendor") === identity,
+  );
   const max = Math.max(0.001, ...buckets.map((bucket) => bucket.rate ?? 0));
   return (
     <div className="vendor-history">
-      {identities.length > 1 && <div className="identity-tabs" aria-label="History identity">{identities.map(item => <button key={item} aria-pressed={identity === item} onClick={() => setSelectedIdentity(item)}>{item} history</button>)}</div>}
+      {identities.length > 1 && (
+        <div className="identity-tabs" aria-label="History identity">
+          {identities.map((item) => (
+            <button
+              key={item}
+              aria-pressed={identity === item}
+              onClick={() => setSelectedIdentity(item)}
+            >
+              {item} history
+            </button>
+          ))}
+        </div>
+      )}
       <div className="chart-head">
         <span>Earlier KEV entries</span>
         <span>Later KEV rate</span>
@@ -97,7 +115,8 @@ export function VendorHistory({ findings }: { findings?: Findings | null }) {
       <p className="caption">
         Within the public-exploit tier: {number(cohort?.positives)} later KEV
         entries / {number(cohort?.pool)} CVEs. Base rate{" "}
-        {percent(cohort?.base_rate, 2)}. Description-based identity carries revision and matching risk.
+        {percent(cohort?.base_rate, 2)}. Description-based identity carries
+        revision and matching risk.
       </p>
     </div>
   );
@@ -171,20 +190,23 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
               <h3>{story.title}</h3>
               <p>{story.sentence}</p>
               {story.numbers && (
-                <details className="story-counts"><summary>Inspect supporting counts</summary><dl>
-                  {Object.entries(story.numbers).map(([key, value]) => (
-                    <div key={key}>
-                      <dt>{key.replaceAll("_", " ")}</dt>
-                      <dd>
-                        {typeof value === "number"
-                          ? number(value, 2)
-                          : value == null
-                            ? "pending"
-                            : String(value)}
-                      </dd>
-                    </div>
-                  ))}
-                </dl></details>
+                <details className="story-counts">
+                  <summary>Inspect supporting counts</summary>
+                  <dl>
+                    {Object.entries(story.numbers).map(([key, value]) => (
+                      <div key={key}>
+                        <dt>{key.replaceAll("_", " ")}</dt>
+                        <dd>
+                          {typeof value === "number"
+                            ? number(value, 2)
+                            : value == null
+                              ? "pending"
+                              : String(value)}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </details>
               )}
             </article>
           ))}

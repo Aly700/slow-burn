@@ -117,7 +117,8 @@ export default function App() {
             <a
               key={id}
               className={
-                active === id || (id === "timing" && ["signals", "discovery"].includes(active))
+                active === id ||
+                (id === "timing" && ["signals", "discovery"].includes(active))
                   ? "active"
                   : ""
               }
