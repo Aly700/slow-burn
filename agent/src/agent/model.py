@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import threading
 import time
 
-from .config import MODEL
+from .config import IBM_MODEL, MODEL, MODEL_REVISION
 
 
 @dataclass
@@ -14,6 +14,8 @@ class Completion:
 class Granite:
     def __init__(self, name=MODEL):
         self.name = name
+        self.source_name = IBM_MODEL if name == MODEL else name
+        self.revision = MODEL_REVISION if name == MODEL else None
         self._model = None
         self._lock = threading.Lock()
         self.load_seconds = None
@@ -23,7 +25,7 @@ class Granite:
             if self._model is None:
                 from mlx_lm import load
                 start = time.monotonic()
-                self._model, self._tokenizer = load(self.name)
+                self._model, self._tokenizer = load(self.name, revision=self.revision)
                 self.load_seconds = time.monotonic() - start
 
     def complete(self, messages, max_tokens, deadline):

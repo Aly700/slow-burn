@@ -98,3 +98,51 @@ def test_late_quoted_product_is_not_split_into_columns(corpus):
     from agent.data import DataTools
     tools = DataTools(corpus)
     assert len(tools.rows('SELECT * FROM affected_products WHERE cve_id=?', ['CVE-2025-1000'])) == 2
+
+
+def test_evaluation_fixture_does_not_claim_a_model_rank_or_probability(corpus):
+    import csv
+    path = corpus.scores
+    with path.open() as f:
+        rows = list(csv.DictReader(f))
+    rows[0]['ranking_kind'] = 'evaluation_reasons_only'
+    write_csv(path, rows)
+    from agent.data import DataTools
+    result = DataTools(corpus).explain_score('CVE-2025-1000')
+    assert result['rank'] is None
+    assert result['score'] is None
+    assert result['reasons']
+    assert result['ranking_kind'] == 'evaluation_reasons_only'
+
+
+def test_ranking_cannot_disagree_with_scoreboard_snapshot(corpus):
+    import csv
+    corpus.snapshot_month = None
+    with (corpus.data / 'vulnerabilities.csv').open() as f:
+        rows = list(csv.DictReader(f))
+    rows.append({**rows[0], 'cve_id': 'CVE-2026-1000', 'published': '2026-01-01'})
+    write_csv(corpus.data / 'vulnerabilities.csv', rows)
+    with corpus.scores.open() as f:
+        score = next(csv.DictReader(f))
+    score.update(cve_id='CVE-2026-1000', snapshot_month='2026-10')
+    write_csv(corpus.scores, [score])
+    from agent.data import DataTools
+    tools = DataTools(corpus)
+    assert tools.get_cve('CVE-2026-1000')['snapshot_month'] == '2026-01'
+    with pytest.raises(ValueError, match='snapshot'):
+        tools.explain_score('CVE-2026-1000')
+
+
+def test_queue_respects_investigation_cutoff(corpus):
+    import csv
+    with corpus.scores.open() as f:
+        base = next(csv.DictReader(f))
+    rows = [{**base, 'cve_id': f'CVE-2025-{i+1000}', 'rank': i+1, 'snapshot_month': m} for i, m in enumerate(['2025-02', '2025-03', '2025-12'])]
+    write_csv(corpus.scores, rows)
+    from agent.data import DataTools
+    tools = DataTools(corpus)
+    assert len(tools.queue(10)['items']) == 2
+    with pytest.raises(ValueError, match='snapshot'):
+        tools.queue(10, {'snapshot_month':'2025-12'})
+    corpus.snapshot_month = None
+    assert len(tools.queue(10)['items']) == 3

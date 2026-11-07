@@ -4,8 +4,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 MODEL = "mlx-community/granite-4.0-h-small-4bit"
+MODEL_REVISION = "db4baaa911c39582ab9fdcfc9f43a6bbc343d54a"
 IBM_MODEL = "ibm-granite/granite-4.0-h-small"
 EMBED_MODEL = "ibm-granite/granite-embedding-30m-english"
+EMBED_REVISION = "9b5b096411652ec1189c68fcfb90d0a82c5b45af"
 
 
 @dataclass

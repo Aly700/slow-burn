@@ -101,3 +101,25 @@ def test_decision_cannot_race_a_committed_ticket_intent(tmp_path, monkeypatch):
     s.recover()
     assert s.get(rid)['state'] == 'TICKET_FILED'
     assert len((tmp_path / 'tickets.jsonl').read_text().splitlines()) == 1
+
+
+def test_recovery_records_delivery_after_append_before_final_state(tmp_path, monkeypatch):
+    s, rid = ready(tmp_path)
+    r = s.get(rid)
+    token = s.approve(rid, True)
+    original = s.flush_tickets
+    def crash_after_append():
+        original()
+        raise OSError('simulated stop after durable append')
+    monkeypatch.setattr(s, 'flush_tickets', crash_after_append)
+    with pytest.raises(OSError):
+        s.file_ticket(r['cve_id'], r['briefing_hash'], token)
+    monkeypatch.setattr(s, 'flush_tickets', original)
+    s.recover()
+    s.recover()
+    run = s.get(rid)
+    assert run['state'] == 'TICKET_FILED'
+    deliveries = [c for c in run['tool_results'] if c['tool'] == 'file_fix_ticket' and c['output'].get('allowed')]
+    assert len(deliveries) == 1
+    assert any(t.get('purpose') == 'recovered approved ticket delivery' for t in run['trace'])
+    assert len((tmp_path / 'tickets.jsonl').read_text().splitlines()) == 1

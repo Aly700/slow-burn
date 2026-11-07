@@ -6,7 +6,7 @@ import time
 
 import numpy as np
 
-from .config import EMBED_MODEL, Settings
+from .config import EMBED_MODEL, EMBED_REVISION, Settings
 
 
 class EmbeddingIndex:
@@ -16,7 +16,7 @@ class EmbeddingIndex:
         candidate_ids = sorted(data.load_scores())
         candidate_rows = data.rows("SELECT cve_id,description FROM vulnerabilities WHERE cve_id IN (SELECT unnest(?)) ORDER BY cve_id", [candidate_ids])
         self.texts = [r.get("short_description") or "" for r in self.kev] + [r.get("description") or "" for r in candidate_rows]
-        payload = json.dumps({"model": EMBED_MODEL, "ids": [r["cve_id"] for r in self.kev] + candidate_ids, "texts": self.texts}, sort_keys=True)
+        payload = json.dumps({"model": EMBED_MODEL, "revision": EMBED_REVISION, "ids": [r["cve_id"] for r in self.kev] + candidate_ids, "texts": self.texts}, sort_keys=True)
         key = hashlib.sha256(payload.encode()).hexdigest()[:20]
         self.path = settings.cache / f"granite-embeddings-v1-{key}.npz"
         self.meta_path = self.path.with_suffix(".json")
@@ -33,7 +33,7 @@ class EmbeddingIndex:
         import torch
         from sentence_transformers import SentenceTransformer
         torch.set_num_threads(4)
-        model = SentenceTransformer(EMBED_MODEL, device="cpu", trust_remote_code=False)
+        model = SentenceTransformer(EMBED_MODEL, revision=EMBED_REVISION, device="cpu", trust_remote_code=False)
         model.max_seq_length = 256
         return model
 
@@ -45,7 +45,7 @@ class EmbeddingIndex:
         ids = sorted(data.load_scores())
         candidates = data.rows("SELECT cve_id,description FROM vulnerabilities WHERE cve_id IN (SELECT unnest(?)) ORDER BY cve_id", [ids])
         texts = [r.get("short_description") or "" for r in kev] + [r.get("description") or "" for r in candidates]
-        payload = json.dumps({"model": EMBED_MODEL, "ids": [r["cve_id"] for r in kev] + ids, "texts": texts}, sort_keys=True)
+        payload = json.dumps({"model": EMBED_MODEL, "revision": EMBED_REVISION, "ids": [r["cve_id"] for r in kev] + ids, "texts": texts}, sort_keys=True)
         key = hashlib.sha256(payload.encode()).hexdigest()[:20]
         path = settings.cache / f"granite-embeddings-v1-{key}.npz"
         if path.exists() and path.with_suffix(".json").exists():
@@ -56,7 +56,7 @@ class EmbeddingIndex:
         tmp = path.with_suffix(".building.npz")
         np.savez_compressed(tmp, kev=vectors[:len(kev)], candidates=vectors[len(kev):], ids=np.array([r["cve_id"] for r in candidates]))
         tmp.replace(path)
-        meta = {"model": EMBED_MODEL, "max_length": 256, "normalization": "L2; cosine similarity", "kev_count": len(kev), "candidate_count": len(candidates), "seconds": round(time.monotonic() - start, 3), "content_sha256": hashlib.sha256(payload.encode()).hexdigest()}
+        meta = {"model": EMBED_MODEL, "revision": EMBED_REVISION, "max_length": 256, "normalization": "L2; cosine similarity", "kev_count": len(kev), "candidate_count": len(candidates), "seconds": round(time.monotonic() - start, 3), "content_sha256": hashlib.sha256(payload.encode()).hexdigest()}
         path.with_suffix(".json").write_text(json.dumps(meta, indent=2))
         return meta
 
@@ -71,5 +71,5 @@ class EmbeddingIndex:
         allowed = [i for i, row in enumerate(self.kev) if row["date_added"] <= cutoff and row["cve_id"] != cve_id]
         top = sorted(allowed, key=lambda i: (-float(scores[i]), self.kev[i]["cve_id"]))[:k]
         matches = [{"cve_id": self.kev[i]["cve_id"], "similarity": round(float(scores[i]), 6), "date_added": self.kev[i]["date_added"], "vendor": self.kev[i].get("vendor"), "product": self.kev[i].get("product"), "description": self.kev[i].get("short_description"), "cwe_ids": self.kev[i].get("cwe_ids")} for i in top]
-        return {"cve_id": cve_id, "matches": matches, "catalog_cutoff": cutoff, "embedding_model": self.metadata["model"],
+        return {"cve_id": cve_id, "matches": matches, "catalog_cutoff": cutoff, "embedding_model": self.metadata["model"], "embedding_revision": self.metadata.get("revision"),
                 "warnings": ["Similarity is a description analogy, not proof of exploitation or affected product identity.", "KEV descriptions are from the supplied 2025-12-31 extract; only admission dates can be filtered historically."]}

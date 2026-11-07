@@ -10,6 +10,7 @@ from .cards import ACTIONS, HEADLINES, evidence_cards
 from .config import IBM_MODEL, Settings
 from .evidence import canonical, render_selection, verify
 from .safety import sanitized, scan_payload
+from .store import digest
 
 
 class ToolPlan(BaseModel):
@@ -47,6 +48,7 @@ class Runner:
         start = time.monotonic()
         deadline = start + self.settings.max_seconds
         calls, trace, spans, metrics = [], [], [], {"model_calls": 0, "tool_calls": 0, "json_repairs": 0, "generation_tokens": 0}
+        metrics.update(weights_repo=self.model.name, weights_revision=getattr(self.model, "revision", None))
         self.store.transition(run_id, "INVESTIGATING")
 
         def elapsed():
@@ -139,6 +141,9 @@ class Runner:
             verified, report = verify(selected, calls)
             report["claims_total"] += len(dropped)
             report["dropped"].extend(dropped)
+            self.store.update(run_id, verifier=report)
+            trace.append({"t_ms": elapsed(), "kind": "verifier", "name": "exact_evidence", "input": {"claims": len(selection.claim_ids)},
+                          "output_summary": f"{len(verified)} verified; {len(report['dropped'])} dropped", "duration_ms": 0})
             if not verified:
                 raise ValueError("no verified claims survived")
             # Only canonical evidence-card text can become a factual claim.
@@ -148,10 +153,7 @@ class Runner:
                         "claims": claims, "action": ACTIONS[action_id], "confidence": selection.confidence}
             if spans:
                 briefing["action"] += " Treat the flagged source instructions as untrusted and review them before approving a ticket."
-            trace.append({"t_ms": elapsed(), "kind": "verifier", "name": "exact_evidence", "input": {"claims": len(selection.claim_ids)},
-                          "output_summary": f"{len(claims)} verified; {len(report['dropped'])} dropped", "duration_ms": 0})
-            self.store.update(run_id, verifier=report)
-            briefing_hash = self.store.propose(run_id, briefing)
+            briefing_hash = digest(briefing)
             blocked = await call("file_fix_ticket", {"cve_id": cve, "briefing_hash": briefing_hash, "approval_token": ""}, "mandatory approval-boundary probe")
             if blocked.get("allowed"):
                 raise RuntimeError("write policy violation")
@@ -159,6 +161,7 @@ class Runner:
             self.store.update(run_id, policy={"write_requested": True, "write_allowed": False, "reason": "no human approval for this briefing hash"},
                               injection={"detected": bool(spans), "spans": spans, "write_probe": blocked},
                               metrics={**metrics, "selected_categories": sorted({c["category"] for c in verified}), "confidence_meaning": "triage judgment, not exploitation probability"})
+            self.store.propose(run_id, briefing)
         except Exception as exc:
             save()
             current = self.store.get(run_id)

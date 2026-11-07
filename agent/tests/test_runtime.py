@@ -98,3 +98,50 @@ def test_api_approve_deny_and_trace(corpus):
         assert client.get(f'/runs/{other}/trace').json()['trace']
         assert client.post(f'/runs/{other}/approval', headers={'Origin': 'https://untrusted.example'}, json={'approve': True}).status_code == 403
         assert client.post('/runs', json={'cve_id': '../../private'}).status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_proposal_not_exposed_until_policy_probe_finishes(corpus):
+    from agent.client import ToolClient
+    from agent.runtime import Runner
+    from agent.store import Store
+    store = Store(corpus.state, corpus.tickets)
+    run = store.create('CVE-2025-1000', ScriptedModel.name)
+    entered, release = asyncio.Event(), asyncio.Event()
+    async with ToolClient(corpus) as client:
+        class DelayedProbe:
+            async def call(self, name, args):
+                if name == 'file_fix_ticket':
+                    entered.set()
+                    await release.wait()
+                return await client.call(name, args)
+        task = asyncio.create_task(Runner(corpus, store, ScriptedModel()).run(run['run_id'], DelayedProbe()))
+        await asyncio.wait_for(entered.wait(), 3)
+        try:
+            assert store.get(run['run_id'])['state'] == 'INVESTIGATING'
+        finally:
+            release.set()
+            await task
+
+
+@pytest.mark.asyncio
+async def test_all_unknown_claims_fail_and_remain_counted(corpus):
+    from agent.client import ToolClient
+    from agent.model import Completion
+    from agent.runtime import Runner
+    from agent.store import Store
+    class UnknownFacts(ScriptedModel):
+        def complete(self, messages, max_tokens, deadline):
+            if json.loads(messages[-1]['content'])['phase'] == 'tools':
+                return super().complete(messages, max_tokens, deadline)
+            return Completion(json.dumps({'verdict':'fix_now', 'claim_ids':['fabricated'], 'action_id':'remediate', 'confidence':.9}), {})
+    store = Store(corpus.state, corpus.tickets)
+    run = store.create('CVE-2025-1000', UnknownFacts.name)
+    async with ToolClient(corpus) as client:
+        await Runner(corpus, store, UnknownFacts()).run(run['run_id'], client)
+    result = store.get(run['run_id'])
+    assert result['state'] == 'FAILED'
+    assert result['briefing'] is None
+    assert result['verifier']['claims_total'] == 1
+    assert result['verifier']['claims_verified'] == 0
+    assert result['verifier']['dropped'][0]['id'] == 'fabricated'

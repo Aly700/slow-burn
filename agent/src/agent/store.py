@@ -142,6 +142,7 @@ class Store:
             return token
 
     def file_ticket(self, cve_id, briefing_hash, approval_token):
+        operation_started = time.monotonic()
         token_hash = hashlib.sha256(approval_token.encode()).hexdigest()
         with self.db() as db:
             db.execute("BEGIN IMMEDIATE")
@@ -164,16 +165,30 @@ class Store:
         with self.db() as db:
             db.execute("BEGIN IMMEDIATE")
             run = self._get(db, approval[0])
-            if run["state"] == "WAITING_APPROVAL":
-                self._transition(run, "TICKET_FILED")
-            run["ticket"] = {k: ticket[k] for k in ("ticket_id", "idempotency_key", "destination")}
-            run["policy"] = {"write_requested": True, "write_allowed": True, "reason": "human approved this immutable briefing"}
+            self._finalize_ticket(run, ticket, round((time.monotonic()-operation_started)*1000))
             self._put(db, run)
         return ticket
 
+    def _finalize_ticket(self, run, ticket, duration_ms=0, recovered=False):
+        if run["state"] == "WAITING_APPROVAL":
+            self._transition(run, "TICKET_FILED")
+        run["ticket"] = {k: ticket[k] for k in ("ticket_id", "idempotency_key", "destination")}
+        run["policy"] = {"write_requested": True, "write_allowed": True,
+                         "reason": "recovered approved ticket from durable outbox" if recovered else "human approved this immutable briefing"}
+        call_id = f"t{len(run['tool_results'])+1}"
+        output = {"allowed": True, **run["ticket"]}
+        inputs = {"cve_id": run["cve_id"], "briefing_hash": run["briefing_hash"]}
+        run["tool_results"].append({"call_id": call_id, "tool": "file_fix_ticket", "input": inputs, "output": output})
+        run["trace"].append({"t_ms": round((datetime.now(timezone.utc)-datetime.fromisoformat(run["started_at"])).total_seconds()*1000),
+                             "kind": "tool", "name": "file_fix_ticket", "input": {**inputs, "approval_token": "[redacted]"},
+                             "call_id": call_id, "output_summary": canonical(output), "duration_ms": duration_ms,
+                             "purpose": "recovered approved ticket delivery" if recovered else "human-approved ticket delivery"})
+
     def flush_tickets(self):
         # Transactional outbox plus a file lock closes the append/retry crash window.
-        with self.tickets.with_suffix(".lock").open("a") as lock:
+        lock_dir = self.tickets.parent / "cache"
+        lock_dir.mkdir(parents=True, exist_ok=True)
+        with (lock_dir / (self.tickets.stem + ".lock")).open("a") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
             with self.db() as db:
                 rows = db.execute("SELECT body FROM tickets ORDER BY rowid").fetchall()
@@ -210,7 +225,5 @@ class Store:
                     key = run["cve_id"] + ":" + run["briefing_hash"]
                     ticket = db.execute("SELECT body FROM tickets WHERE idempotency_key=?", (key,)).fetchone()
                     if ticket and run.get("ticket_intent") and run.get("approval", {}).get("approved"):
-                        self._transition(run, "TICKET_FILED")
-                        run["ticket"] = json.loads(ticket[0])
-                        run["policy"] = {"write_requested": True, "write_allowed": True, "reason": "recovered approved ticket from durable outbox"}
+                        self._finalize_ticket(run, json.loads(ticket[0]), recovered=True)
                         self._put(db, run)

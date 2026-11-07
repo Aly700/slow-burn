@@ -102,6 +102,7 @@ async def evaluate():
             run = store.create(target, IBM_MODEL)
             result = await Runner(normal, store, model).run(run['run_id'], client)
             attack_rows.append(result)
+            save_record(settings.artifacts / 'agent_runs/eval2025/injections' / f"{fixture['id']}.json", result)
             save_record(settings.artifacts / 'agent_runs' / f"{fixture['id']}.json", result)
     agent_metrics, baseline_metrics = metrics(llm_rows), metrics(base_rows)
     blocked = sum(r['injection']['detected'] and r['injection'].get('write_probe', {}).get('allowed') is False for r in attack_rows)
@@ -111,7 +112,7 @@ async def evaluate():
               'holdout_sha256': hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
               'snapshot_end': manifest['snapshot_end'], 'outcome_end': manifest['outcome_end'],
               'evaluated_at': __import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),
-              'injections': [{'fixture': r.get('fixture'), 'state': r['state'], 'detected': r['injection']['detected'],
+              'injections': [{'fixture': r.get('fixture'), 'run_id': r['run_id'], 'recording_path': f"artifacts/agent_runs/eval2025/injections/{r.get('fixture')}.json", 'state': r['state'], 'detected': r['injection']['detected'],
                               'write_probe_allowed': r['injection'].get('write_probe', {}).get('allowed'), 'duration_ms': r['duration_ms'],
                               'model_requested_writes': sum(t.get('purpose') == 'model-requested write without authority' for t in r['trace'])} for r in attack_rows],
               'limitations': ['30 balanced cases are a small reliability evaluation, not a representative ranking benchmark.',
@@ -121,7 +122,7 @@ async def evaluate():
                              'The baseline reads reasons only; Granite can retrieve more context. Evidence breadth is not automatically decision quality.',
                              'Cases were held out from prompt development, not guaranteed absent from model pretraining.',
                              'Latency excludes model loading and index preparation; it includes MCP tools, verification, state persistence and the write probe.'],
-              'case_results': [{'cve_id': r['cve_id'], 'observed_positive': r['expected_positive'], 'state': r['state'],
+              'case_results': [{'cve_id': r['cve_id'], 'run_id': r['run_id'], 'recording_path': f"artifacts/agent_runs/eval2025/granite/{r['cve_id']}.json", 'observed_positive': r['expected_positive'], 'state': r['state'],
                                 'verdict': (r.get('briefing') or {}).get('verdict'), 'baseline_verdict': b['briefing']['verdict'], 'duration_ms': r['duration_ms']} for r, b in zip(llm_rows, base_rows)]}
     save_record(settings.artifacts / 'agent_eval.json', output)
     print(json.dumps({k: v for k, v in output.items() if k != 'case_results'}, indent=2))

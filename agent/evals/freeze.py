@@ -39,7 +39,7 @@ def main():
                 'negative_label': 'Not recorded in the provided KEV by 2025-12-31; does not imply never exploited.',
                 'cases': cases}
     path.write_text(json.dumps(manifest, indent=2) + '\n')
-    fields = ['rank','cve_id','published','snapshot_month','score','epss','any_exploit','exploitdb','metasploit','nuclei','poc_github','cvss3_score','attack_vector','cwe_ids','assigner','description','reasons']
+    fields = ['rank','cve_id','published','snapshot_month','score','epss','any_exploit','exploitdb','metasploit','nuclei','poc_github','cvss3_score','attack_vector','cwe_ids','assigner','description','reasons','ranking_kind']
     with (BASE / 'heldout_scores_2025.csv').open('w') as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
@@ -49,7 +49,7 @@ def main():
             reasons = [{'feature': 'epss', 'label': 'Snapshot EPSS', 'value': epss, 'contribution': 0.0},
                        {'feature': 'any_exploit', 'label': 'Any public exploit or scanner flag', 'value': any_exploit, 'contribution': 0.0}]
             score_row = {k: r.get(k) for k in fields}
-            score_row.update(rank=i, snapshot_month='2025-09', score=epss or 0, any_exploit=any_exploit, reasons=json.dumps(reasons))
+            score_row.update(ranking_kind='evaluation_reasons_only', rank=i, snapshot_month='2025-09', score=epss or 0, any_exploit=any_exploit, reasons=json.dumps(reasons))
             writer.writerow(score_row)
     print(json.dumps({'cases': len(cases), 'positive': 15, 'negative': 15, 'manifest_sha256': hashlib.sha256(path.read_bytes()).hexdigest()}))
 

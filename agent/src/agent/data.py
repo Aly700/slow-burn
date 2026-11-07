@@ -154,13 +154,21 @@ class DataTools:
         validate_cve(cve_id)
         rows = self.load_scores()
         row = rows.get(cve_id)
-        if not row or (self.settings.snapshot_month and row["snapshot_month"] != self.settings.snapshot_month):
+        if not row:
             return {"cve_id": cve_id, "rank": None, "score": None, "reasons": [], "score_is_probability": False,
                     "score_file_sha256": self.score_hash, "warnings": ["No model ranking for this historical snapshot."]}
+        expected_month = self.active_month if self.active_cve == cve_id else self.snapshot(cve_id)
+        if row["snapshot_month"] != expected_month:
+            raise ValueError("ranking snapshot does not match the CVE's scoreboard or investigation snapshot")
         score = number(row["score"])
         reasons = json.loads(row["reasons"])
         if not isinstance(reasons, list) or len(reasons) > 5:
             raise ValueError("scores reasons must be a JSON list with at most five entries")
+        if row.get("ranking_kind") == "evaluation_reasons_only":
+            return {"cve_id": cve_id, "rank": None, "score": None, "snapshot_month": row["snapshot_month"],
+                    "reasons": reasons, "score_is_probability": False, "score_file_sha256": self.score_hash,
+                    "ranking_kind": "evaluation_reasons_only",
+                    "warnings": ["Historical fixture supplies snapshot reasons only; no model rank or KEV probability is available."]}
         warnings = []
         valid_score = score is not None and 0 <= score <= 1
         if not valid_score:
@@ -223,9 +231,16 @@ class DataTools:
         filters = filters or {}
         if set(filters) - {"snapshot_month", "any_exploit", "min_epss"}:
             raise ValueError("unsupported queue filter")
+        cutoff_month = self.active_month or self.settings.snapshot_month
+        if "snapshot_month" in filters:
+            month_end(filters["snapshot_month"])
+            if cutoff_month and filters["snapshot_month"] > cutoff_month:
+                raise ValueError("queue filter is after the investigation snapshot")
         rows = sorted(self.load_scores().values(), key=lambda r: int(r["rank"]))
         result = []
         for r in rows:
+            if cutoff_month and r["snapshot_month"] > cutoff_month:
+                continue
             if "snapshot_month" in filters and r["snapshot_month"] != filters["snapshot_month"]:
                 continue
             if "any_exploit" in filters and int(r.get("any_exploit", 0)) != int(filters["any_exploit"]):
@@ -235,4 +250,5 @@ class DataTools:
             result.append({"cve_id": r["cve_id"], "rank": int(r["rank"]), "snapshot_month": r["snapshot_month"], "score": number(r["score"])})
             if len(result) == n:
                 break
-        return {"items": result, "score_file_sha256": self.score_hash}
+        return {"items": result, "score_file_sha256": self.score_hash, "snapshot_cutoff": cutoff_month,
+                "rank_scope": "supplied benchmark-wide ranking, not a historical observation"}

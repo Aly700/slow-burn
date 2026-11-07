@@ -96,7 +96,7 @@ def create_app(settings=None, model=None):
             raise HTTPException(503, "investigation worker unavailable")
         if queue.full():
             raise HTTPException(429, "investigation queue is full")
-        source = IBM_MODEL if isinstance(model, Granite) else model.name
+        source = getattr(model, "source_name", model.name)
         run = store.create(body.cve_id, source)
         queue.put_nowait(run["run_id"])
         return run
