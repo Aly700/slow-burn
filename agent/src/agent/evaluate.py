@@ -53,6 +53,9 @@ def metrics(rows):
 async def evaluate():
     manifest_path = EVAL_DIR / 'heldout_2025.json'
     manifest = json.loads(manifest_path.read_text())
+    legacy = json.loads((EVAL_DIR / 'granite_decides_reference.json').read_text())
+    assert legacy['holdout_sha256'] == hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+    legacy_cases = {r['cve_id']: r for r in legacy['case_results']}
     root = Settings().root
     os.environ['TRIAGE_STATE_DB'] = str(root / 'artifacts/cache/eval-state.sqlite')
     os.environ['TRIAGE_TICKETS'] = str(root / 'artifacts/cache/eval-tickets.jsonl')
@@ -89,7 +92,7 @@ async def evaluate():
             result['expected_positive'] = case['added_to_kev_by_2025_12_31']
             result['delivered_valid'] = len(verify((result.get('briefing') or {}).get('claims', []), result['tool_results'])[0])
             llm_rows.append(result)
-            save_record(settings.artifacts / 'agent_runs/eval2025/granite' / f'{cve}.json', result)
+            save_record(settings.artifacts / 'agent_runs/eval2025/policy_granite' / f'{cve}.json', result)
             print(json.dumps({'case': len(llm_rows), 'cve_id': cve, 'state': result['state'], 'latency_ms': result['duration_ms'], 'error': result.get('error')}), flush=True)
     attack_rows = []
     normal = Settings(snapshot_month=None, score_path=None)
@@ -102,28 +105,35 @@ async def evaluate():
             run = store.create(target, IBM_MODEL)
             result = await Runner(normal, store, model).run(run['run_id'], client)
             attack_rows.append(result)
-            save_record(settings.artifacts / 'agent_runs/eval2025/injections' / f"{fixture['id']}.json", result)
+            save_record(settings.artifacts / 'agent_runs/eval2025/policy_injections' / f"{fixture['id']}.json", result)
             save_record(settings.artifacts / 'agent_runs' / f"{fixture['id']}.json", result)
     agent_metrics, baseline_metrics = metrics(llm_rows), metrics(base_rows)
     blocked = sum(r['injection']['detected'] and r['injection'].get('write_probe', {}).get('allowed') is False for r in attack_rows)
     output = {'cases': 30, 'evidence_fidelity': agent_metrics['evidence_fidelity'], 'unsafe_action_rate': agent_metrics['unsafe_action_rate'],
               'injection_cases': len(attack_rows), 'injection_blocked': blocked,
-              'baseline': baseline_metrics, 'agent': agent_metrics, 'model': IBM_MODEL, 'runtime_weights': settings.model,
+              'baseline': baseline_metrics, 'agent': legacy['metrics'], 'model': IBM_MODEL, 'runtime_weights': settings.model,
+              'granite_decides': legacy['metrics'], 'policy_granite': agent_metrics, 'active_arm': 'policy_granite',
+              'granite_decides_reference': {'source_commit':legacy['source_commit'], 'evaluated_at':legacy['evaluated_at'], 'path':'agent/evals/granite_decides_reference.json'},
+              'arms': [{'id':'template','name':'Reasons-only template', **baseline_metrics},
+                       {'id':'granite_decides','name':'Granite decides (preserved)', **legacy['metrics']},
+                       {'id':'policy_granite','name':'Policy decides + Granite briefs', **agent_metrics}],
               'holdout_sha256': hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
               'snapshot_end': manifest['snapshot_end'], 'outcome_end': manifest['outcome_end'],
               'evaluated_at': __import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),
-              'injections': [{'fixture': r.get('fixture'), 'run_id': r['run_id'], 'recording_path': f"artifacts/agent_runs/eval2025/injections/{r.get('fixture')}.json", 'state': r['state'], 'detected': r['injection']['detected'],
+              'injections': [{'fixture': r.get('fixture'), 'run_id': r['run_id'], 'recording_path': f"artifacts/agent_runs/eval2025/policy_injections/{r.get('fixture')}.json", 'state': r['state'], 'detected': r['injection']['detected'],
                               'write_probe_allowed': r['injection'].get('write_probe', {}).get('allowed'), 'duration_ms': r['duration_ms'],
                               'model_requested_writes': sum(t.get('purpose') == 'model-requested write without authority' for t in r['trace'])} for r in attack_rows],
               'limitations': ['30 balanced cases are a small reliability evaluation, not a representative ranking benchmark.',
                              'Controls were not in KEV through 2025-12-31; exploitation can be unreported.',
-                             'Both methods use deterministic factual rendering; fidelity is enforced by architecture.',
+                             'All three arms use deterministic factual rendering; fidelity is enforced by architecture.',
+                             'The old Granite-decides arm retains its measured numbers and recordings from commit 9ac418c.',
+                             'This is a revision comparison on the same frozen cases after the earlier results were known, not a fresh unseen confirmation set.',
                              'Current NVD descriptions, CVSS and CWE metadata are not historical snapshots.',
                              'The baseline reads reasons only; Granite can retrieve more context. Evidence breadth is not automatically decision quality.',
                              'Cases were held out from prompt development, not guaranteed absent from model pretraining.',
                              'Latency excludes model loading and index preparation; it includes MCP tools, verification, state persistence and the write probe.'],
-              'case_results': [{'cve_id': r['cve_id'], 'run_id': r['run_id'], 'recording_path': f"artifacts/agent_runs/eval2025/granite/{r['cve_id']}.json", 'observed_positive': r['expected_positive'], 'state': r['state'],
-                                'verdict': (r.get('briefing') or {}).get('verdict'), 'baseline_verdict': b['briefing']['verdict'], 'duration_ms': r['duration_ms']} for r, b in zip(llm_rows, base_rows)]}
+              'case_results': [{'cve_id': r['cve_id'], 'run_id': r['run_id'], 'recording_path': f"artifacts/agent_runs/eval2025/policy_granite/{r['cve_id']}.json", 'observed_positive': r['expected_positive'], 'state': r['state'],
+                                'verdict': (r.get('briefing') or {}).get('verdict'), 'baseline_verdict': b['briefing']['verdict'], 'granite_decides_verdict': legacy_cases[r['cve_id']]['verdict'], 'duration_ms': r['duration_ms']} for r, b in zip(llm_rows, base_rows)]}
     save_record(settings.artifacts / 'agent_eval.json', output)
     print(json.dumps({k: v for k, v in output.items() if k != 'case_results'}, indent=2))
     if settings.tickets.exists() and settings.tickets.stat().st_size:

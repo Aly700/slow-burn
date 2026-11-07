@@ -26,11 +26,11 @@ Recording rebuilds the content-addressed embedding cache when the model lane cha
 
 - `POST /runs` with `{"cve_id":"CVE-2026-8037"}` returns HTTP 202 and the durable run, initially `RECEIVED`.
 - `GET /runs/{run_id}` returns the run, briefing hash, verifier result, injection flags and policy state.
-- `POST /runs/{run_id}/approval` with `{"approve":true}` issues an internal capability for the exact immutable briefing and calls the MCP write tool. `false` moves to `REJECTED`. An optional `briefing_hash` rejects a decision based on a different displayed proposal.
+- `POST /runs/{run_id}/approval` with `{"approve":true}` or the web page's `{"approved":true}` issues an internal capability for the exact immutable briefing and calls the MCP write tool. `false` moves to `REJECTED`. An optional `briefing_hash` rejects a decision based on a different displayed proposal.
 - `GET /runs/{run_id}/trace` returns trace events and the full tool-result ledger needed to independently resolve every citation.
 - `GET /health` reports model readiness and queue depth.
 
-An approval token is never returned to the browser, stored in a trace, or passed to Granite. Supported browser origins are localhost ports 3000, 3001 and 8765. This is a trusted local-operator demo boundary, with no identity provider; do not expose it publicly without authentication and user-scoped authorization.
+An approval token is never returned to the browser, stored in a trace, or passed to Granite. Supported browser origins are localhost and 127.0.0.1 on ports 3000, 3001, 4317, 5173 and 8765. Concurrent repeat approvals return the same ticket. This is a trusted local-operator demo boundary, with no identity provider; do not expose it publicly without authentication and user-scoped authorization.
 
 ## Tools
 
@@ -50,13 +50,27 @@ A stdio connection is an investigation session; call `get_cve` before `vendor_hi
 
 ## Evidence, durability and limits
 
-Granite selects read tools, then selects evidence cards and a verdict through strict JSON schemas. One repair is allowed per stage; the entire run has at most four model calls, ten tool calls and a 55-second deadline. A failed model or empty verified evidence produces `FAILED`, never an automatic template success. Native inference checks the deadline between generated tokens; the API also bounds its wait.
+Granite selects read tools, then selects evidence cards and source-backed headline/action choices through strict JSON schemas. Verdict and urgency come only from `src/agent/priority.py`. A retrieved history or analogy card is required when available; this is an enforced briefing requirement, not evidence of unrestricted reasoning. One repair is allowed per stage; the entire run has at most four model calls, ten tool calls and a 55-second deadline. A failed model or empty verified evidence produces `FAILED`, never an automatic template success. Native inference checks the deadline between generated tokens; the API also bounds its wait.
 
-Factual sentences are rendered from exact tool fields. The verifier checks tool name, field path, JSON value/type and optional call ID against this run's result ledger. Unknown or repeated fact IDs are dropped and counted. This proves data fidelity, not that source data is correct, and avoids claiming that a free-text citation checker proves semantic entailment. Headlines contain a recommendation and CVE ID; actions are bounded operational recommendations rather than invented patch versions. Confidence is triage judgment, not a calibrated exploitation probability.
+Factual sentences are rendered from exact tool fields. The verifier checks tool name, field path, JSON value/type and optional call ID against this run's result ledger. Unknown or repeated fact IDs are dropped and counted. This proves data fidelity, not that source data is correct, and avoids claiming that a free-text citation checker proves semantic entailment. Description-derived product, capability, prerequisites and fixes carry exact source excerpts. Headlines and actions have their own verified evidence references. Explicitly named fixes may be quoted; negated, future or unrelated fixes are rejected, and version boundaries alone never imply a fixed release. Otherwise actions name the affected service or endpoint and a concrete exposure-control step. Actual deployment exposure remains unknown. Confidence describes briefing evidence, not a calibrated exploitation probability.
 
 SQLite uses transactional state changes, a hashed 256-bit approval capability with a 15-minute expiry, and a unique `cve_id:briefing_hash` ticket key. A durable outbox and file lock make retries safe even across an interrupted append. Recovery marks interrupted investigations `FAILED`, preserves pending approvals, and finishes approved delivery intents. Rejection is terminal. The model never receives the token issuance operation.
 
 The runtime database, CSV cache and embedding vectors live under gitignored `artifacts/cache/`. Tickets are local demo outputs and should not be committed as production incident records. A separate test/evaluation ledger stays under the cache. No runtime tool fetches external vulnerability information.
+
+## Deterministic priority
+
+Thresholds and urgency labels live in one place, `src/agent/priority.py`; each briefing records the policy version, inputs, triggers and thresholds.
+
+| Verdict | Any qualifying signal | Urgency / review window |
+| --- | --- | --- |
+| `fix_now` | Rank ≤ 500; valid probability score ≥ 0.10; EPSS ≥ 0.10; any recorded public exploit/scanner signal | Urgent / emergency change process |
+| `watch` | Rank ≤ 2,000; valid probability score ≥ 0.01; EPSS ≥ 0.01 | Scheduled / next maintenance window |
+| `defer` | Neither tier qualifies | Routine / normal patch cycle |
+
+The first matching tier wins. Scores outside [0,1] and unavailable historical ranks are ignored. Nuclei is a scanner-template signal, not proof of exploitation. Live priority reads actual snapshot signals, so new feature names in the reasons column do not break recording or alter the policy unexpectedly.
+
+The evaluation has three arms. Existing `baseline` and `agent` keys remain; `agent` preserves the old Granite-decides result. Added `granite_decides`, `policy_granite`, `active_arm` and `arms` expose the comparison. Original Granite-decides recordings are preserved under `eval2025/granite/`; new runs use `eval2025/policy_granite/`. Reusing the same frozen cases after the first results were known makes this a revision comparison, not a fresh unseen validation set.
 
 ## Data limitations
 

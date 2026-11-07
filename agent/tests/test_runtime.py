@@ -15,7 +15,7 @@ class ScriptedModel:
         if body['phase'] == 'tools':
             output = {'tools': ['vendor_history', 'signal_timeline']}
         else:
-            output = {'verdict': 'watch', 'claim_ids': [c['id'] for c in body['facts'][:3]], 'action_id': 'investigate', 'confidence': .5}
+            output = {'claim_ids': [c['id'] for c in body['facts'][:3]], 'context_id':body['historical_context'][0]['id'] if body['historical_context'] else None, 'headline_id':body['headlines'][0]['id'], 'action_id':body['actions'][0]['id'], 'confidence':.5}
         return Completion(json.dumps(output), {'generation_tokens': 40, 'generation_tps': 1000.0})
 
 
@@ -133,8 +133,9 @@ async def test_all_unknown_claims_fail_and_remain_counted(corpus):
     class UnknownFacts(ScriptedModel):
         def complete(self, messages, max_tokens, deadline):
             if json.loads(messages[-1]['content'])['phase'] == 'tools':
-                return super().complete(messages, max_tokens, deadline)
-            return Completion(json.dumps({'verdict':'fix_now', 'claim_ids':['fabricated'], 'action_id':'remediate', 'confidence':.9}), {})
+                return Completion(json.dumps({'tools':['queue']}), {})
+            body = json.loads(messages[-1]['content'])
+            return Completion(json.dumps({'claim_ids':['fabricated'], 'context_id':body['historical_context'][0]['id'] if body['historical_context'] else None, 'headline_id':body['headlines'][0]['id'], 'action_id':body['actions'][0]['id'], 'confidence':.9}), {})
     store = Store(corpus.state, corpus.tickets)
     run = store.create('CVE-2025-1000', UnknownFacts.name)
     async with ToolClient(corpus) as client:
@@ -145,3 +146,109 @@ async def test_all_unknown_claims_fail_and_remain_counted(corpus):
     assert result['verifier']['claims_total'] == 1
     assert result['verifier']['claims_verified'] == 0
     assert result['verifier']['dropped'][0]['id'] == 'fabricated'
+
+
+def test_approval_aliases_and_vite_origins(corpus):
+    from fastapi.testclient import TestClient
+    from agent.api import Approval, ORIGINS, create_app
+    assert Approval.model_validate({'approved':True}).approve is True
+    assert Approval.model_validate({'approve':False}).approve is False
+    with pytest.raises(ValueError):
+        Approval.model_validate({'approve':True,'approved':False})
+    expected = [f'http://{host}:{port}' for host in ['localhost','127.0.0.1'] for port in [4317,5173]]
+    assert set(expected) <= set(ORIGINS)
+    with TestClient(create_app(corpus, ScriptedModel())) as client:
+        for origin in expected:
+            response = client.options('/runs/x/approval', headers={'Origin':origin,'Access-Control-Request-Method':'POST','Access-Control-Request-Headers':'content-type'})
+            assert response.status_code == 200
+            assert response.headers['access-control-allow-origin'] == origin
+
+
+@pytest.mark.asyncio
+async def test_model_cannot_override_policy_verdict(corpus):
+    from agent.client import ToolClient
+    from agent.model import Completion
+    from agent.runtime import Runner
+    from agent.store import Store
+    class Overrides(ScriptedModel):
+        def complete(self, messages, max_tokens, deadline):
+            result = super().complete(messages,max_tokens,deadline)
+            if json.loads(messages[-1]['content'])['phase'] == 'briefing':
+                value=json.loads(result.text); value['verdict']='defer'
+                return Completion(json.dumps(value), {})
+            return result
+    store=Store(corpus.state,corpus.tickets)
+    run=store.create('CVE-2025-1000',Overrides.name)
+    async with ToolClient(corpus) as client:
+        result=await Runner(corpus,store,Overrides()).run(run['run_id'],client)
+    assert result['state']=='FAILED'
+    assert result['briefing'] is None
+
+
+@pytest.mark.asyncio
+async def test_json_repair_identifies_missing_historical_context(corpus):
+    from agent.client import ToolClient
+    from agent.model import Completion
+    from agent.runtime import Runner
+    from agent.store import Store
+    class RepairsContext(ScriptedModel):
+        def complete(self, messages, max_tokens, deadline):
+            body = json.loads(messages[-1]['content'])
+            result = super().complete(messages, max_tokens, deadline)
+            if body['phase'] == 'briefing':
+                if 'repair' not in body:
+                    value = json.loads(result.text)
+                    value['context_id'] = None
+                    return Completion(json.dumps(value), {})
+                assert 'historical context' in body['repair']['error']
+            return result
+    store = Store(corpus.state, corpus.tickets)
+    run = store.create('CVE-2025-1000', RepairsContext.name)
+    async with ToolClient(corpus) as client:
+        result = await Runner(corpus, store, RepairsContext()).run(run['run_id'], client)
+    assert result['state'] == 'WAITING_APPROVAL'
+    assert result['metrics']['json_repairs'] == 1
+    assert 'history' in result['metrics']['selected_categories']
+
+
+@pytest.mark.asyncio
+async def test_new_ranking_feature_names_do_not_break_briefings(corpus):
+    import csv
+    from test_data import write_csv
+    from agent.client import ToolClient
+    from agent.runtime import Runner
+    from agent.store import Store
+    with corpus.scores.open() as stream:
+        rows = list(csv.DictReader(stream))
+    rows[0]['reasons'] = json.dumps([{'feature':'new_semantic_risk_feature', 'label':'New model evidence', 'value':.42, 'contribution':.8}])
+    write_csv(corpus.scores, rows)
+    store = Store(corpus.state, corpus.tickets)
+    run = store.create('CVE-2025-1000', ScriptedModel.name)
+    async with ToolClient(corpus) as client:
+        result = await Runner(corpus, store, ScriptedModel()).run(run['run_id'], client)
+    assert result['state'] == 'WAITING_APPROVAL'
+    assert result['briefing']['verdict'] == 'fix_now'
+    assert result['verifier']['claims_verified'] > 0
+
+
+def test_concurrent_web_approvals_return_the_same_ticket(corpus):
+    import time
+    from concurrent.futures import ThreadPoolExecutor
+    from fastapi.testclient import TestClient
+    from agent.api import create_app
+    app=create_app(corpus,ScriptedModel())
+    with TestClient(app) as client:
+        rid=client.post('/runs',json={'cve_id':'CVE-2025-1000'}).json()['run_id']
+        for _ in range(100):
+            if client.get('/runs/'+rid).json()['state']=='WAITING_APPROVAL': break
+            time.sleep(.01)
+        original=app.state.client.call
+        async def delayed(name,args):
+            if name=='file_fix_ticket': await asyncio.sleep(.03)
+            return await original(name,args)
+        app.state.client.call=delayed
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            responses=list(pool.map(lambda _:client.post(f'/runs/{rid}/approval',json={'approved':True}),range(2)))
+        assert [r.status_code for r in responses]==[200,200]
+        assert len({r.json()['ticket']['ticket_id'] for r in responses})==1
+        assert len(corpus.tickets.read_text().splitlines())==1

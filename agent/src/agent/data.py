@@ -190,7 +190,9 @@ class DataTools:
         matches = [r for r in candidates if norm(r["vendor"]) == norm(vendor)]
         counts = Counter(c for r in matches for c in (r.get("cwe_ids") or "").split(";") if c)
         vintage_ok = cutoff >= "2025-12-31"
+        latest = max(matches, key=lambda r: (r["date_added"], r["cve_id"]), default=None)
         return {"vendor": vendor, "prior_kev": len(matches), "last_added": max((r["date_added"] for r in matches), default=None),
+                "latest_cve": latest["cve_id"] if latest else None,
                 "ransomware_known": sum(r.get("known_ransomware_use") == "Known" for r in matches) if vintage_ok else None,
                 "ransomware_known_as_of": "2025-12-31", "snapshot_end": month_end(self.active_month), "catalog_cutoff": cutoff,
                 "top_cwes": [{"cwe_id": c, "count": n} for c, n in counts.most_common(5)],

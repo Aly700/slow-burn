@@ -4,7 +4,7 @@ import os
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, ConfigDict, Field, StrictBool
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, model_validator
 
 from .client import ToolClient
 from .config import IBM_MODEL, Settings
@@ -13,6 +13,7 @@ from .runtime import Runner
 from .store import Store
 
 ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3001", "http://127.0.0.1:3001", "http://localhost:8765", "http://127.0.0.1:8765"]
+ORIGINS += [f"http://{host}:{port}" for host in ("localhost", "127.0.0.1") for port in (4317, 5173)]
 
 
 class StartRun(BaseModel):
@@ -25,12 +26,23 @@ class Approval(BaseModel):
     approve: StrictBool
     briefing_hash: str | None = None
 
+    @model_validator(mode="before")
+    @classmethod
+    def accept_web_alias(cls, value):
+        if isinstance(value, dict) and "approved" in value:
+            value = dict(value)
+            if "approve" in value and value["approve"] != value["approved"]:
+                raise ValueError("conflicting approval decisions")
+            value["approve"] = value.pop("approved")
+        return value
+
 
 def create_app(settings=None, model=None):
     settings = settings or Settings()
     model = model or Granite(settings.model)
     store = Store(settings.state, settings.tickets)
     queue = asyncio.Queue(maxsize=16)
+    approval_lock = asyncio.Lock()
 
     @asynccontextmanager
     async def lifespan(app):
@@ -110,8 +122,7 @@ def create_app(settings=None, model=None):
         run = get_run(run_id)
         return {"run_id": run_id, "trace": run["trace"], "tool_results": run["tool_results"]}
 
-    @app.post("/runs/{run_id}/approval")
-    async def approval(run_id: str, body: Approval):
+    async def apply_decision(run_id: str, body: Approval):
         run = get_run(run_id)
         if body.briefing_hash and body.briefing_hash != run.get("briefing_hash"):
             raise HTTPException(409, "approval does not match the displayed briefing hash")
@@ -131,6 +142,11 @@ def create_app(settings=None, model=None):
             if not result.get("allowed"):
                 raise HTTPException(409, result.get("reason", "write denied"))
         return get_run(run_id)
+
+    @app.post("/runs/{run_id}/approval")
+    async def approval(run_id: str, body: Approval):
+        async with approval_lock:
+            return await apply_decision(run_id, body)
 
     return app
 
