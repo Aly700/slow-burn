@@ -1,28 +1,384 @@
 {
-  "_status": "seed numbers from the first 2025 exploration; the model lane regenerates this file with the same keys",
   "headline": {
-    "ours_hits_top500_2025_backtest": null,
-    "baselines_2025_backtest": {"cvss_first": 5, "epss_first": 10, "exploit_then_epss": 18},
-    "benchmark_2026_reference": {"cvss_first": 7, "epss_first": 6, "exploit_then_epss": 8},
-    "pool_2025": 48040,
-    "positives_2025": 55
+    "ours_hits_top500_2025_backtest": 14,
+    "baselines_2025_backtest": {
+      "cvss_first": 5,
+      "epss_first": 10,
+      "exploit_then_epss": 19
+    },
+    "benchmark_2026_reference": {
+      "cvss_first": 7,
+      "epss_first": 6,
+      "exploit_then_epss": 8
+    },
+    "pool_2025": 48039,
+    "positives_2025": 55,
+    "ours_hits_equal_workload": 14,
+    "equal_workload_budget": 331,
+    "comparison_note": "2025 is a development backtest. The 2026 reference is organizer-supplied; our 2026 hit count is unknown."
   },
   "two_clocks": {
     "kev_2025_total": 165,
     "first_month": 110,
     "later": 55,
-    "later_lag_days": {"min": 2, "median": 45, "max": 322},
-    "lag_hist": []
+    "later_lag_days": {
+      "min": 1,
+      "median": 33.0,
+      "max": 297
+    },
+    "lag_hist": [
+      {
+        "bucket": "0-30 days",
+        "n": 25
+      },
+      {
+        "bucket": "31-60 days",
+        "n": 17
+      },
+      {
+        "bucket": "61-90 days",
+        "n": 2
+      },
+      {
+        "bucket": "91-180 days",
+        "n": 6
+      },
+      {
+        "bucket": "181-365 days",
+        "n": 5
+      },
+      {
+        "bucket": "366+ days",
+        "n": 0
+      }
+    ],
+    "lag_origin": "End of publication month to KEV addition",
+    "publication_to_kev_lag_days": {
+      "min": 2,
+      "median": 45.0,
+      "max": 322
+    },
+    "first_month_share": 0.6666666666666666,
+    "added_before_publication": 7,
+    "note": "These are catalog clocks, not first-attack timestamps. First-month entries are excluded from the ranking benchmark."
   },
   "signals": [
-    {"name": "Vendor says 'may have been exploited' / 'in the wild'", "n": 33, "hits": 5, "rate": 0.1515, "lift": 133, "leak_risk": "medium"},
-    {"name": "Unauthenticated remote code execution wording", "n": 1713, "hits": 13, "rate": 0.0076, "lift": 6.7, "leak_risk": "low"},
-    {"name": "Path traversal", "n": 1039, "hits": 6, "rate": 0.0058, "lift": 5.1, "leak_risk": "low"},
-    {"name": "Deserialization", "n": 624, "hits": 3, "rate": 0.0048, "lift": 4.2, "leak_risk": "low"},
-    {"name": "Edge device (VPN, firewall, gateway, router, file transfer)", "n": 866, "hits": 4, "rate": 0.0046, "lift": 4.1, "leak_risk": "low"}
+    {
+      "name": "any_exploit present at snapshot",
+      "n": 1084,
+      "hits": 24,
+      "rate": 0.02214022140221402,
+      "lift": 19.338074471653805,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.014922536117901487,
+        0.03273293136927679
+      ],
+      "note": ""
+    },
+    {
+      "name": "exploitdb present at snapshot",
+      "n": 69,
+      "hits": 2,
+      "rate": 0.028985507246376812,
+      "lift": 25.31699604743083,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.007985035233144928,
+        0.09966773461265746
+      ],
+      "note": ""
+    },
+    {
+      "name": "metasploit present at snapshot",
+      "n": 30,
+      "hits": 1,
+      "rate": 0.03333333333333333,
+      "lift": 29.114545454545453,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.0059084379948573795,
+        0.16670751396958874
+      ],
+      "note": ""
+    },
+    {
+      "name": "nuclei present at snapshot",
+      "n": 138,
+      "hits": 11,
+      "rate": 0.07971014492753623,
+      "lift": 69.62173913043478,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.0450894755777049,
+        0.1370968505776684
+      ],
+      "note": ""
+    },
+    {
+      "name": "poc_github present at snapshot",
+      "n": 959,
+      "hits": 21,
+      "rate": 0.021897810218978103,
+      "lift": 19.126343729263436,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.01436636979531386,
+        0.03324436908426924
+      ],
+      "note": ""
+    },
+    {
+      "name": "Vendor has earlier KEV entries (assigner identity)",
+      "n": 8492,
+      "hits": 14,
+      "rate": 0.0016486104569006124,
+      "lift": 1.4399563225281549,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.0009823193515780407,
+        0.0027655847995539675
+      ],
+      "note": "Only known vendor domains are matched; third-party assigning organizations are not treated as vendors."
+    },
+    {
+      "name": "CVE reserved before publication year",
+      "n": 9812,
+      "hits": 9,
+      "rate": 0.0009172441907867916,
+      "lift": 0.8011544305673942,
+      "leak_risk": "low",
+      "rate_95_wilson_interval": [
+        0.00048264675042851294,
+        0.001742491030930958
+      ],
+      "note": ""
+    },
+    {
+      "name": "Current description mentions exploitation",
+      "n": 1283,
+      "hits": 9,
+      "rate": 0.007014809041309431,
+      "lift": 6.126989300644795,
+      "leak_risk": "high",
+      "rate_95_wilson_interval": [
+        0.0036948256502551523,
+        0.01327820350888922
+      ],
+      "note": "Excluded from production; text has no historical timestamp."
+    },
+    {
+      "name": "Remote code or command execution wording",
+      "n": 3721,
+      "hits": 19,
+      "rate": 0.005106154259607632,
+      "lift": 4.459900808678019,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.0032713880593319903,
+        0.007961733907518894
+      ],
+      "note": "Descriptive analysis only; current text may differ from publication text."
+    },
+    {
+      "name": "Unauthenticated access wording",
+      "n": 3846,
+      "hits": 19,
+      "rate": 0.004940197607904316,
+      "lift": 4.3149482342930074,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.003164989701992192,
+        0.007703405506787305
+      ],
+      "note": "Descriptive analysis only; current text may differ from publication text."
+    },
+    {
+      "name": "Path traversal wording",
+      "n": 1039,
+      "hits": 6,
+      "rate": 0.005774783445620789,
+      "lift": 5.043905853530492,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.002649206602116239,
+        0.012541595145723505
+      ],
+      "note": "Descriptive analysis only; current text may differ from publication text."
+    },
+    {
+      "name": "Deserialization wording",
+      "n": 624,
+      "hits": 3,
+      "rate": 0.004807692307692308,
+      "lift": 4.199213286713287,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.0016363383618479103,
+        0.014038952985523784
+      ],
+      "note": "Descriptive analysis only; current text may differ from publication text."
+    },
+    {
+      "name": "Edge device wording",
+      "n": 1057,
+      "hits": 4,
+      "rate": 0.003784295175023652,
+      "lift": 3.3053410165992947,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.0014725689578449237,
+        0.009689889226298683
+      ],
+      "note": "Descriptive analysis only; current text may differ from publication text."
+    },
+    {
+      "name": "Privilege escalation wording",
+      "n": 1255,
+      "hits": 1,
+      "rate": 0.0007968127490039841,
+      "lift": 0.6959652299891343,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.00014066724755893573,
+        0.0044997895025198666
+      ],
+      "note": "Descriptive analysis only; current text may differ from publication text."
+    },
+    {
+      "name": "WordPress wording",
+      "n": 4264,
+      "hits": 0,
+      "rate": 0.0,
+      "lift": 0.0,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        0.0,
+        0.0009001271274922669
+      ],
+      "note": "Descriptive analysis only; current text may differ from publication text."
+    },
+    {
+      "name": "Cross-site scripting wording",
+      "n": 8693,
+      "hits": 1,
+      "rate": 0.00011503508570113885,
+      "lift": 0.10047582694540017,
+      "leak_risk": "medium",
+      "rate_95_wilson_interval": [
+        2.0306283583445943e-05,
+        0.0006513858396811653
+      ],
+      "note": "Descriptive analysis only; current text may differ from publication text."
+    }
   ],
   "deprioritize": [
-    {"name": "WordPress plugins", "n": 4264, "hits": 0, "share_of_pool": 0.089}
+    {
+      "name": "WordPress descriptions in this KEV-ranking task",
+      "n": 4264,
+      "hits": 0,
+      "share_of_pool": 0.08876121484627074,
+      "rate_95_wilson_interval": [
+        0.0,
+        0.0009001271274922669
+      ],
+      "note": "Zero observed later additions is not zero exploitation risk. Do not defer exposed business-critical assets on this finding alone."
+    }
   ],
-  "base_rate_2025": 0.00114
+  "base_rate_2025": 0.0011449030995649369,
+  "censoring": {
+    "training_minimum_followup_days": 90,
+    "excluded_2025_immature": 12759,
+    "note": "Primary includes censored late rows for seed comparability; mature and fixed-90-day results are separate. December has zero follow-up."
+  },
+  "data_quality": {
+    "seed_pool": 48040,
+    "current_pool": 48039,
+    "snapshot_catalog_disagreements": [
+      {
+        "cve_id": "CVE-2025-4664",
+        "snapshot_month": "2025-05"
+      }
+    ],
+    "exploit_rule_hits_with_catalog_only_eligibility": 18,
+    "exploit_rule_hits_with_conservative_eligibility": 19,
+    "difference": "Exclude snapshot in_kev=1 even when the frozen catalog disagrees. This removes a high-ranked unlabelled row and changes the exploit-first top-500 cutoff."
+  },
+  "top500_profile_2026": {
+    "vendors_from_assigner": {
+      "unmapped": 215,
+      "apache": 71,
+      "microsoft": 47,
+      "wordfence": 30,
+      "apple": 19,
+      "google": 18,
+      "joomla": 13,
+      "redhat": 10,
+      "cisco": 8,
+      "wpscan": 7,
+      "patchstack": 7,
+      "fortinet": 6,
+      "mozilla": 6,
+      "ibm": 5,
+      "oracle": 5,
+      "vmware": 4,
+      "samsung": 4,
+      "f5": 3,
+      "adobe": 2,
+      "gitlab": 2
+    },
+    "assigners": {
+      "security-advisories@github.com": 74,
+      "security@apache.org": 71,
+      "cve@mitre.org": 64,
+      "secure@microsoft.com": 47,
+      "disclosure@vulncheck.com": 45,
+      "security@wordfence.com": 30,
+      "product-security@apple.com": 19,
+      "chrome-cve-admin@google.com": 16,
+      "security@joomla.org": 13,
+      "cna@vuldb.com": 11,
+      "secalert@redhat.com": 10,
+      "psirt@cisco.com": 8,
+      "contact@wpscan.com": 7,
+      "audit@patchstack.com": 7,
+      "psirt@fortinet.com": 6
+    },
+    "cwe_current_display_only": {
+      "CWE-22": 30,
+      "CWE-89": 24,
+      "CWE-94": 22,
+      "CWE-20": 22,
+      "CWE-502": 20,
+      "CWE-78": 19,
+      "CWE-918": 15,
+      "CWE-200": 15,
+      "CWE-79": 13,
+      "CWE-863": 12,
+      "CWE-284": 12,
+      "CWE-122": 12,
+      "CWE-306": 11,
+      "CWE-862": 11,
+      "CWE-77": 10
+    },
+    "flags": {
+      "any_exploit": 500,
+      "exploitdb": 9,
+      "metasploit": 7,
+      "nuclei": 153,
+      "poc_github": 417
+    },
+    "snapshot_months": {
+      "2026-01": 15,
+      "2026-02": 19,
+      "2026-03": 42,
+      "2026-04": 39,
+      "2026-05": 49,
+      "2026-07": 140,
+      "2026-08": 107,
+      "2026-09": 89
+    },
+    "epss_median": 0.005655,
+    "note": "CWE and CVSS in the display CSV are current descriptive metadata and do not enter the strict model."
+  }
 }

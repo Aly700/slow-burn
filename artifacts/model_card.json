@@ -1,4 +1,730 @@
 {
-  "model": "baseline: exploit flag then EPSS",
-  "note": "placeholder until the model lands"
+  "model": "logistic_strict",
+  "trained_on": "2024-published and Jan\u2013Sep 2025-published eligible CVEs, labels observed by 2025-12-31; minimum 90 days follow-up",
+  "features_used": [
+    "epss_log",
+    "epss_percentile",
+    "exploitdb",
+    "metasploit",
+    "nuclei",
+    "poc_github",
+    "exploit_count",
+    "any_exploit",
+    "id_year_gap",
+    "days_at_snapshot",
+    "assigner_prior_kev",
+    "assigner_recent_kev",
+    "vendor_prior_kev",
+    "vendor_recent_kev"
+  ],
+  "features_excluded": [
+    {
+      "name": "nvd_status",
+      "why": "Current analysis status reflects prioritization after exploitation; explicitly prohibited.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 19,
+          "precision_at_500": 0.038,
+          "recall_at_500": 0.34545454545454546,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 15,
+          "precision_at_scaled_budget": 0.045317220543806644,
+          "recall_at_scaled_budget": 0.2727272727272727,
+          "average_precision": 0.0702780970713336,
+          "delta_hits_at_500": 5,
+          "delta_hits_at_scaled_budget": 1
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 7,
+          "precision_at_500": 0.014,
+          "recall_at_500": 0.12727272727272726,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 2,
+          "precision_at_scaled_budget": 0.006042296072507553,
+          "recall_at_scaled_budget": 0.03636363636363636,
+          "average_precision": 0.0046623981221240625,
+          "delta_hits_at_500": 7,
+          "delta_hits_at_scaled_budget": 2
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 48039,
+        "positives": 55,
+        "rate": 0.0011449030995649369
+      }
+    },
+    {
+      "name": "n_affected_cpes",
+      "why": "Current enrichment count reflects post-snapshot analysis; explicitly prohibited.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 16,
+          "precision_at_500": 0.032,
+          "recall_at_500": 0.2909090909090909,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 12,
+          "precision_at_scaled_budget": 0.03625377643504532,
+          "recall_at_scaled_budget": 0.21818181818181817,
+          "average_precision": 0.0530347066867531,
+          "delta_hits_at_500": 2,
+          "delta_hits_at_scaled_budget": -2
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 8,
+          "precision_at_500": 0.016,
+          "recall_at_500": 0.14545454545454545,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 4,
+          "precision_at_scaled_budget": 0.012084592145015106,
+          "recall_at_scaled_budget": 0.07272727272727272,
+          "average_precision": 0.005530525197134367,
+          "delta_hits_at_500": 8,
+          "delta_hits_at_scaled_budget": 4
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 30078,
+        "positives": 55,
+        "rate": 0.0018285790278608951
+      }
+    },
+    {
+      "name": "n_references",
+      "why": "Current reference count can increase after incidents; explicitly prohibited.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 14,
+          "precision_at_500": 0.028,
+          "recall_at_500": 0.2545454545454545,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 13,
+          "precision_at_scaled_budget": 0.03927492447129909,
+          "recall_at_scaled_budget": 0.23636363636363636,
+          "average_precision": 0.03549017146603723,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": -1
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 3,
+          "precision_at_500": 0.006,
+          "recall_at_500": 0.05454545454545454,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 1,
+          "precision_at_scaled_budget": 0.0030211480362537764,
+          "recall_at_scaled_budget": 0.01818181818181818,
+          "average_precision": 0.0029468141447192503,
+          "delta_hits_at_500": 3,
+          "delta_hits_at_scaled_budget": 1
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 48039,
+        "positives": 55,
+        "rate": 0.0011449030995649369
+      }
+    },
+    {
+      "name": "blank_severity_scores",
+      "why": "Missingness reveals current analysis coverage; explicitly prohibited.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 14,
+          "precision_at_500": 0.028,
+          "recall_at_500": 0.2545454545454545,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 14,
+          "precision_at_scaled_budget": 0.04229607250755287,
+          "recall_at_scaled_budget": 0.2545454545454545,
+          "average_precision": 0.0363143156153922,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": 0
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 0,
+          "precision_at_500": 0.0,
+          "recall_at_500": 0.0,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 0,
+          "precision_at_scaled_budget": 0.0,
+          "recall_at_scaled_budget": 0.0,
+          "average_precision": 0.002757958038442471,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": 0
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 2765,
+        "positives": 0,
+        "rate": 0.0
+      }
+    },
+    {
+      "name": "current_cvss_and_vectors",
+      "why": "NIST/CISA scores and vector components lack historical timestamps.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 12,
+          "precision_at_500": 0.024,
+          "recall_at_500": 0.21818181818181817,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 11,
+          "precision_at_scaled_budget": 0.03323262839879154,
+          "recall_at_scaled_budget": 0.2,
+          "average_precision": 0.05008352567748214,
+          "delta_hits_at_500": -2,
+          "delta_hits_at_scaled_budget": -3
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 7,
+          "precision_at_500": 0.014,
+          "recall_at_500": 0.12727272727272726,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 4,
+          "precision_at_scaled_budget": 0.012084592145015106,
+          "recall_at_scaled_budget": 0.07272727272727272,
+          "average_precision": 0.005726799378461833,
+          "delta_hits_at_500": 7,
+          "delta_hits_at_scaled_budget": 4
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 48039,
+        "positives": 55,
+        "rate": 0.0011449030995649369
+      }
+    },
+    {
+      "name": "vendor_supplied_cvss",
+      "why": "Vendor provenance is safer than NIST provenance but does not establish when this value was supplied; masking also reveals coverage.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 12,
+          "precision_at_500": 0.024,
+          "recall_at_500": 0.21818181818181817,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 11,
+          "precision_at_scaled_budget": 0.03323262839879154,
+          "recall_at_scaled_budget": 0.2,
+          "average_precision": 0.05341249157218956,
+          "delta_hits_at_500": -2,
+          "delta_hits_at_scaled_budget": -3
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 2,
+          "precision_at_500": 0.004,
+          "recall_at_500": 0.03636363636363636,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 2,
+          "precision_at_scaled_budget": 0.006042296072507553,
+          "recall_at_scaled_budget": 0.03636363636363636,
+          "average_precision": 0.00299091369356521,
+          "delta_hits_at_500": 2,
+          "delta_hits_at_scaled_budget": 2
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 48039,
+        "positives": 55,
+        "rate": 0.0011449030995649369
+      }
+    },
+    {
+      "name": "current_cwe",
+      "why": "Weakness assignments can be added during current NIST enrichment; no source/timestamp.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 17,
+          "precision_at_500": 0.034,
+          "recall_at_500": 0.3090909090909091,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 12,
+          "precision_at_scaled_budget": 0.03625377643504532,
+          "recall_at_scaled_budget": 0.21818181818181817,
+          "average_precision": 0.051826876097279255,
+          "delta_hits_at_500": 3,
+          "delta_hits_at_scaled_budget": -2
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 0,
+          "precision_at_500": 0.0,
+          "recall_at_500": 0.0,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 0,
+          "precision_at_scaled_budget": 0.0,
+          "recall_at_scaled_budget": 0.0,
+          "average_precision": 0.002782084337443251,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": 0
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 26891,
+        "positives": 27,
+        "rate": 0.0010040534007660555
+      }
+    },
+    {
+      "name": "raw_exploitation_wording",
+      "why": "Current descriptions can explicitly disclose later exploitation.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 14,
+          "precision_at_500": 0.028,
+          "recall_at_500": 0.2545454545454545,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 14,
+          "precision_at_scaled_budget": 0.04229607250755287,
+          "recall_at_scaled_budget": 0.2545454545454545,
+          "average_precision": 0.03664606644943816,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": 0
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 0,
+          "precision_at_500": 0.0,
+          "recall_at_500": 0.0,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 0,
+          "precision_at_scaled_budget": 0.0,
+          "recall_at_scaled_budget": 0.0,
+          "average_precision": 0.002757958038442471,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": 0
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 1283,
+        "positives": 9,
+        "rate": 0.007014809041309431
+      }
+    },
+    {
+      "name": "ransomware_annotations",
+      "why": "The frozen catalog dates inclusion, but does not date ransomware-flag updates.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 14,
+          "precision_at_500": 0.028,
+          "recall_at_500": 0.2545454545454545,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 12,
+          "precision_at_scaled_budget": 0.03625377643504532,
+          "recall_at_scaled_budget": 0.21818181818181817,
+          "average_precision": 0.03741010530287983,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": -2
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 3,
+          "precision_at_500": 0.006,
+          "recall_at_500": 0.05454545454545454,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 2,
+          "precision_at_scaled_budget": 0.006042296072507553,
+          "recall_at_scaled_budget": 0.03636363636363636,
+          "average_precision": 0.002424442927442978,
+          "delta_hits_at_500": 3,
+          "delta_hits_at_scaled_budget": 2
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 5688,
+        "positives": 11,
+        "rate": 0.0019338959212376935
+      }
+    },
+    {
+      "name": "last_modified",
+      "why": "Current record modification time postdates the decision and is not a publication attribute.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 15,
+          "precision_at_500": 0.03,
+          "recall_at_500": 0.2727272727272727,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 13,
+          "precision_at_scaled_budget": 0.03927492447129909,
+          "recall_at_scaled_budget": 0.23636363636363636,
+          "average_precision": 0.04676676110348341,
+          "delta_hits_at_500": 1,
+          "delta_hits_at_scaled_budget": -1
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 2,
+          "precision_at_500": 0.004,
+          "recall_at_500": 0.03636363636363636,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 1,
+          "precision_at_scaled_budget": 0.0030211480362537764,
+          "recall_at_scaled_budget": 0.01818181818181818,
+          "average_precision": 0.0028308521909522007,
+          "delta_hits_at_500": 2,
+          "delta_hits_at_scaled_budget": 1
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 48039,
+        "positives": 55,
+        "rate": 0.0011449030995649369
+      }
+    },
+    {
+      "name": "first_observed_epss",
+      "why": "Historical monthly first observation is date-safe, but equivalent 2026 history is unavailable; no future backfill is allowed.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 14,
+          "precision_at_500": 0.028,
+          "recall_at_500": 0.2545454545454545,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 14,
+          "precision_at_scaled_budget": 0.04229607250755287,
+          "recall_at_scaled_budget": 0.2545454545454545,
+          "average_precision": 0.039220641400628205,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": 0
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 0,
+          "precision_at_500": 0.0,
+          "recall_at_500": 0.0,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 0,
+          "precision_at_scaled_budget": 0.0,
+          "recall_at_scaled_budget": 0.0,
+          "average_precision": 0.002757958038442471,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": 0
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 48039,
+        "positives": 55,
+        "rate": 0.0011449030995649369
+      }
+    },
+    {
+      "name": "affected_products_coverage",
+      "why": "Whether a CPE exists reveals current analysis coverage.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 14,
+          "precision_at_500": 0.028,
+          "recall_at_500": 0.2545454545454545,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 13,
+          "precision_at_scaled_budget": 0.03927492447129909,
+          "recall_at_scaled_budget": 0.23636363636363636,
+          "average_precision": 0.04670074951618122,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": -1
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 0,
+          "precision_at_500": 0.0,
+          "recall_at_500": 0.0,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 0,
+          "precision_at_scaled_budget": 0.0,
+          "recall_at_scaled_budget": 0.0,
+          "average_precision": 0.0028796571330533638,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": 0
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 30078,
+        "positives": 55,
+        "rate": 0.0018285790278608951
+      }
+    },
+    {
+      "name": "affected_products_identity",
+      "why": "A correct product identity does not make its current CPE availability historical.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 16,
+          "precision_at_500": 0.032,
+          "recall_at_500": 0.2909090909090909,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 15,
+          "precision_at_scaled_budget": 0.045317220543806644,
+          "recall_at_scaled_budget": 0.2727272727272727,
+          "average_precision": 0.040457048755452446,
+          "delta_hits_at_500": 2,
+          "delta_hits_at_scaled_budget": 1
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 3,
+          "precision_at_500": 0.006,
+          "recall_at_500": 0.05454545454545454,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 1,
+          "precision_at_scaled_budget": 0.0030211480362537764,
+          "recall_at_scaled_budget": 0.01818181818181818,
+          "average_precision": 0.005496750816368765,
+          "delta_hits_at_500": 3,
+          "delta_hits_at_scaled_budget": 1
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 13458,
+        "positives": 34,
+        "rate": 0.0025263783623123794
+      }
+    },
+    {
+      "name": "news_threat_references",
+      "why": "Current news/research references may have been added after the incident; explicitly prohibited.",
+      "decision": "excluded",
+      "methods": [
+        {
+          "name": "logistic",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 12,
+          "precision_at_500": 0.024,
+          "recall_at_500": 0.21818181818181817,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 12,
+          "precision_at_scaled_budget": 0.03625377643504532,
+          "recall_at_scaled_budget": 0.21818181818181817,
+          "average_precision": 0.03695101607550342,
+          "delta_hits_at_500": -2,
+          "delta_hits_at_scaled_budget": -2
+        },
+        {
+          "name": "lightgbm",
+          "pool": 48039,
+          "positives": 55,
+          "hits_at_500": 0,
+          "precision_at_500": 0.0,
+          "recall_at_500": 0.0,
+          "scaled_budget": 331,
+          "hits_at_scaled_budget": 0,
+          "precision_at_scaled_budget": 0.0,
+          "recall_at_scaled_budget": 0.0,
+          "average_precision": 0.002757958038442471,
+          "delta_hits_at_500": 0,
+          "delta_hits_at_scaled_budget": 0
+        }
+      ],
+      "nonzero_coverage_2025": {
+        "n": 290,
+        "positives": 3,
+        "rate": 0.010344827586206896
+      }
+    },
+    {
+      "name": "current_description_semantics_and_identity",
+      "why": "Sanitization removes explicit incident claims but cannot establish historical provenance. Evaluated only in ablations; excluded from strict production."
+    },
+    {
+      "name": "post_2025_exploitation_data",
+      "why": "No external labels or scores used. All outcomes stop at 2025-12-31."
+    },
+    {
+      "name": "target_kev_membership",
+      "why": "Only used for historical eligibility/labels; never a model feature."
+    }
+  ],
+  "ibm_technology": [
+    "ibm-granite/granite-embedding-30m-english revision ae3da2ae1b16814b84c52deccd9aeee77727d044; sentence-transformers on Apple MPS; description and identity embedding ablations"
+  ],
+  "ibm_in_selected_model": "Evaluated in research; not selected by strict validation rule",
+  "recipe": {
+    "name": "logistic_strict",
+    "algorithm": "logistic",
+    "block": "strict",
+    "embedding": "",
+    "no_history": false,
+    "blend": 0.0
+  },
+  "training_pool": 75148,
+  "training_positives": 119,
+  "label": "KEV addition after the row\u2019s snapshot through the historical label cutoff",
+  "score_interpretation": "Estimated probability of later catalog inclusion under historical variable follow-up; not a 30-day exploitation probability.",
+  "calibration": {
+    "method": "Unweighted binary log-loss; no class balancing, no post-hoc test-set calibration",
+    "limitation": "Scarce positives, censored negatives, changing catalog scope and EPSS versions limit absolute probability reliability."
+  },
+  "explanations": "Top five grouped terms by absolute signed log-odds contribution. Base and omitted terms are supplied separately; contributions are associations, not causes.",
+  "snapshot_rule": "Use supplied scoreboard snapshot_month, including June 2026 \u2192 July. Never fetch a later signal.",
+  "history_cutoff": "KEV entries date_added <= snapshot end and <= 2025-12-31; 2026 history is frozen at 2025 year-end.",
+  "metadata_display": [
+    "cvss3_score",
+    "attack_vector",
+    "cwe_ids",
+    "description"
+  ],
+  "metadata_display_note": "Current metadata is included for the UI contract only and does not enter the strict model.",
+  "limitations": [
+    "Historical labels are KEV inclusion, not first attack.",
+    "All-2025 results include right censoring; mature and fixed-horizon sensitivity are separate.",
+    "Model selection uses historical development splits; no untouched validation of the selected recipe.",
+    "Historical assigning-organization values are assumed stable; the source has no field-level revision history."
+  ],
+  "leak_checks": {
+    "passed": true,
+    "strict_allowlist": true,
+    "no_post_2025_labels": true,
+    "all_metadata_local": true,
+    "production_suspect_columns": [],
+    "strict_production_allowlist": true,
+    "train_test_cve_disjoint": true,
+    "training_label_cutoffs_enforced": true
+  },
+  "input_manifest": {
+    "affected_products.csv": {
+      "sha256": "9f8ea794331634b8d310569fc546b0c903efc923d99a96cd06f2a30f178af058",
+      "bytes": 199371677
+    },
+    "exploit_signals_2024.csv": {
+      "sha256": "c01ef2a7d08fc2f9e883df48273ececc83ab04f4f73ae233c2384e5f19c8d2a8",
+      "bytes": 122020228
+    },
+    "exploit_signals_2025.csv": {
+      "sha256": "1bfecaf12e22c85eb14372c48cc2ce9a1f14a5b016d573584b258558dccd6fdd",
+      "bytes": 138928290
+    },
+    "known_exploited.csv": {
+      "sha256": "53c8a610af93e98399b698666379690c7d1e653d056332b943688ad6b2eeba1f",
+      "bytes": 612723
+    },
+    "references.csv": {
+      "sha256": "94f002746872643c63901dde28a13d427630c1e8d7e5eeeb57c8e6ec01d923e8",
+      "bytes": 144935205
+    },
+    "scoreboard_2026.csv": {
+      "sha256": "cb07b228098ba93927f4e9d3962dfc164b026d8819defc03260cefa74ca3bcd8",
+      "bytes": 3604845
+    },
+    "vulnerabilities.csv": {
+      "sha256": "5fe4fcbd897fbbdafca2685e656b58b1b05ad431cd07b833735c685720d685b6",
+      "bytes": 238187059
+    },
+    "weakness_types.csv": {
+      "sha256": "cf0cd63889ff8e02419450743f01ae17cc2d7d99c495d14137374ea5398b01f6",
+      "bytes": 340034
+    }
+  },
+  "audit_baseline": {
+    "logistic": {
+      "name": "logistic",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 14,
+      "precision_at_500": 0.028,
+      "recall_at_500": 0.2545454545454545,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 14,
+      "precision_at_scaled_budget": 0.04229607250755287,
+      "recall_at_scaled_budget": 0.2545454545454545,
+      "average_precision": 0.03588643036171092
+    },
+    "lightgbm": {
+      "name": "lightgbm",
+      "pool": 48039,
+      "positives": 55,
+      "hits_at_500": 0,
+      "precision_at_500": 0.0,
+      "recall_at_500": 0.0,
+      "scaled_budget": 331,
+      "hits_at_scaled_budget": 0,
+      "precision_at_scaled_budget": 0.0,
+      "recall_at_scaled_budget": 0.0,
+      "average_precision": 0.002757958038442471
+    }
+  }
 }
