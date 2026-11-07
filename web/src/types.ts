@@ -17,6 +17,7 @@ export interface Score {
   attack_vector?: string;
   cwe_ids?: string;
   assigner?: string;
+  vendor_identity?: string;
   description?: string;
   reasons?: Reason[];
 }
@@ -32,6 +33,7 @@ export interface Findings {
   _status?: string;
   headline?: {
     ours_hits_top500_2025_backtest?: Nullable;
+    comparison_note?: string;
     baselines_2025_backtest?: Record<string, Nullable>;
     benchmark_2026_reference?: Record<string, Nullable>;
     later_kev_without_public_signal?: Nullable;
@@ -98,6 +100,9 @@ export interface ModelCard {
   features_excluded?: { name: string; why: string }[];
   ibm_technology?: string[];
   note?: string;
+  limitations?: string[];
+  score_interpretation?: string;
+  description_policy?: { enabled_in_selected_model?: boolean; sanitization?: string; residual_risk?: string };
 }
 export interface Run {
   run_id: string;

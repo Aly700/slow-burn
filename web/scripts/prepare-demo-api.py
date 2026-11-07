@@ -1,12 +1,13 @@
 """Import recorded proposals into an isolated local demo store without resetting decisions."""
 import json
+import os
 from pathlib import Path
 
 from agent.evidence import canonical
 from agent.store import Store, digest
 
 web = Path(__file__).resolve().parents[1]
-store = Store(web / ".runtime/triage.sqlite", web / ".runtime/tickets.jsonl")
+store = Store(Path(os.getenv("TRIAGE_STATE_DB", web / ".runtime/demo/triage.sqlite")), Path(os.getenv("TRIAGE_TICKETS", web / ".runtime/demo/tickets.jsonl")))
 added = 0
 for path in sorted((web.parent / "artifacts/agent_runs").glob("CVE-*.json")):
     run = json.loads(path.read_text())

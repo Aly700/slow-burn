@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Data, Score } from "../types";
-import { list, number, percent, reasonLabel } from "../lib";
+import { list, number, percent, reasonLabel, compactReasonLabel } from "../lib";
 import { Icon } from "./Icon";
 import { SectionHeading } from "./Story";
 
@@ -27,7 +27,7 @@ export function Queue({
     () =>
       scores.filter((row) => {
         const text =
-          `${row.cve_id} ${row.assigner ?? ""} ${row.description ?? ""} ${list(row.reasons).map(reasonLabel).join(" ")}`.toLowerCase();
+          `${row.cve_id} ${row.assigner ?? ""} ${row.vendor_identity ?? ""} ${row.description ?? ""} ${list(row.reasons).map(reasonLabel).join(" ")}`.toLowerCase();
         return (
           text.includes(query.toLowerCase()) &&
           (month === "all" || row.snapshot_month === month) &&
@@ -127,7 +127,7 @@ export function Queue({
           <Icon name="search" />
           <input
             aria-label="Search queue"
-            placeholder="Search CVE, assigner, or description…"
+            placeholder="Search CVE, vendor, assigner, or description…"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -210,7 +210,7 @@ export function Queue({
           <thead>
             <tr>
               <th scope="col">Rank</th>
-              <th scope="col">Vulnerability / assigner</th>
+              <th scope="col">Vulnerability / vendor or assigner</th>
               <th scope="col">Snapshot</th>
               <th scope="col" className="score-cell">
                 {ranking ? "Rank score" : "Model score"}
@@ -248,7 +248,7 @@ export function Queue({
                     {row.cve_id}
                   </button>
                   <span className="assigner" title={row.assigner}>
-                    {row.assigner || "Assigner unavailable"}
+                    {row.vendor_identity && row.vendor_identity !== "unmapped" ? row.vendor_identity : row.assigner || "Assigner unavailable"}
                   </span>
                 </td>
                 <td className="mono snapshot">{row.snapshot_month || "—"}</td>
@@ -265,7 +265,7 @@ export function Queue({
                           title={reasonLabel(reason)}
                           key={i}
                         >
-                          {reasonLabel(reason)}
+                          {compactReasonLabel(reason)}
                         </span>
                       ))}
                     {!list(row.reasons).length && (

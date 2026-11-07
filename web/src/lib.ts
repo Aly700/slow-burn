@@ -20,3 +20,12 @@ export function reasonLabel(reason: Reason) {
 }
 export const displayValue = (value: unknown) =>
   typeof value === "string" ? value : (JSON.stringify(value) ?? "unknown");
+
+export function compactReasonLabel(reason: Reason) {
+  if (reason.feature === "exploit_count") return `${number(reason.value)} public tool signals`;
+  if (reason.feature === "description_embedding") return "Granite description";
+  if (reason.feature === "vendor_prior_kev") return `Vendor: ${number(reason.value)} earlier KEV`;
+  if (reason.feature === "epss") return `EPSS ${percent(reason.value)}`;
+  if (reason.feature === "nuclei") return Number(reason.value) === 1 ? "Nuclei template" : "No Nuclei flag";
+  return reasonLabel(reason);
+}

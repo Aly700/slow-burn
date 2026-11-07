@@ -159,7 +159,7 @@ export function Presentation({
           </span>
           <span>
             {step < 4
-              ? "2025 historical evidence"
+              ? "2025 historical evidence · development analysis"
               : data.meta?.runs_source === "fixtures"
                 ? "Illustrative fixture"
                 : "Recorded IBM Granite run"}
@@ -194,13 +194,13 @@ export function Presentation({
                         }}
                       />
                     </div>
-                    <strong>{number(method.hits_at_500)}</strong>
+                    <strong className={method.hits_at_500 == null ? "is-pending" : ""}>{number(method.hits_at_500)}</strong>
                   </div>
                 ))}
               </div>
             </div>
             <div className="slide-bottom-note">
-              <strong>2025 BACKTEST</strong>
+              <strong>2025 DEVELOPMENT BACKTEST</strong>
               <span>
                 {number(findings?.headline?.positives_2025)} later KEV entries ·{" "}
                 {number(findings?.headline?.pool_2025)} eligible CVEs · outcome

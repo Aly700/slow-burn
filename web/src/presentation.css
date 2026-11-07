@@ -1164,3 +1164,25 @@
 }
 
 .clocks-pending > div > strong { font-size:48px; letter-spacing:-2px; }
+
+.identity-tabs { display:flex; gap:16px; margin-bottom:18px; }
+.identity-tabs button { background:none; border:0; border-bottom:1px solid transparent; color:var(--muted); padding:0 0 8px; font-size:12px; text-transform:capitalize; }
+.identity-tabs button[aria-pressed="true"] { color:var(--text); border-color:var(--text); }
+.present-vendors .vendor-row { padding:12px 0; }
+.present-vendors .vendor-row small { display:none; }
+.present-vendors .vendor-history .chart-head { font-size:11px; }
+.present-vendors .identity-tabs { margin-bottom:12px; }
+.present-vendors .vendor-row > div:first-child strong { font-size:26px; }
+.vendor-bar { position:relative; padding-right:74px; height:30px; }
+.vendor-bar > strong { position:absolute; right:0; top:2px; }
+.vendor-bar > span { flex-shrink:0; }
+.vendor-history .caption { margin-top:18px; }
+.method-inventory { margin-top:20px; }.method-inventory summary,.story-counts summary { color:var(--muted); font-size:12px; cursor:pointer; }
+.method-inventory .feature-list { padding-top:15px; }
+.technology-detail { overflow-wrap:anywhere; font-size:13px !important; border-left:2px solid var(--line-bright); padding-left:16px; line-height:1.6; }
+.methods-grid h3 { overflow-wrap:anywhere; }
+
+.present-baselines strong.is-pending { font-size:15px; letter-spacing:0; }
+
+.discovery-grid .vendor-row { padding:16px 0; }
+.discovery-grid .vendor-row small { display:none; }

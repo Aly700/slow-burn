@@ -6,6 +6,10 @@ const require = createRequire(path.resolve(process.env.PLAYWRIGHT_ROOT ?? proces
 const { chromium } = require("playwright-core");
 const base = process.env.PREVIEW_URL ?? "http://localhost:4317";
 const bundle = JSON.parse(await readFile(new URL("../public/data/bundle.json", import.meta.url), "utf8"));
+const evidenceBreadth = run => new Set((run.briefing?.claims ?? []).flatMap(claim => (claim.evidence ?? []).map(evidence => evidence.field))).size;
+const candidates = bundle.runs.filter(run => run.briefing?.verdict === "fix_now" && run.verifier?.claims_verified >= 4);
+const featured = candidates.find(run => run.cve_id === "CVE-2026-10523") ?? candidates.sort((a,b) => b.verifier.claims_verified - a.verifier.claims_verified || evidenceBreadth(b) - evidenceBreadth(a))[0] ?? bundle.runs[0];
+const rejectRun = bundle.runs.find(run => run.run_id !== featured.run_id && bundle.scores.some(score => score.cve_id === run.cve_id));
 const shots = new URL("../../shots/checks/", import.meta.url);
 await mkdir(shots, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });
@@ -80,12 +84,11 @@ try {
     await openFeatured(page);
     assert.match(await page.getByRole("dialog").innerText(), /Recorded investigation/);
     await page.locator(".evidence-chip summary").first().click();
-    assert.match(await page.locator(".evidence-chip[open]").innerText(), /cve_lookup/);
+    assert.match(await page.locator(".evidence-chip[open]").innerText(), /get_cve/);
     await page.getByRole("tab", { name: /Trace/ }).click();
     assert.ok(await page.locator(".trace-event").count() > 0);
     await page.getByRole("button", { name: "Approve ticket" }).click();
     await page.waitForFunction(() => document.querySelector(".approval-note")?.textContent?.includes("Service response"));
-    const featured = bundle.runs.find(run => run.cve_id === "CVE-2026-10523");
     assert.deepEqual(posted, { approved: true, briefing_hash: featured.briefing_hash });
     await page.keyboard.press("Escape");
     await present(page, 6);
@@ -141,7 +144,7 @@ try {
       const text = await visibleSlide(page).innerText();
       assert.doesNotMatch(text, /NaN|Infinity|undefined/);
       assert.match(text, /pending/i);
-      assert.equal(await page.locator(".present-slide").evaluate(node => node.scrollWidth <= node.clientWidth + 2), true);
+      assert.equal(await page.locator(".present-slide").evaluate(node => node.scrollWidth <= node.clientWidth + 2), true, `Missing-data slide ${slide} overflows`);
       if (slide < 6) await page.keyboard.press("ArrowRight");
     }
     await page.screenshot({ path: new URL("missing-presentation.png", shots).pathname });
@@ -160,14 +163,15 @@ try {
     await page.getByRole("button", { name: "Approve ticket" }).click();
     await page.waitForFunction(() => document.querySelector(".approval-note")?.textContent?.includes("Service response: ticket filed"));
     await page.screenshot({ path: new URL("real-approved.png", shots).pathname });
-    const tickets = (await readFile(new URL("../.runtime/tickets.jsonl", import.meta.url), "utf8")).trim().split("\n").map(JSON.parse);
-    assert.ok(tickets.some(ticket => ticket.cve_id === "CVE-2026-10523"));
+    const tickets = (await readFile(new URL("../.runtime/demo/tickets.jsonl", import.meta.url), "utf8")).trim().split("\n").map(JSON.parse);
+    assert.ok(tickets.some(ticket => ticket.cve_id === featured.cve_id));
     await page.keyboard.press("Escape");
     await page.locator("#queue").scrollIntoViewIfNeeded();
-    await page.getByRole("button", { name: "CVE-2026-8037", exact: true }).click();
+    await page.getByRole("textbox", { name: "Search queue" }).fill(rejectRun.cve_id);
+    await page.getByRole("button", { name: rejectRun.cve_id, exact: true }).click();
     await page.getByRole("button", { name: "Reject", exact: true }).click();
     await page.waitForFunction(() => document.querySelector(".approval-note")?.textContent?.includes("Service response: rejected"));
-    assert.equal((await readFile(new URL("../.runtime/tickets.jsonl", import.meta.url), "utf8")).trim().split("\n").length, tickets.length);
+    assert.equal((await readFile(new URL("../.runtime/demo/tickets.jsonl", import.meta.url), "utf8")).trim().split("\n").length, tickets.length);
   });
   assert.deepEqual(errors, []);
   console.log(JSON.stringify({ passed, errors }, null, 2));

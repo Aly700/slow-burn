@@ -288,6 +288,7 @@ export function Briefing({
                   ))}
                 </div>
               )}
+              {!!list(score.reasons).length && <details className="run-metadata"><summary>Ranking signals at the snapshot</summary>{list(score.reasons).map((reason, i) => <p key={i}>{reasonLabel(reason)}</p>)}</details>}
               <details className="run-metadata">
                 <summary>Run provenance</summary>
                 <dl>

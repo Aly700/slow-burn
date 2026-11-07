@@ -84,13 +84,13 @@ export function Hero({ data }: { data: Data }) {
         </div>
         <div className="backtest-panel">
           <div className="panel-label">
-            <span>2025 BACKTEST</span>
+            <span>2025 DEVELOPMENT BACKTEST</span>
             <span className="badge">
               {!baseline.length && ours == null
                 ? "Awaiting results"
                 : seed
                   ? "Preliminary findings"
-                  : "Historical validation"}
+                  : "Development comparison"}
             </span>
           </div>
           <h2>
@@ -134,7 +134,7 @@ export function Hero({ data }: { data: Data }) {
             findings?.headline?.pool_2025 != null
               ? `${number(findings.headline.positives_2025)} later KEV entries among ${number(findings.headline.pool_2025)} eligible CVEs.`
               : "Cohort counts pending."}{" "}
-            Outcome cutoff: 31 Dec 2025.
+            Outcome cutoff: 31 Dec 2025. Model selection used this development data.
           </p>
         </div>
       </div>
@@ -340,7 +340,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
           )}
           <p className="caption">
             Base rate: {percent(findings?.base_rate_2025, 3)}. Bars scaled to
-            low-risk signals; hatched bars exceed that scale. Description
+            low-risk signals; hatching marks revision risk. Description
             wording can be updated after an attack.
           </p>
         </div>
@@ -400,12 +400,13 @@ export function Methods({ data }: { data: Data }) {
           <h3>{card?.model ?? "Model pending"}</h3>
           {card?.trained_on && <p>{card.trained_on}</p>}
           <div className="feature-list">
-            {list(card?.features_used).map((feature) => (
+            {list(card?.features_used).slice(0, 14).map((feature) => (
               <span className="chip" key={feature}>
                 {feature}
               </span>
             ))}
           </div>
+          {list(card?.features_used).length > 14 && <details className="method-inventory"><summary>All {number(list(card?.features_used).length)} model features</summary><div className="feature-list">{list(card?.features_used).slice(14).map(feature => <span className="chip" key={feature}>{feature}</span>)}</div></details>}
           {!list(card?.features_used).length && (
             <p className="caption">
               Feature inventory pending the final model card.
@@ -415,7 +416,7 @@ export function Methods({ data }: { data: Data }) {
         <div>
           <span className="eyebrow">EXCLUDED & WHY</span>
           {list(card?.features_excluded).length ? (
-            list(card?.features_excluded).map((item) => (
+            list(card?.features_excluded).slice(0, 4).map((item) => (
               <p className="excluded-feature" key={item.name}>
                 <code>{item.name}</code>
                 <span>{item.why}</span>
@@ -428,6 +429,7 @@ export function Methods({ data }: { data: Data }) {
               as leakage risks.
             </p>
           )}
+          {list(card?.features_excluded).length > 4 && <details className="method-inventory"><summary>All {number(list(card?.features_excluded).length)} exclusions and reasons</summary>{list(card?.features_excluded).slice(4).map(item => <p className="excluded-feature" key={item.name}><code>{item.name}</code><span>{item.why}</span></p>)}</details>}
         </div>
         <div className="ibm-method">
           <span className="eyebrow">BUILT AROUND IBM GRANITE</span>
@@ -443,11 +445,7 @@ export function Methods({ data }: { data: Data }) {
           </p>
           {list(card?.ibm_technology).length ? (
             <div className="feature-list">
-              {list(card?.ibm_technology).map((tech) => (
-                <span className="chip" key={tech}>
-                  {tech}
-                </span>
-              ))}
+              {list(card?.ibm_technology).map((tech) => <p className="technology-detail" key={tech}>{tech}</p>)}
             </div>
           ) : (
             <span className="badge">Model integration pending</span>
@@ -469,9 +467,13 @@ export function Methods({ data }: { data: Data }) {
       </div>
       {data.backtest?.pool && (
         <details className="validation-details">
-          <summary>Validation cohort and limitations</summary>
+          <summary>Development cohort and limitations</summary>
+          {list(card?.limitations).map((limit, i) => <p key={i}>{limit}</p>)}
           <p>{data.backtest.pool}</p>
           {data.backtest.label && <p>{data.backtest.label}</p>}
+          {card?.score_interpretation && <p>{card.score_interpretation}</p>}
+          {card?.description_policy?.sanitization && <p>{card.description_policy.sanitization}</p>}
+          {card?.description_policy?.residual_risk && <p>{card.description_policy.residual_risk}</p>}
           <p>
             EPSS changed its model in March 2025. February 2025 signal coverage
             is incomplete. NVD descriptions and severity may be revised after

@@ -60,10 +60,27 @@ for (const name of (await files(selectedDir))
   runs.push(run);
   await write(`agent_runs/${name}`, run);
 }
+async function findVerifierExample(directory) {
+  for (const name of (await files(directory)).sort()) {
+    const file = path.join(directory, name);
+    if (name.endsWith(".json")) {
+      const run = await json(file);
+      if (run?.run_id && Array.isArray(run.verifier?.dropped) && run.verifier.dropped.length) return run;
+    } else {
+      try {
+        const found = await findVerifierExample(file);
+        if (found) return found;
+      } catch (error) { if (error.code !== "ENOTDIR") throw error; }
+    }
+  }
+  return null;
+}
+const verifierExample = useFixtures ? null : await findVerifierExample(runDir);
 const bundle = {
   ...artifacts,
   scores,
   runs,
+  verifier_example: verifierExample,
   meta: {
     synced_at: new Date().toISOString(),
     runs_source: useFixtures ? "fixtures" : "recorded",
