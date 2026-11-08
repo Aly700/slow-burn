@@ -27,7 +27,7 @@ Tested on 2025 the same way the track's benchmark works (train on 2024; rank eac
 
 The 2026 result is scored by the organisers after submission.
 
-![Result](docs/img/result.png)
+[2025 backtest screenshot](docs/img/result.png)
 
 ## How it works
 
@@ -37,9 +37,9 @@ The 2026 result is scored by the organisers after submission.
 
 **`web/` (the page).** A static React page: the 2025 replay, the findings, a fix-first queue you can filter to the vendors and products you run (with the previously-attacked-products list and CSV or ticket JSON export), live Granite investigation, the analyst, and the Granite map of all 2026 descriptions. Press `p` for the six-slide presentation and `m` for the map.
 
-![Briefing](docs/img/briefing.png)
+[Recorded briefing screenshot](docs/img/briefing.png)
 
-![Granite map](docs/img/map.png)
+[Description map screenshot](docs/img/map.png)
 
 ## Run it
 

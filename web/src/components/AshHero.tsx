@@ -60,7 +60,7 @@ export function AshHero() {
       </picture>
       <canvas ref={canvas} />
     </div>
-    <div className="ash-top"><span>IBM Granite description map</span><span>72,987 descriptions</span></div>
+    <div className="ash-top"><div><span>IBM Granite description map</span><small>Position reflects description similarity.</small></div><span>72,987 descriptions</span></div>
     <p className="sr-only">The field shows description similarity, with 500 ranking picks and 317 past-exploited CVEs marked. The 2026 benchmark result is pending judging.</p>
     <div className="ash-copy">
       <h1 id="ash-title">Ranking vulnerabilities by likelihood of exploitation</h1>
