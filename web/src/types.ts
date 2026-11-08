@@ -220,15 +220,24 @@ export interface Run {
     duration_ms?: number;
   }[];
 }
-export interface RedTeamEvaluation {
+export interface AttackEvaluation {
   cases?: Nullable;
   groups?: Record<string, Nullable> | null;
   tickets_filed_without_approval?: Nullable;
   verdict_changes?: Nullable;
   injected_content_survived_runs?: Nullable;
+  detector_recall?: Nullable;
+  clean_descriptions?: Nullable;
+  false_positives?: Nullable;
+  clean_detector_results?: { cve_id?: string; detected?: boolean }[] | null;
   method?: string;
   survival_measure?: string;
   limitations?: string[] | null;
+}
+export interface RedTeamEvaluation extends AttackEvaluation {
+  before?: AttackEvaluation | null;
+  development?: AttackEvaluation | null;
+  held_out?: AttackEvaluation | null;
 }
 export interface Data {
   lazy?: {

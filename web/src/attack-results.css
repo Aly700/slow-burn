@@ -8,10 +8,89 @@
   font-weight: 500;
   margin: 0 0 24px;
 }
-.attack-suite {
-  font-size: 17px;
+.attack-kicker {
+  color: var(--accent);
+  font: 12px/1.5 var(--mono);
+  letter-spacing: 1.3px;
+  margin: 0 0 12px;
+}
+.attack-evidence {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 40px;
+  align-items: start;
+}
+.attack-survival {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.attack-survival > strong {
+  font-size: 88px;
+  font-weight: 500;
+  letter-spacing: -4px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.attack-survival small {
+  margin-left: 5px;
+  font-size: 36px;
+  letter-spacing: -1px;
   color: var(--muted);
+}
+.attack-survival > p {
+  font-size: 26px;
+  line-height: 1.35;
   margin: 0;
+  max-width: 420px;
+}
+.attack-heldout-note {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 12px 0 0;
+}
+.attack-comparison {
+  border-left: 1px solid var(--line-bright);
+  padding-left: 24px;
+  display: grid;
+  gap: 16px;
+}
+.attack-comparison > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 14px;
+}
+.attack-comparison span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.attack-comparison strong {
+  font: 22px/1.2 var(--mono);
+  white-space: nowrap;
+}
+.attack-comparison small {
+  font-size: 13px;
+  color: var(--muted);
+}
+.attack-comparison .attack-tuned {
+  flex-basis: 100%;
+  font: 11px/1.5 var(--mono);
+  color: var(--text);
+}
+.attack-reason {
+  font-size: 24px;
+  line-height: 1.4;
+  margin: 20px 0 24px;
+}
+.attack-results:not(.compact) .desktop-break {
+  display: none;
+}
+.attack-suite {
+  font-size: 15px;
+  color: var(--muted);
+  margin: 0 0 10px;
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
@@ -27,10 +106,9 @@
 }
 .attack-boundaries {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1.3fr;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  margin: 22px 0;
 }
 .attack-boundaries > div {
   display: flex;
@@ -43,57 +121,43 @@
   padding-left: 30px;
 }
 .attack-boundaries strong {
-  font-size: 52px;
+  font-size: 48px;
   font-weight: 500;
   line-height: 1;
   letter-spacing: -2px;
 }
 .attack-boundaries span {
   color: var(--muted);
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.4;
 }
-.attack-survival {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-}
-.attack-survival > strong {
-  font-size: 82px;
-  font-weight: 500;
-  letter-spacing: -4px;
-  line-height: 1.1;
-  white-space: nowrap;
-}
-.attack-survival small {
-  font-size: 36px;
-  letter-spacing: -1px;
-  color: var(--muted);
-}
-.attack-survival > p {
-  font-size: 24px;
-  line-height: 1.35;
-  margin: 0;
-}
-.attack-reason {
-  font-size: 23px;
-  line-height: 1.4;
-  margin: 18px 0 0;
-}
-.attack-results:not(.compact) .desktop-break {
-  display: none;
-}
+.attack-detector,
 .attack-scope {
   font-size: 13px;
   line-height: 1.6;
   color: var(--muted);
   margin: 16px 0 0;
 }
+.attack-detector strong {
+  color: var(--text);
+  font-weight: 500;
+}
+.attack-family-groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 26px;
+}
+.attack-family-group h4 {
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 12px;
+}
 .attack-families {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 28px;
 }
 .attack-families span {
   padding: 7px 10px;
@@ -114,32 +178,73 @@
   padding: 0;
   border: 0;
 }
-.compact .attack-suite {
-  font-size: 16px;
+.compact .attack-evidence {
+  grid-template-columns: minmax(0, 1fr) 142px;
+  gap: 22px;
 }
-.compact .attack-suite > span {
-  flex-basis: auto;
-  margin: 0 0 0 auto;
-}
-.compact .attack-boundaries {
-  margin: 18px 0;
+.compact .attack-survival {
+  display: flex;
+  gap: 20px;
 }
 .compact .attack-survival > strong {
-  font-size: 76px;
+  font-size: 78px;
 }
 .compact .attack-survival > p {
-  font-size: 22px;
+  font-size: 20px;
+  margin-top: 0;
+  max-width: 300px;
+}
+.compact .attack-comparison {
+  padding-left: 18px;
+  margin-top: 8px;
+}
+.compact .attack-comparison > div {
+  display: grid;
+  gap: 5px;
+}
+.compact .attack-heldout-note {
+  font-size: 11px;
+  margin-top: 10px;
 }
 .compact .attack-reason {
-  font-size: 24px;
+  font-size: 19px;
+  margin: 12px 0 16px;
+}
+.compact .attack-suite {
+  font-size: 13px;
+}
+.compact .attack-suite > span {
+  font-size: 10px;
+}
+.compact .attack-boundaries > div {
+  display: block;
+  padding: 10px 8px 10px 0;
+}
+.compact .attack-boundaries > div + div {
+  padding-left: 18px;
+}
+.compact .attack-boundaries strong {
+  display: block;
+  font-size: 34px;
+  margin-bottom: 6px;
+}
+.compact .attack-boundaries span {
+  font-size: 12px;
 }
 .slide-6 .present-gate {
   gap: 48px;
-  margin: 26px 0 24px;
+  margin: 18px 0 10px;
   grid-template-columns: 1.25fr 1fr;
 }
 .slide-6 .gate-states {
-  margin-top: 22px;
+  margin-top: 16px;
+}
+.slide-6 .gate-states > div {
+  padding-top: 8px;
+}
+.slide-6 .gate-states > div > span {
+  height: 20px;
+  margin-bottom: 4px;
 }
 .slide-6 .gate-control {
   padding: 24px;
@@ -191,24 +296,15 @@
 }
 @media (min-width: 1700px) and (min-height: 1000px) {
   .slide-6 .present-gate {
-    margin-top: 42px;
-    margin-bottom: 36px;
+    margin-top: 36px;
+    margin-bottom: 28px;
     gap: 80px;
   }
-  .compact .attack-suite {
-    font-size: 20px;
+  .compact .attack-kicker {
+    font-size: 14px;
   }
-  .compact .attack-suite > span {
-    font-size: 13px;
-  }
-  .compact .attack-boundaries {
-    margin: 24px 0;
-  }
-  .compact .attack-boundaries strong {
-    font-size: 72px;
-  }
-  .compact .attack-boundaries span {
-    font-size: 22px;
+  .compact .attack-evidence {
+    grid-template-columns: minmax(0, 1fr) 190px;
   }
   .compact .attack-survival > strong {
     font-size: 108px;
@@ -217,12 +313,37 @@
     font-size: 48px;
   }
   .compact .attack-survival > p {
-    font-size: 30px;
+    font-size: 28px;
+    max-width: 390px;
+  }
+  .compact .attack-comparison span {
+    font-size: 15px;
+  }
+  .compact .attack-comparison strong {
+    font-size: 28px;
+  }
+  .compact .attack-comparison small {
+    font-size: 16px;
+  }
+  .compact .attack-comparison .attack-tuned {
+    font-size: 13px;
+  }
+  .compact .attack-heldout-note {
+    font-size: 13px;
   }
   .compact .attack-reason {
-    font-size: 30px;
+    font-size: 28px;
   }
-  .compact .attack-scope {
+  .compact .attack-suite {
+    font-size: 17px;
+  }
+  .compact .attack-suite > span {
+    font-size: 12px;
+  }
+  .compact .attack-boundaries strong {
+    font-size: 48px;
+  }
+  .compact .attack-boundaries span {
     font-size: 16px;
   }
   .slide-6 .gate-control {
@@ -238,43 +359,89 @@
     font-size: 34px;
   }
 }
+@media (max-width: 1000px) {
+  .attack-survival {
+    display: block;
+  }
+  .attack-survival > p {
+    margin-top: 8px;
+  }
+  .attack-boundaries > div {
+    display: block;
+  }
+  .attack-boundaries strong {
+    display: block;
+    margin-bottom: 8px;
+  }
+}
 @media (max-width: 700px) {
   .attack-results > h3 {
     font-size: 26px;
   }
-  .attack-suite {
-    font-size: 16px;
-  }
-  .attack-suite > span {
-    flex-basis: 100%;
-    margin: 6px 0 0;
-  }
-  .attack-boundaries > div {
-    align-items: start;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .attack-boundaries > div + div {
-    padding-left: 20px;
-  }
-  .attack-boundaries span {
-    font-size: 15px;
-  }
-  .attack-survival {
-    gap: 16px;
-    flex-wrap: wrap;
+  .attack-evidence,
+  .compact .attack-evidence {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
   }
   .attack-survival > strong,
   .compact .attack-survival > strong {
-    font-size: 68px;
+    font-size: 72px;
+  }
+  .compact .attack-survival {
+    display: block;
   }
   .attack-survival > p,
   .compact .attack-survival > p {
-    font-size: 22px;
+    font-size: 23px;
+  }
+  .attack-comparison,
+  .compact .attack-comparison {
+    grid-template-columns: 1fr 1fr;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding: 14px 0 0;
+    margin: 0;
+    gap: 14px;
+  }
+  .attack-comparison > div {
+    display: grid;
   }
   .attack-reason,
   .compact .attack-reason {
-    font-size: 22px;
+    font-size: 21px;
+  }
+  .attack-suite > span,
+  .compact .attack-suite > span {
+    flex-basis: 100%;
+    margin: 2px 0 0;
+  }
+  .attack-boundaries {
+    grid-template-columns: 1fr 1fr;
+  }
+  .attack-boundaries > div,
+  .compact .attack-boundaries > div {
+    padding: 14px 0;
+  }
+  .attack-boundaries > div + div,
+  .compact .attack-boundaries > div + div {
+    padding-left: 20px;
+  }
+  .attack-boundaries > div:last-child,
+  .compact .attack-boundaries > div:last-child {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-left: 0;
+  }
+  .attack-boundaries span,
+  .compact .attack-boundaries span {
+    font-size: 14px;
+  }
+  .attack-family-groups {
+    grid-template-columns: 1fr;
   }
   .slide-6 .present-gate {
     grid-template-columns: 1fr;
@@ -287,9 +454,8 @@
     font-size: 22px;
   }
 }
-
 .attack-boundaries strong.is-pending {
-  font-size: 24px;
+  font-size: 22px;
   letter-spacing: 0;
 }
 .attack-survival > strong.is-pending {
@@ -299,10 +465,4 @@
 }
 .attack-survival > strong.is-pending small {
   font-size: 24px;
-}
-@media (max-width: 700px) {
-  .compact .attack-suite > span {
-    flex-basis: 100%;
-    margin: 6px 0 0;
-  }
 }
