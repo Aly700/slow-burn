@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Data, Run } from "../types";
 import { displayValue, list, number, percent } from "../lib";
 import { strongestRun } from "../storyData";
+import { blindSpotSummary } from "../blindSpot";
 import { useApproval } from "../useApproval";
 import {
   BlindSpot,
@@ -12,6 +13,7 @@ import {
 } from "./Discovery";
 import { Icon } from "./Icon";
 import { Replay } from "./Replay";
+import { BlindSpotStudy, WatchMethods } from "./BlindSpotStudy";
 import { useInvestigation } from "../useInvestigation";
 import { LiveControls, LiveTrace } from "./LiveInvestigation";
 
@@ -164,15 +166,17 @@ export function Presentation({
             {String(step + 1).padStart(2, "0")} / {chapters[step]}
           </span>
           <span>
-            {step < 4
-              ? "2025 historical evidence · development analysis"
-              : data.meta?.runs_source === "fixtures"
-                ? "Illustrative fixture"
-                : live.session.status !== "idle"
-                  ? live.session.mode === "live"
-                    ? "Live IBM Granite investigation"
-                    : "Replay of a recorded run"
-                  : "Recorded IBM Granite run"}
+            {step === 2
+              ? `${blindSpotSummary(findings?.blind_spot).year ?? "pending"} no-signal study`
+              : step < 4
+                ? "2025 historical evidence · development analysis"
+                : data.meta?.runs_source === "fixtures"
+                  ? "Illustrative fixture"
+                  : live.session.status !== "idle"
+                    ? live.session.mode === "live"
+                      ? "Live IBM Granite investigation"
+                      : "Replay of a recorded run"
+                    : "Recorded IBM Granite run"}
           </span>
         </div>
         {step === 0 && (
@@ -219,20 +223,11 @@ export function Presentation({
           <>
             <h1>Exploit feeds have a blind spot.</h1>
             <div className="present-blind">
-              <BlindSpot findings={findings} />
-              <aside>
-                <span className="eyebrow">THE OPERATIONAL CONSEQUENCE</span>
-                <h2>
-                  No public exploit.
-                  <br />
-                  Still worth fixing.
-                </h2>
-                <p>
-                  Rankings built only on exploit signals cannot see the warning
-                  that is missing.
-                </p>
-                <p>We need another way to decide what deserves attention.</p>
-              </aside>
+              <div className="blind-overview">
+                <BlindSpot findings={findings} />
+                <WatchMethods findings={findings} compact />
+              </div>
+              <BlindSpotStudy findings={findings} />
             </div>
           </>
         )}

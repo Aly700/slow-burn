@@ -18,7 +18,7 @@ Click **Present** or press **p** for the six-step, approximately one-minute walk
 
 1. A 12-second replay of the **2025 development backtest**. Four fields show each ranking’s selected CVEs; dots become available at snapshot month end and ignite at their recorded KEV dates. The separate tray contains positives missed by all four rankings. Press **r** to replay, pause, or drag the date scrubber. Reduced motion starts at the final state. Hover burning dots or use **Inspect confirmed CVEs** for dates and product details. The 2026 outcome remains pending judging.
 2. Publication-month versus later KEV inclusion, with the later-entry lag histogram. KEV inclusion is a catalog clock, not a first-attack timestamp.
-3. The later-exploited cohort without a public exploit signal at its snapshot.
+3. The later-exploited cohort without a public exploit signal at its snapshot, the pre-registered watch-model test, and the exploratory product-history contrast. All study measurements come from `findings.blind_spot`; the primary split is kept separate from the overlapping later-cutoff analysis. The registered plan and full limitations are linked in Discovery.
 4. Vendor history within the public-exploit tier, with separate vendor/product views and the WordPress description cohort.
 5. A fix-now briefing, **Run live with Granite**, and the three-arm evaluation. The evaluation reused its cases during revision; it is not an unseen confirmation.
 6. The human approval gate and the IBM Concert positioning line.
@@ -46,6 +46,8 @@ Choose vendor/product suggestions or enter a custom text term above the queue. S
 Selections are saved per browser under `slow-burn.stack.v1`. Restricted storage leaves the page functional for the current visit. Clear stack removes the selection; Clear filters also resets search, snapshot and queue filters. The top-500 match count is independent of the additional search/month filters.
 
 **Export** downloads every matching row across pages, from the bundled top 1,000 candidates. CSV includes the ranking, snapshot signals and ticket fields. JSON drafts contain `cve_id`, `rank`, `verdict`, `headline`, `proposed_action`, and `evidence_summary`. Only verified briefing claims enter that summary; rows without a briefing carry `pending` and labelled ranking signals. Exports do not create or approve tickets. The phone queue keeps rank, CVE/product and score visible without horizontal scrolling.
+
+The stack panel exposes an optional `secondaryList` slot. A future artifact-backed list can reuse the selected `StackChoice[]` and `matchesStack` helper. Keep “Previously attacked products, no public exploit yet” separate from the patch ranking and render it only when `product_watch_2026.csv` has been supplied and synced. This revision renders no second list and assumes no future CSV or embedding-map schema.
 
 ## Live investigation
 

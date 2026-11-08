@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import type { Score } from "../types";
 import {
   choiceKey,
@@ -17,11 +18,14 @@ export function StackFilter({
   choices,
   persisted,
   onChange,
+  secondaryList,
 }: {
   scores: Score[];
   choices: StackChoice[];
   persisted: boolean;
   onChange: (choices: StackChoice[]) => void;
+  // Supply an inventory-matched secondary list only when its artifact is present.
+  secondaryList?: ReactNode;
 }) {
   const [query, setQuery] = useState("");
   const suggestions = useMemo(() => stackSuggestions(scores), [scores]);
@@ -151,6 +155,7 @@ export function StackFilter({
         Matches any selected identity; custom text searches descriptions too.
         Confirm affected versions before patching.
       </p>
+      {secondaryList}
     </div>
   );
 }
