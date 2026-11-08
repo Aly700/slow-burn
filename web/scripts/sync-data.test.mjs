@@ -83,8 +83,17 @@ test("sync handles absent inputs, then replaces fixtures with recorded runs with
       path.join(root, "artifacts/replay_2025.json"),
       JSON.stringify({ start: "2025-01-01", end: "2025-12-31", methods: [] }),
     );
+    await mkdir(path.join(root, "agent/evals"), { recursive: true });
+    await writeFile(
+      path.join(root, "agent/evals/analyst_eval.json"),
+      JSON.stringify({
+        cases: 1,
+        results: [{ question: "Recorded question", grade: "fully" }],
+      }),
+    );
     sync();
     const result = await bundle();
+    assert.equal(result.analyst_eval.results[0].question, "Recorded question");
     assert.equal(result.replay_2025.start, "2025-01-01");
     assert.equal(result.verifier_example.run_id, "verifier-example");
     assert.equal(result.meta.runs_source, "recorded");

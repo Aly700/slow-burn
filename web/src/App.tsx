@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Data, Score, Run } from "./types";
 import { list } from "./lib";
 import { Hero, Methods, Signals, Timing } from "./components/Story";
 import { Queue } from "./components/Queue";
+import { Analyst } from "./components/Analyst";
 import { Briefing } from "./components/Briefing";
 import { Discovery, AgentSection } from "./components/Discovery";
 import { Presentation } from "./components/Presentation";
@@ -89,6 +90,29 @@ export default function App() {
       },
     );
   };
+  const openCve = (cve: string) =>
+    setSelected(
+      list(data.scores).find((row) => row.cve_id === cve) ?? {
+        rank: 0,
+        cve_id: cve,
+      },
+    );
+  const askAfterPresentation = useRef(false);
+  useEffect(() => {
+    if (!presenting && askAfterPresentation.current) {
+      askAfterPresentation.current = false;
+      document
+        .getElementById("analyst")
+        ?.scrollIntoView({ behavior: "instant", block: "start" });
+      document
+        .getElementById("analyst-question")
+        ?.focus({ preventScroll: true });
+    }
+  }, [presenting]);
+  const openAnalyst = () => {
+    askAfterPresentation.current = true;
+    setPresenting(false);
+  };
   const close = useCallback(() => setSelected(null), []);
   return (
     <>
@@ -111,6 +135,7 @@ export default function App() {
             ["overview", "Overview"],
             ["timing", "Discovery"],
             ["queue", "Fix-first queue"],
+            ["analyst", "Ask Slow Burn"],
             ["agent", "Briefing"],
             ["methods", "Methods"],
           ].map(([id, label]) => (
@@ -170,6 +195,7 @@ export default function App() {
           }}
           onOpen={setSelected}
         />
+        <Analyst data={data} onOpen={openCve} />
         <AgentSection data={data} run={featured} onOpen={openFeatured} />
         <Methods data={data} />
       </main>
@@ -190,6 +216,7 @@ export default function App() {
           }}
           initialNotice={featured ? decisions[featured.cve_id]?.notice : ""}
           onClose={closePresentation}
+          onAsk={openAnalyst}
           onUpdate={updateRun}
         />
       )}

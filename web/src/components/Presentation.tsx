@@ -31,11 +31,13 @@ export function Presentation({
   data,
   initialNotice = "",
   onClose,
+  onAsk,
   onUpdate,
 }: {
   data: Data;
   initialNotice?: string;
   onClose: () => void;
+  onAsk?: () => void;
   onUpdate: (run: Run, notice: string) => void;
 }) {
   const [step, setStep] = useState(0);
@@ -252,6 +254,13 @@ export function Presentation({
           <>
             <h1>Policy decides. Granite briefs.</h1>
             <LiveControls live={live} disabled={busy} />
+            {onAsk && (
+              <div className="present-ask-link">
+                <button onClick={onAsk}>
+                  Ask a question about the ranking ↗
+                </button>
+              </div>
+            )}
             <div className="present-investigation">
               <div className="present-briefing">
                 <LiveTrace live={live} />
