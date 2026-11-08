@@ -157,6 +157,7 @@ export interface Data {
   scores?: Score[];
   runs?: Run[];
   agent_eval?: AgentEval | null;
+  replay_2025?: ReplayData | null;
   verifier_example?: Run | null;
   meta?: {
     synced_at?: string;
@@ -185,4 +186,27 @@ export interface AgentEval {
   snapshot_end?: string;
   outcome_end?: string;
   limitations?: string[];
+}
+
+export interface ReplayItem {
+  cve_id: string;
+  rank?: number;
+  snapshot_month?: string;
+  published?: string;
+  kev_date?: string | null;
+}
+export interface ReplayPositive extends ReplayItem {
+  vendor?: string;
+  product?: string;
+  public_exploit_signal?: boolean;
+  rank_in?: Record<string, number | null>;
+}
+export interface ReplayData {
+  split?: string;
+  pool?: number;
+  positives?: number;
+  start: string;
+  end: string;
+  methods?: { key: string; name: string; hits?: number | null; items?: ReplayItem[] }[];
+  later_exploited?: ReplayPositive[];
 }

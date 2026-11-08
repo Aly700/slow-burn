@@ -27,6 +27,7 @@ async function json(file) {
 async function write(name, value) {
   await writeFile(path.join(dest, name), JSON.stringify(value, null, 2) + "\n");
 }
+// Includes replay_2025.json and future additive contract artifacts.
 const artifacts = {};
 for (const name of await files(source)) {
   if (!name.endsWith(".json")) continue;

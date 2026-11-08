@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Data, Run } from "../types";
 import { displayValue, list, number, percent } from "../lib";
-import { standardRankings, strongestRun } from "../storyData";
+import { strongestRun } from "../storyData";
 import { useApproval } from "../useApproval";
 import {
   BlindSpot,
@@ -11,6 +11,7 @@ import {
   WordPress,
 } from "./Discovery";
 import { Icon } from "./Icon";
+import { Replay } from "./Replay";
 
 const chapters = [
   "The result",
@@ -78,7 +79,7 @@ export function Presentation({
       if (event.key === "Tab") {
         const nodes = Array.from(
           container.current?.querySelectorAll<HTMLElement>(
-            "button:not(:disabled), summary, a[href]",
+            "button:not(:disabled), input, select, summary, a[href]",
           ) ?? [],
         );
         const first = nodes[0],
@@ -112,13 +113,6 @@ export function Presentation({
   const firstShare =
     clock?.first_month != null && total ? clock.first_month / total : null;
   const laterShare = clock?.later != null && total ? clock.later / total : null;
-  const ours = findings?.headline?.ours_hits_top500_2025_backtest;
-  const methods = standardRankings(data);
-  const maxHits = Math.max(
-    1,
-    ours ?? 0,
-    ...methods.map((method) => method.hits_at_500 ?? 0),
-  );
   const droppedRun = list(run?.verifier?.dropped).length
     ? run
     : (data.verifier_example ??
@@ -171,47 +165,7 @@ export function Presentation({
             <p className="slide-lead">
               Same top-500 budget. How many later-exploited CVEs did we find?
             </p>
-            <div className="present-results">
-              <div className="present-ours">
-                <span>Slow Burn</span>
-                <strong className={ours == null ? "is-pending" : ""}>
-                  {number(ours)}
-                </strong>
-                <p>
-                  later KEV entries caught
-                  <br />
-                  in the top 500
-                </p>
-              </div>
-              <div className="present-baselines">
-                {methods.map((method) => (
-                  <div key={method.name}>
-                    <span>{method.name}</span>
-                    <div>
-                      <i
-                        style={{
-                          width: `${((method.hits_at_500 ?? 0) / maxHits) * 100}%`,
-                        }}
-                      />
-                    </div>
-                    <strong
-                      className={method.hits_at_500 == null ? "is-pending" : ""}
-                    >
-                      {number(method.hits_at_500)}
-                    </strong>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="slide-bottom-note">
-              <strong>2025 DEVELOPMENT BACKTEST</strong>
-              <span>
-                {number(findings?.headline?.positives_2025)} later KEV entries ·{" "}
-                {number(findings?.headline?.pool_2025)} eligible CVEs · outcome
-                cutoff 31 Dec 2025
-              </span>
-              <span>2026 result: pending judging</span>
-            </div>
+            <Replay data={data.replay_2025} presentation />
           </>
         )}
         {step === 1 && (

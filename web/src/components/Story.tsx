@@ -1,6 +1,6 @@
 import type { Data, Findings } from "../types";
 import { list, number, percent } from "../lib";
-import { standardRankings } from "../storyData";
+import { Replay } from "./Replay";
 import { Icon } from "./Icon";
 
 export function SectionHeading({
@@ -24,135 +24,11 @@ export function SectionHeading({
 }
 
 export function Hero({ data }: { data: Data }) {
-  const findings = data.findings;
-  const ours = findings?.headline?.ours_hits_top500_2025_backtest;
-  const baseline = standardRankings(data);
-  const max = Math.max(
-    1,
-    ...baseline.map((item) => item.hits_at_500 ?? 0),
-    ours ?? 0,
-  );
-  const seed = /seed/i.test(
-    `${findings?._status ?? ""} ${data.backtest?._status ?? ""}`,
-  );
-  const benchmark = findings?.headline?.benchmark_2026_reference;
-  const referenceHits = Object.values(benchmark ?? {}).filter(
-    (n): n is number => typeof n === "number" && Number.isFinite(n),
-  );
-  const benchmarkRange = referenceHits.length
-    ? `${Math.min(...referenceHits)}–${Math.max(...referenceHits)}`
-    : "pending";
-  const first = findings?.two_clocks?.first_month;
-  const total = findings?.two_clocks?.kev_2025_total;
-  const firstPercent =
-    first != null && total ? Math.round((first / total) * 100) : null;
-  const lag = findings?.two_clocks?.later_lag_days?.median;
-  return (
-    <section id="overview" className="hero">
-      <div className="hero-main">
-        <div className="hero-copy">
-          <h1>
-            Severity isn’t
-            <br />a forecast.
-          </h1>
-          <p className="hero-lead">
-            It tells you how bad an attack could be.
-            <br />
-            <strong>We ask what attackers will target next.</strong>
-          </p>
-          <p className="hero-description">
-            {firstPercent != null && lag != null ? (
-              <>
-                In the 2025 exploited cohort, <strong>{firstPercent}%</strong>{" "}
-                enter KEV in their publication month. Later cases have a{" "}
-                <strong>{number(lag)}-day</strong> median lag. That’s the window
-                we prioritise.
-              </>
-            ) : (
-              <>
-                A fix-first queue built around the signals that precede
-                exploitation, with evidence you can inspect before you act.
-              </>
-            )}
-          </p>
-          <a className="button primary" href="#queue">
-            Explore the fix-first queue <Icon name="arrow" />
-          </a>
-          <a className="text-link" href="#timing">
-            Start with the discovery <Icon name="down" size={15} />
-          </a>
-        </div>
-        <div className="backtest-panel">
-          <div className="panel-label">
-            <span>2025 DEVELOPMENT BACKTEST</span>
-            <span className="badge">
-              {!baseline.length && ours == null
-                ? "Awaiting results"
-                : seed
-                  ? "Preliminary findings"
-                  : "Development comparison"}
-            </span>
-          </div>
-          <h2>
-            Same 500 fixes.
-            <br />
-            Different outcomes.
-          </h2>
-          <div className="result-feature">
-            <div className={`result-number ${ours == null ? "pending" : ""}`}>
-              {number(ours)}
-            </div>
-            <div>
-              <strong>Slow Burn</strong>
-              <span>later KEV entries in the top 500</span>
-            </div>
-          </div>
-          <div
-            className="comparison"
-            aria-label="2025 backtest hits in the top 500"
-          >
-            {baseline.length ? (
-              baseline.map((method, i) => (
-                <div className="comparison-row" key={`${method.name}-${i}`}>
-                  <span>{method.name}</span>
-                  <div className="bar-track">
-                    <div
-                      style={{
-                        width: `${((method.hits_at_500 ?? 0) / max) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <strong>{number(method.hits_at_500)}</strong>
-                </div>
-              ))
-            ) : (
-              <p className="empty-inline">Baseline validation pending.</p>
-            )}
-          </div>
-          <p className="caption">
-            {findings?.headline?.positives_2025 != null &&
-            findings?.headline?.pool_2025 != null
-              ? `${number(findings.headline.positives_2025)} later KEV entries among ${number(findings.headline.pool_2025)} eligible CVEs.`
-              : "Cohort counts pending."}{" "}
-            Outcome cutoff: 31 Dec 2025. Model selection used this development
-            data.
-          </p>
-        </div>
-      </div>
-      <div className="benchmark-strip">
-        <div>
-          <span className="status-dot" />
-          <strong>2026 benchmark</strong>
-          <span>Result pending judging</span>
-        </div>
-        <p>
-          Standard rankings find <strong>{benchmarkRange}</strong>{" "}
-          later-exploited CVEs in their top 500.
-        </p>
-        <span className="mono">Snapshot-bound ranking</span>
-      </div>
-    </section>
-  );
+  return <section id="overview" className="hero replay-hero">
+    <div className="replay-intro"><h1>Severity isn’t a forecast.</h1><p>Same fix budget. A year of consequences.<br /><strong>Watch what each ranking catches.</strong></p></div>
+    <Replay data={data.replay_2025} />
+    <div className="benchmark-strip"><div><span className="status-dot" /><strong>2026 benchmark</strong><span>Result pending judging</span></div><a className="text-link" href="#queue">Explore your fix-first queue <Icon name="arrow" size={16} /></a><span className="mono">Snapshot-bound ranking</span></div>
+  </section>;
 }
 
 export function Timing({ findings }: { findings?: Findings | null }) {

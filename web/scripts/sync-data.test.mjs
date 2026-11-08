@@ -67,8 +67,10 @@ test("sync handles absent inputs, then replaces fixtures with recorded runs with
       run_id: "verifier-example", cve_id: "CVE-2025-3",
       verifier: { dropped: [{ id: "unsupported", text: "Unsupported example", why: "No evidence" }] },
     }));
+    await writeFile(path.join(root, "artifacts/replay_2025.json"), JSON.stringify({ start: "2025-01-01", end: "2025-12-31", methods: [] }));
     sync();
     const result = await bundle();
+    assert.equal(result.replay_2025.start, "2025-01-01");
     assert.equal(result.verifier_example.run_id, "verifier-example");
     assert.equal(result.meta.runs_source, "recorded");
     assert.equal(result.meta.score_mode, "probability");
