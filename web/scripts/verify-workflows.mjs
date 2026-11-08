@@ -2,6 +2,8 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { readFile } from "node:fs/promises";
 import assert from "node:assert/strict";
+import { decodeWatch, filterWatch } from "../src/productWatch.ts";
+import { parseCsv } from "./csv.mjs";
 import {
   installLiveMock,
   startLiveMock,
@@ -251,8 +253,37 @@ try {
         const content = await readFile(await download.path(), "utf8");
         if (format === "JSON tickets") {
           const payload = JSON.parse(content);
+          const review = bundle.lazy?.product_watch
+            ? filterWatch(
+                decodeWatch(
+                  JSON.parse(
+                    await readFile(
+                      new URL(
+                        `../public/data/${bundle.lazy.product_watch.file}`,
+                        import.meta.url,
+                      ),
+                      "utf8",
+                    ),
+                  ),
+                ),
+                [{ kind: "vendor", value: "Adobe" }],
+              )
+            : [];
           assert.deepEqual(
-            payload.map((row) => row.cve_id),
+            payload
+              .filter((row) => row.source_list === "product_review")
+              .map((row) => row.cve_id),
+            review.map((row) => row.cve_id),
+          );
+          assert.ok(
+            payload
+              .filter((row) => row.source_list === "product_review")
+              .every((row) => row.rank === null && row.verdict === "review"),
+          );
+          assert.deepEqual(
+            payload
+              .filter((row) => row.source_list === "fix_first")
+              .map((row) => row.cve_id),
             rows.map((row) => row.cve_id),
           );
           assert.ok(
@@ -262,6 +293,19 @@ try {
           );
         } else {
           assert.ok(content.includes("proposed_action"));
+          const parsed = parseCsv(content),
+            sourceIndex = parsed[0].indexOf("source_list");
+          assert.equal(
+            parsed.slice(1).filter((row) => row[sourceIndex] === "fix_first")
+              .length,
+            rows.length,
+          );
+          if (bundle.lazy?.product_watch)
+            assert.ok(
+              parsed
+                .slice(1)
+                .some((row) => row[sourceIndex] === "product_review"),
+            );
           for (const row of rows) assert.ok(content.includes(row.cve_id));
         }
       }

@@ -91,8 +91,16 @@ test("sync handles absent inputs, then replaces fixtures with recorded runs with
         results: [{ question: "Recorded question", grade: "fully" }],
       }),
     );
+    await writeFile(path.join(root, "artifacts/product_watch_2026.csv"), 'cve_id,vendor,product,match_confidence,prior_kev_count,latest_prior_kev_cve,latest_prior_kev_date,epss,description,snapshot_month\nCVE-2026-3,Example,Service,psirt_supported,2,CVE-2024-1,2024-06-01,,Description,2026-04\n');
+    await writeFile(path.join(root, "artifacts/map_2026.json"), JSON.stringify({ coordinates: { data: "separate payload" } }));
     sync();
     const result = await bundle();
+    assert.equal(result.map_2026, undefined);
+    assert.equal(result.lazy.map.file, "map_2026.json");
+    assert.equal(result.lazy.product_watch.rows, 1);
+    const watch = JSON.parse(await readFile(path.join(web, "public/data/product_watch_2026.json"), "utf8"));
+    assert.equal(watch.rows[0][4], 2);
+    assert.equal(watch.rows[0][7], null);
     assert.equal(result.analyst_eval.results[0].question, "Recorded question");
     assert.equal(result.replay_2025.start, "2025-01-01");
     assert.equal(result.verifier_example.run_id, "verifier-example");

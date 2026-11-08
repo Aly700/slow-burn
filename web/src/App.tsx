@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Data, Score, Run } from "./types";
 import { list } from "./lib";
 import { Hero, Methods, Signals, Timing } from "./components/Story";
+import { GraniteMap } from "./components/GraniteMap";
 import { Queue } from "./components/Queue";
 import { Analyst } from "./components/Analyst";
 import { Briefing } from "./components/Briefing";
@@ -176,6 +177,13 @@ export default function App() {
         <Timing findings={data.findings} />
         <Signals findings={data.findings} />
         <Discovery findings={data.findings} />
+        <section
+          id="granite-map"
+          className="story-section map-section"
+          aria-label="What Granite reads"
+        >
+          <GraniteMap data={data} />
+        </section>
         <Queue
           data={{
             ...data,

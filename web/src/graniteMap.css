@@ -1,0 +1,463 @@
+.map-section {
+  padding-block: 56px;
+}
+.granite-map {
+  min-width: 0;
+}
+.map-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.map-heading .eyebrow {
+  color: #92abb5;
+  font-size: 10px;
+  letter-spacing: 1.8px;
+}
+.map-heading h2 {
+  font-size: 42px;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  font-weight: 450;
+  margin: 10px 0;
+}
+.map-heading p {
+  color: var(--muted);
+  font-size: 15px;
+}
+.map-total {
+  text-align: right;
+  flex-shrink: 0;
+}
+.map-total strong {
+  font: 38px var(--mono);
+  letter-spacing: -1.8px;
+  color: #dae5e6;
+}
+.map-total span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 5px;
+}
+.map-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 22px;
+  padding: 16px 18px;
+  background: #10191e;
+  border: 1px solid #2a3d45;
+  border-bottom: 0;
+}
+.map-layer {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.map-layer input {
+  width: 13px;
+  height: 13px;
+  accent-color: var(--layer-color);
+}
+.map-layer i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--layer-color);
+}
+.map-layer small {
+  font: 10px var(--mono);
+  color: var(--muted);
+  margin-left: 2px;
+}
+.map-label-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  margin-left: auto;
+}
+.map-label-toggle input {
+  accent-color: #bac8cc;
+}
+.map-field {
+  position: relative;
+  height: clamp(480px, 58vw, 660px);
+  border: 1px solid #2a3d45;
+  background: #090f12;
+  overflow: hidden;
+}
+.map-field canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+.map-field canvas:active {
+  cursor: grabbing;
+}
+.map-field canvas:focus-visible {
+  outline: 2px solid #e6bd96;
+  outline-offset: -3px;
+}
+.map-corner {
+  position: absolute;
+  left: 22px;
+  top: 20px;
+  pointer-events: none;
+}
+.map-corner > span {
+  font: 9px var(--mono);
+  letter-spacing: 1.3px;
+  color: #819aa5;
+}
+.map-corner small {
+  display: block;
+  color: #7e929c;
+  font-size: 10px;
+  margin-top: 6px;
+}
+.map-controls {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  background: #10191ef2;
+  border: 1px solid #3b4b53;
+}
+.map-controls button {
+  border: 0;
+  border-right: 1px solid #3b4b53;
+  background: none;
+  padding: 10px 13px;
+  font-size: 14px;
+  min-height: 36px;
+}
+.map-controls button:hover {
+  background: #233038;
+}
+.map-controls span {
+  font: 11px var(--mono);
+  padding: 0 12px;
+  color: var(--muted);
+}
+.map-tooltip {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  pointer-events: none;
+  padding: 14px 16px;
+  background: #111c22f5;
+  border: 1px solid #51626a;
+  max-width: min(350px, calc(100% - 36px));
+  box-shadow: 0 8px 30px #0006;
+}
+.map-tooltip strong,
+.map-tooltip span,
+.map-tooltip small {
+  display: block;
+}
+.map-tooltip strong {
+  font: 13px var(--mono);
+  color: #f4d7b0;
+}
+.map-tooltip span {
+  font-size: 13px;
+  margin-top: 6px;
+  color: #c3d4da;
+}
+.map-tooltip small {
+  font-size: 10px;
+  margin-top: 8px;
+  color: var(--muted);
+}
+.map-under {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 0;
+}
+.map-under label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--muted);
+  min-width: 0;
+}
+.map-under select {
+  max-width: 340px;
+  min-width: 0;
+  color: #c7d5d8;
+  background: #121b20;
+  border: 1px solid #35454c;
+  font-size: 11px;
+  padding: 9px 12px;
+}
+.map-under > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.map-evidence {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  align-items: start;
+  gap: 40px;
+  padding-top: 19px;
+  border-top: 1px solid #2a3d45;
+}
+.map-evidence p {
+  font-size: 17px;
+  line-height: 1.55;
+  max-width: 1030px;
+  color: #bac9cd;
+}
+.map-evidence strong {
+  color: #f4d7b0;
+  font-weight: 500;
+}
+.map-evidence > span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+.map-overlay-note {
+  font-size: 11px;
+  color: #aec9ba;
+  margin-bottom: 14px;
+}
+.map-methods {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.map-methods summary {
+  cursor: pointer;
+  display: list-item;
+}
+.map-methods p {
+  margin: 12px 0;
+  max-width: 1100px;
+}
+.map-methods a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: #b8cbd1;
+}
+.map-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.map-loading button {
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.map-appendix-button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  white-space: nowrap;
+  background: #162026;
+  border: 1px solid #3b4b53;
+  padding: 8px 14px;
+  font-size: 12px;
+}
+.present-header .map-appendix-button {
+  margin-left: auto;
+}
+.present-header > .icon-button {
+  margin-left: 0;
+}
+.present-map {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 22px 4.5vw 14px;
+}
+.map-appendix .map-heading {
+  margin-bottom: 14px;
+}
+.map-appendix .map-heading h2 {
+  font-size: 40px;
+}
+.map-appendix .map-field {
+  height: clamp(280px, calc(100dvh - 415px), 660px);
+}
+.map-appendix .map-toolbar {
+  padding-block: 12px;
+}
+.map-appendix .map-under {
+  padding-block: 10px;
+}
+.map-appendix .map-evidence {
+  padding-top: 13px;
+}
+.map-appendix .map-evidence p {
+  font-size: 16px;
+}
+.map-appendix .map-methods {
+  margin-top: 8px;
+}
+@media (min-width: 1700px) {
+  .map-heading h2 {
+    font-size: 48px;
+  }
+  .map-appendix .map-heading h2 {
+    font-size: 46px;
+  }
+  .map-appendix .map-evidence p {
+    font-size: 20px;
+  }
+}
+@media (max-width: 1100px) {
+  .map-toolbar {
+    gap: 10px 15px;
+  }
+  .map-label-toggle {
+    margin-left: 0;
+  }
+  .map-evidence {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+@media (max-width: 700px) {
+  .map-heading {
+    flex-direction: column;
+    align-items: start;
+    gap: 18px;
+  }
+  .map-heading h2 {
+    font-size: 34px;
+  }
+  .map-heading p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .map-total {
+    text-align: left;
+  }
+  .map-total strong {
+    font-size: 30px;
+  }
+  .map-total span {
+    font-size: 10px;
+  }
+  .map-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 12px 10px;
+    gap: 13px 10px;
+  }
+  .map-layer {
+    font-size: 10px;
+    gap: 5px;
+  }
+  .map-layer small {
+    font-size: 8px;
+  }
+  .map-layer input {
+    width: 12px;
+    height: 12px;
+  }
+  .map-layer i {
+    display: none;
+  }
+  .map-label-toggle {
+    font-size: 10px;
+  }
+  .map-field {
+    height: 440px;
+  }
+  .map-corner {
+    left: 12px;
+    top: 13px;
+  }
+  .map-corner small {
+    font-size: 9px;
+  }
+  .map-controls {
+    right: 10px;
+    bottom: 10px;
+  }
+  .map-controls button {
+    padding: 8px 11px;
+  }
+  .map-tooltip {
+    left: 10px;
+    bottom: 62px;
+  }
+  .map-under {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .map-under label {
+    flex-direction: column;
+    align-items: start;
+    gap: 8px;
+  }
+  .map-under select {
+    width: 100%;
+    max-width: 100%;
+  }
+  .map-under > span {
+    font-size: 10px;
+  }
+  .map-evidence p {
+    font-size: 15px;
+  }
+  .map-evidence > span {
+    font-size: 11px;
+  }
+  .map-appendix-button {
+    font-size: 10px;
+    gap: 8px;
+    padding: 7px 10px;
+  }
+  .present-map {
+    padding: 16px 20px;
+  }
+  .map-appendix .map-heading h2 {
+    font-size: 30px;
+  }
+  .map-appendix .map-field {
+    height: 360px;
+  }
+}
+@media (min-width: 701px) {
+  .map-appendix .map-field {
+    height: clamp(250px, calc(100dvh - 525px), 590px);
+  }
+  .map-appendix .map-heading h2 {
+    margin-block: 6px;
+  }
+  .map-appendix .map-heading p {
+    font-size: 13px;
+  }
+  .map-appendix .map-total strong {
+    font-size: 34px;
+  }
+  .map-appendix .map-evidence {
+    gap: 24px;
+    grid-template-columns: minmax(0, 1fr) 220px;
+  }
+}

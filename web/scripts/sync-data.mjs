@@ -1,7 +1,7 @@
 import { readFile, writeFile, readdir, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { convertScores } from "./csv.mjs";
+import { convertScores, parseCsv } from "./csv.mjs";
 import { normalizeRecording } from "./live-recordings.mjs";
 
 const web = fileURLToPath(new URL("../", import.meta.url));
@@ -32,8 +32,30 @@ async function write(name, value) {
 const artifacts = {};
 for (const name of await files(source)) {
   if (!name.endsWith(".json")) continue;
-  artifacts[name.slice(0, -5)] = await json(path.join(source, name));
-  await write(name, artifacts[name.slice(0, -5)]);
+  const value = await json(path.join(source, name));
+  if (name !== "map_2026.json") artifacts[name.slice(0, -5)] = value;
+  await writeFile(path.join(dest, name), JSON.stringify(value));
+}
+// Large review and map files stay outside the initial page bundle.
+const lazy = {};
+if ((await files(source)).includes("map_2026.json"))
+  lazy.map = { file: "map_2026.json" };
+try {
+  const [headers, ...sourceRows] = parseCsv(await readFile(path.join(source, "product_watch_2026.csv"), "utf8"));
+  const columns = ["cve_id", "vendor", "product", "match_confidence", "prior_kev_count", "latest_prior_kev_cve", "latest_prior_kev_date", "epss", "description", "snapshot_month"];
+  const positions = columns.map(column => headers.indexOf(column));
+  if (positions.some(position => position < 0)) throw new Error("Review list is missing required columns");
+  const rows = sourceRows.filter(row => row[positions[0]]).map(row => positions.map((position, index) => {
+    const value = row[position] ?? "";
+    return [4, 7].includes(index) ? (value.trim() && Number.isFinite(Number(value)) ? Number(value) : null) : value;
+  }));
+  const identities = new Map();
+  for (const row of rows) identities.set(`${row[1]}\t${row[2]}`, { vendor: row[1], product: row[2] });
+  lazy.product_watch = { file: "product_watch_2026.json", rows: rows.length, identities: [...identities.values()] };
+  await writeFile(path.join(dest, "product_watch_2026.json"), JSON.stringify({ columns, rows }));
+} catch (error) {
+  if (error.code !== "ENOENT") throw error;
+  await rm(path.join(dest, "product_watch_2026.json"), { force: true });
 }
 const analystPath = path.resolve(web, "../agent/evals/analyst_eval.json");
 const analyst = (await files(path.dirname(analystPath))).includes(
@@ -125,6 +147,7 @@ for (const name of (await files(liveDir))
 }
 const bundle = {
   ...artifacts,
+  lazy,
   analyst_eval: analyst,
   scores,
   runs,

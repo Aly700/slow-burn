@@ -269,7 +269,7 @@ try {
             exact: true,
           })
           .count(),
-        0,
+        bundle.lazy?.product_watch ? 1 : 0,
       );
       await present(page, 3);
       assert.match(
