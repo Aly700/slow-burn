@@ -239,7 +239,7 @@ export function Analyst({
             <span role="status">
               <i />
               {live.health === "ready"
-                ? "Local Granite ready"
+                ? live.label
                 : live.health === "checking"
                   ? "Checking local Granite…"
                   : suggested.length
@@ -271,7 +271,7 @@ export function Analyst({
             <div className="analyst-form-actions">
               <span>
                 {live.health === "ready"
-                  ? "Runs on this laptop"
+                  ? live.hosted ? "Hosted inference · read-only" : "Runs on this laptop"
                   : "Suggested questions have recorded answers"}
               </span>
               {running ? (
@@ -305,7 +305,7 @@ export function Analyst({
               <div className="analyst-result-head">
                 <span>
                   {session.mode === "live"
-                    ? "Live Granite answer"
+                    ? live.label
                     : "Recorded answer · evaluation run"}
                 </span>
                 <span className="mono" role="status">
@@ -357,6 +357,7 @@ export function Analyst({
               )}
               {session.mode === "recorded" && (
                 <p className="analyst-record-note">
+                  {session.message && <span role="status">{session.message} </span>}
                   Saved answer and query, not a new inference. Source values are
                   available under each evidence disclosure.
                 </p>

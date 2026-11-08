@@ -1,3 +1,4 @@
+import { previewOnly } from "./api";
 import { useState } from "react";
 import { requestApproval } from "./approval";
 import { list } from "./lib";
@@ -39,6 +40,7 @@ export function useApproval(
     if (next) onUpdate(next, message);
   }
   async function decide(approved: boolean) {
+    if (previewOnly(currentRun)) return;
     if (!currentRun || currentRun.state !== "WAITING_APPROVAL" || busy) return;
     setBusy(true);
     setNotice("");
@@ -86,5 +88,5 @@ export function useApproval(
     }
     setBusy(false);
   }
-  return { currentRun, notice, busy, decide, replaceRun };
+  return { currentRun, notice, busy, decide, replaceRun, preview: previewOnly(currentRun) };
 }

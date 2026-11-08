@@ -54,6 +54,7 @@ export function Presentation({
     busy,
     decide,
     replaceRun,
+    preview,
   } = useApproval(
     selected,
     data.meta?.runs_source === "fixtures",
@@ -414,7 +415,7 @@ export function Presentation({
                     <span className="eyebrow">HUMAN APPROVAL GATE</span>
                   </div>
                   <h2>
-                    {pending
+                    {preview ? "Ticket preview only" : pending
                       ? "Ticket awaiting approval"
                       : `${notice.startsWith("Simulated") ? "Simulated: " : ""}${state.toLowerCase().replaceAll("_", " ")}`}
                   </h2>
@@ -432,11 +433,11 @@ export function Presentation({
                     </details>
                   </div>
                   <p>
-                    {pending
+                    {preview ? "Public mode is read-only. Review this proposed ticket as a preview." : pending
                       ? "Review the proposed action before approving or rejecting the ticket."
                       : "The decision is retained for this session."}
                   </p>
-                  {pending && (
+                  {pending && !preview && (
                     <div className="approval-buttons">
                       <button
                         className="button secondary"
@@ -456,7 +457,7 @@ export function Presentation({
                     </div>
                   )}
                   <p className="approval-note" role="status">
-                    {notice ||
+                    {preview ? "No ticket can be filed from this public service." : notice ||
                       (data.meta?.runs_source === "fixtures"
                         ? "Fixture mode. Approval is simulated locally; no ticket will be created."
                         : "Uses localhost:8765. If unreachable, a labelled local simulation is shown.")}

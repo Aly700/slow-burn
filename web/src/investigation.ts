@@ -21,8 +21,9 @@ export function connectInvestigation(
   receive: (event: LiveEvent) => void,
   fail: (message: string) => void,
   create: (url: string) => Source = (url) => new EventSource(url),
+  base = LIVE_API,
 ) {
-  const source = create(`${LIVE_API}/live/${encodeURIComponent(cve)}`);
+  const source = create(`${base}/live/${encodeURIComponent(cve)}`);
   let closed = false,
     runId: string | undefined,
     briefing = false;

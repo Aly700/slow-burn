@@ -1,3 +1,4 @@
+import { previewOnly } from "../api";
 import type { Run } from "../types";
 import { displayValue, list } from "../lib";
 import { Icon } from "./Icon";
@@ -57,6 +58,7 @@ export function ApprovalFooter({ run, notice = "", fixture = false, busy = false
 }) {
   const state = run?.state ?? "RECEIVED";
   const pending = state === "WAITING_APPROVAL";
+  const preview = previewOnly(run);
   const stageLabel = (value: string) => value.toLowerCase().replaceAll("_", " ");
   return (
     <footer className="approval-footer">
@@ -65,13 +67,13 @@ export function ApprovalFooter({ run, notice = "", fixture = false, busy = false
           <div className="approval-status">
             <Icon name="shield" size={18} />
             <strong>
-              {pending
+              {preview ? "Approval preview only" : pending
                 ? "Human approval required"
                 : `${notice.startsWith("Simulated") ? "Simulated: " : ""}${stageLabel(state)}`}
             </strong>
             {pending && <span>No ticket filed</span>}
           </div>
-          {pending && (
+          {pending && !preview && (
             <div className="approval-buttons">
               <button className="button secondary" disabled={busy} aria-describedby={noteId} onClick={() => void onDecide(false)}>
                 Reject
@@ -83,7 +85,7 @@ export function ApprovalFooter({ run, notice = "", fixture = false, busy = false
             </div>
           )}
           <p id={noteId} className={`approval-note ${notice ? "has-notice" : ""}`} role="status">
-            {notice || (fixture
+            {preview ? "Public mode is read-only. This proposed ticket is a preview; no ticket can be filed." : notice || (fixture
               ? "Demo mode. Approval is simulated locally; no ticket will be created."
               : "Uses the local approval service. If unreachable, a local simulation is labelled here.")}
           </p>

@@ -179,6 +179,7 @@ export interface ModelCard {
   };
 }
 export interface Run {
+  public?: boolean;
   run_id: string;
   list?: "top500" | "watch" | "live";
   briefing_hash?: string;

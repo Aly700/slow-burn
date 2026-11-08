@@ -1,14 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Data, Investigation, LiveEvent, Run } from "./types";
 import {
   applyLiveEvent,
   connectInvestigation,
-  LIVE_API,
-  localViewer,
   recordedEvents,
   replayEvents,
   validCve,
 } from "./investigation";
+import { useApi } from "./useApi";
 import { strongestRun } from "./storyData";
 
 export function useInvestigation(
@@ -18,9 +17,7 @@ export function useInvestigation(
   onComplete: (run: Run, replay: boolean) => void,
 ) {
   const [input, setInput] = useState(initialCve);
-  const [health, setHealth] = useState<"checking" | "ready" | "offline">(
-    "checking",
-  );
+  const { api, health, checkHealth, label } = useApi();
   const [session, setSession] = useState<Investigation>({
     mode: "replay",
     status: "idle",
@@ -34,36 +31,7 @@ export function useInvestigation(
   const callbacks = useRef({ onStart, onComplete });
   callbacks.current = { onStart, onComplete };
   const generation = useRef(0);
-  const healthRequest = useRef<AbortController | null>(null);
-  const checkHealth = useCallback(async () => {
-    healthRequest.current?.abort();
-    const controller = new AbortController();
-    healthRequest.current = controller;
-    if (!localViewer(window.location.hostname)) {
-      setHealth("offline");
-      return;
-    }
-    try {
-      const response = await fetch(`${LIVE_API}/live/health`, {
-        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(1800)]),
-      });
-      const body = await response.json();
-      if (controller.signal.aborted) return;
-      setHealth(response.ok && body.ready === true ? "ready" : "offline");
-    } catch {
-      if (!controller.signal.aborted) setHealth("offline");
-    }
-  }, []);
-  useEffect(() => {
-    void checkHealth();
-    const poll = setInterval(() => void checkHealth(), 15_000);
-    return () => {
-      clearInterval(poll);
-      healthRequest.current?.abort();
-      stop.current?.();
-      generation.current++;
-    };
-  }, [checkHealth]);
+  useEffect(() => () => { stop.current?.(); generation.current++; }, []);
   useEffect(() => {
     if (session.status !== "running") return;
     const start = performance.now();
@@ -91,8 +59,8 @@ export function useInvestigation(
     }
     stop.current?.();
     const id = ++generation.current;
-    const mode =
-      health === "ready" && localViewer(window.location.hostname)
+    let mode: "live" | "replay" =
+      health === "ready" && api.base
         ? "live"
         : "replay";
     const recording =
@@ -130,7 +98,7 @@ export function useInvestigation(
       message:
         actualCve !== cve
           ? `No recording for ${cve}. Replaying ${actualCve} instead.`
-          : undefined,
+          : api.message,
     };
     setSession(state.current);
     callbacks.current.onStart();
@@ -149,29 +117,30 @@ export function useInvestigation(
           }));
       }
     };
-    if (mode === "live") {
-      try {
-        stop.current = connectInvestigation(cve, receive, (message) => {
-          if (id === generation.current)
-            setSession((previous) => ({
-              ...previous,
-              status: "error",
-              message,
-            }));
-        });
-      } catch {
-        setSession((previous) => ({
-          ...previous,
-          status: "error",
-          message:
-            "The live connection could not be opened. Check the local service and retry.",
-        }));
+    const replay = (message?: string) => {
+      if (id !== generation.current) return;
+      stop.current?.();
+      if (!recording && !record) {
+        setSession(previous => ({ ...previous, status: "error", message: "Live service unavailable and no recorded run is available." }));
+        return;
       }
-    } else
-      stop.current = replayEvents(
-        recording?.events ?? recordedEvents(record!),
-        receive,
-      );
+      mode = "replay";
+      const recordedCve = recording?.cve_id ?? record!.cve_id;
+      state.current = { mode, status: "running", cve_id: recordedCve, tools: [], claims: [],
+        illustrative: !recording && data.meta?.runs_source === "fixtures",
+        fixture: recording?.fixture ?? record?.fixture,
+        message: [message, recordedCve !== cve ? `No recording for ${cve}. Replaying ${recordedCve} instead.` : undefined].filter(Boolean).join(' ') || undefined };
+      setSession(state.current);
+      stop.current = replayEvents(recording?.events ?? recordedEvents(record!), receive);
+    };
+    if (mode === "live" && api.base) {
+      try {
+        stop.current = connectInvestigation(cve, receive, message => replay(
+          message.includes('Daily limit reached') ? message : 'Live investigation unavailable, showing a recorded run.'
+        ), undefined, api.base);
+      } catch { replay('Live investigation unavailable, showing a recorded run.'); }
+    } else replay(api.message);
+
   };
   return {
     input,
@@ -182,6 +151,7 @@ export function useInvestigation(
     launch,
     cancel,
     checkHealth,
+    label,
     recordingAvailable: !!(data.runs?.length || data.live_examples?.length),
   };
 }
