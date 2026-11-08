@@ -5,6 +5,8 @@ description = "Point-in-time vulnerability prioritization and KEV inclusion rese
 requires-python = ">=3.12"
 dependencies = [
     "lightgbm>=4.7.0",
+    "matplotlib==3.11.2",
+    "numba==0.68.1",
     "pandas>=3.1.1",
     "pyahocorasick>=2.3.1",
     "pyarrow>=26.0.1",
@@ -12,4 +14,5 @@ dependencies = [
     "scipy>=1.18.1",
     "sentence-transformers>=6.2.0",
     "torch>=2.15.0",
+    "umap-learn==0.5.12",
 ]

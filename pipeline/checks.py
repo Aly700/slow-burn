@@ -317,6 +317,9 @@ def artifact_checks(include_watch=True):
         if 'product_watch' in findings['blind_spot']:
             from pipeline.product_watch import product_checks
             product_checks()
+    if include_watch and 'map' in findings:
+        from pipeline.space_map import map_checks
+        map_checks()
     for name in ['backtest', 'findings']:
         json.loads((ARTIFACTS / f'{name}.json').read_text())
     print('Artifact contracts: passed (500 / 5000 rows, probabilities, reasons, membership, column order)')

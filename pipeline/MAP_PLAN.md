@@ -4,10 +4,10 @@ The submitted ranking and model remain frozen. This round adds descriptive capab
 
 ## Product watch
 
-- [ ] Reuse the profile's exact no-signal pool and product identity. Reconstruct distinct prior KEV IDs for its chosen alias, capped at both snapshot end and 2025-12-31. Assert that the count equals the profile's feature count.
-- [ ] Export the specified twelve columns, ordered by descending prior count, descending EPSS (missing last), then ascending CVE ID. Confidence is categorical evidence strength, not a fabricated probability: `psirt_supported`, `vendor_text_supported`, or `product_alias_only`.
-- [ ] Report the complete queue's 2025 size and coverage of the 31 no-signal positives, plus the 2026 size and match-source breakdown. Preserve all earlier findings and the edited README.
-- [ ] Test temporal cutoffs, count reconciliation, and ordering; regenerate, check, document the contract, and commit this part.
+- [x] Reuse the profile's exact no-signal pool and product identity. Reconstruct distinct prior KEV IDs for its chosen alias, capped at both snapshot end and 2025-12-31. Assert that the count equals the profile's feature count.
+- [x] Export the specified twelve columns, ordered by descending prior count, descending EPSS (missing last), then ascending CVE ID. Confidence is categorical evidence strength, not a fabricated probability: `psirt_supported`, `vendor_text_supported`, or `product_alias_only`.
+- [x] Report the complete queue's 2025 size and coverage of the 31 no-signal positives, plus the 2026 size and match-source breakdown. Preserve all earlier findings and the edited README.
+- [x] Test temporal cutoffs, count reconciliation, and ordering; regenerate, check, document the contract, and commit this part.
 
 ## Semantic map and predeclared check
 
@@ -19,8 +19,16 @@ Before measuring the outcome association, freeze this check: use the original no
 
 Add one map story only if primary AUROC exceeds 0.5 with one-sided permutation p <= 0.01, and the no-signal sensitivity also exceeds 0.5 with p <= 0.05. Otherwise publish the measured result without a new story. This is an association check, not evidence that nearest-neighbour ranking improves top-500 performance.
 
-- [ ] Test typed-array encoding, flag counts, sparse ID membership, and temporal anchor selection before implementation.
-- [ ] Pin UMAP and its numerical dependencies without changing existing locked model packages. Cache layout by input vectors, parameters, code and versions.
-- [ ] Export interleaved uint16 coordinates, uint8 bit flags, int16 cluster IDs, sparse indexed CVE IDs, and region centroids/terms/counts. JSON must be less than 3,000,000 bytes.
-- [ ] Decode and visually inspect the full map locally; test exact membership and counts against source data. Keep any preview under the ignored cache directory.
-- [ ] Add contracts, findings, reproduction commands, and dependency-ordered full rebuild while keeping replay last. Run all existing and new checks, confirm protected hashes, commit, and generate `.lane/model-REPORT-4.md`.
+- [x] Test typed-array encoding, flag counts, sparse ID membership, and temporal anchor selection before implementation.
+- [x] Pin UMAP and its numerical dependencies without changing existing locked model packages. Cache layout by input vectors, parameters, code and versions.
+- [x] Export interleaved uint16 coordinates, uint8 bit flags, int16 cluster IDs, sparse indexed CVE IDs, and region centroids/terms/counts. JSON must be less than 3,000,000 bytes.
+- [x] Decode and visually inspect the full map locally; test exact membership and counts against source data. Keep any preview under the ignored cache directory.
+- [x] Add contracts, findings, reproduction commands, and dependency-ordered full rebuild while keeping replay last. Run all existing and new checks, confirm protected hashes, commit, and generate `.lane/model-REPORT-4.md`.
+
+## Reproducibility amendment
+
+Two fresh fits with identical vectors, seed, parameters and versions produced different coordinates. The pinned UMAP version has a [documented duplicate-row issue](https://github.com/lmcinnes/umap/issues/1277). Enable its built-in `unique=True`: fit distinct vectors and expand the positions back to every CVE. No row is removed from the artifact or counts, and identical vectors occupy the same position. This amendment responds to a failed reproduction check; it changes neither the original-space comparison nor its story gate. Accept the corrected layout only after two fresh fits reproduce the export exactly.
+
+## Empty-text validity audit
+
+After computing the predeclared results, inspection found 18 eligible 2025 descriptions with no text remaining after sanitization, including three later-listed CVEs (all three in the no-signal pool). Empty descriptions do not support a semantic comparison; stripping incident-only wording could itself create a proxy. Before computing filtered results, add this stricter, post-hoc validity guard: remove empty sanitized queries and empty sanitized 2024 anchors, recompute original-space distances and the same monthly permutation tests, and require the original primary and no-signal thresholds again. Preserve the original results and report all exclusions. Add a story only if both the predeclared check and this guard pass; use the nonempty-text results in the sentence. This is an audit prompted by an observed data-quality concern, not a predeclared second experiment or a ranking change. Keep every row on the descriptive map, including empty texts, and report that count.
