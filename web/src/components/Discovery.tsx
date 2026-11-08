@@ -4,13 +4,23 @@ import { list, number, percent } from "../lib";
 import { evaluationArms } from "../storyData";
 import { SectionHeading } from "./Story";
 import { Icon } from "./Icon";
+import { blindSpotSummary } from "../blindSpot";
+import { BlindSpotStudy, WatchMethods } from "./BlindSpotStudy";
 
 export function BlindSpot({ findings }: { findings?: Findings | null }) {
   const headline = findings?.headline;
-  const unseen = headline?.later_kev_without_public_signal;
-  const seen = headline?.later_kev_with_public_signal;
-  const total =
-    unseen != null && seen != null ? unseen + seen : headline?.positives_2025;
+  const study = blindSpotSummary(findings?.blind_spot);
+  const unseen = findings?.blind_spot
+    ? study.unseen
+    : headline?.later_kev_without_public_signal;
+  const seen = findings?.blind_spot
+    ? study.seen
+    : headline?.later_kev_with_public_signal;
+  const total = findings?.blind_spot
+    ? study.total
+    : unseen != null && seen != null
+      ? unseen + seen
+      : headline?.positives_2025;
   return (
     <div className="blind-spot">
       <div className={`blind-number ${unseen == null ? "is-pending" : ""}`}>
@@ -42,8 +52,8 @@ export function BlindSpot({ findings }: { findings?: Findings | null }) {
         </div>
       )}
       <p className="caption">
-        Eligible 2025 cohort · signals measured at the snapshot · later KEV
-        inclusion through 31 Dec 2025.
+        Eligible {study.year ?? "historical"} cohort · signals measured at the
+        snapshot. Missing observations also count as no signal.
       </p>
     </div>
   );
@@ -175,11 +185,15 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
         title="The blind spot. And the repeat offenders."
         detail="What an exploit feed alone misses"
       />
-      <div className="discovery-grid">
+      <div className="discovery-blind-grid">
         <BlindSpot findings={findings} />
+        <BlindSpotStudy findings={findings} />
+      </div>
+      <WatchMethods findings={findings} />
+      <div className="discovery-vendor-block">
         <div>
           <span className="eyebrow">AFTER PUBLIC EXPLOIT CODE APPEARS</span>
-          <h3>Does vendor history still separate risk?</h3>
+          <h3>Vendor history helps inside the exploit tier.</h3>
           <VendorHistory findings={findings} />
         </div>
       </div>

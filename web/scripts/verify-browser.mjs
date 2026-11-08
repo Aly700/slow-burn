@@ -87,12 +87,10 @@ try {
           await visibleSlide(page).getAttribute("aria-label"),
           new RegExp(`^Slide ${slide}:`),
         );
-        const box = await page
-          .locator(".present-slide")
-          .evaluate((node) => ({
-            width: node.scrollWidth <= node.clientWidth + 2,
-            height: node.scrollHeight <= node.clientHeight + 2,
-          }));
+        const box = await page.locator(".present-slide").evaluate((node) => ({
+          width: node.scrollWidth <= node.clientWidth + 2,
+          height: node.scrollHeight <= node.clientHeight + 2,
+        }));
         assert.deepEqual(
           box,
           { width: true, height: true },
@@ -232,9 +230,63 @@ try {
     },
   );
   await check(
+    "blind-spot study separates the primary test, exploratory contrast and patch allocation",
+    async (page) => {
+      await load(page);
+      const study = page.locator("#discovery .blind-study");
+      assert.deepEqual(
+        await study.locator(".watch-results strong").allTextContents(),
+        ["0 / 31", "0 / 31", "0.33"],
+      );
+      assert.match(
+        await study.locator(".contrast-count").innerText(),
+        /15 of 31/,
+      );
+      assert.deepEqual(
+        await study.locator(".history-share > strong").allTextContents(),
+        ["48%", "16%"],
+      );
+      assert.match(
+        await study.locator(".vendor-null").innerText(),
+        /1.0× lift/,
+      );
+      assert.match(
+        await page.locator("#discovery .watch-allocation").innerText(),
+        /450 exploit \+ 50 watch found 21 vs 22 hits.*100% exploit tier/s,
+      );
+      assert.equal(
+        await page.locator("#discovery .watch-methods a").getAttribute("href"),
+        "https://github.com/Aly700/slow-burn/blob/main/pipeline/WATCH_PLAN.md",
+      );
+      await page.locator("#discovery .watch-limitations summary").click();
+      assert.match(
+        await page.locator("#discovery .watch-limitations").innerText(),
+        /exploratory contrasts, not preregistered causal tests/,
+      );
+      assert.equal(
+        await page
+          .getByText("Previously attacked products, no public exploit yet", {
+            exact: true,
+          })
+          .count(),
+        0,
+      );
+      await present(page, 3);
+      assert.match(
+        await page.locator(".presentation .watch-feature-boundary").innerText(),
+        /earlier 2025 exposure/,
+      );
+      assert.match(
+        await page.locator(".presentation .watch-takeaway").innerText(),
+        /check whether you run a product that has been attacked before/,
+      );
+    },
+  );
+  await check(
     "optional findings, histogram, vendor buckets and dropped claim",
     async (page) => {
       const data = structuredClone(bundle);
+      data.findings.blind_spot = null;
       Object.assign(data.findings.headline, {
         later_kev_without_public_signal: 20,
         later_kev_with_public_signal: 10,

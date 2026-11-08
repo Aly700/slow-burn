@@ -30,7 +30,63 @@ export interface Signal {
   lift?: Nullable;
   leak_risk?: string;
 }
+export interface WatchBudget {
+  budget?: Nullable;
+  hits?: Nullable;
+  random_expected_hits?: Nullable;
+}
+export interface WatchContrast {
+  name?: string;
+  no_signal_pool?: Nullable;
+  no_signal_positives?: Nullable;
+  pool_share?: Nullable;
+  positive_share?: Nullable;
+  lift?: Nullable;
+  leak_risk?: string;
+}
+export interface BlindSpotStudyData {
+  selected_recipe?: string;
+  selection?: {
+    selection_year?: Nullable;
+    test_used_for_selection?: boolean;
+  } | null;
+  policy?: { version?: string; negative_result?: string } | null;
+  splits?:
+    | {
+        name?: string;
+        test_label_cutoff?: string;
+        test?: { positives?: Nullable } | null;
+        methods?: { name?: string; budgets?: WatchBudget[] | null }[] | null;
+      }[]
+    | null;
+  profile?: {
+    no_signal_positives?: Nullable;
+    with_signal_positives?: Nullable;
+    actionable_contrasts?: WatchContrast[] | null;
+    contrasts?: WatchContrast[] | null;
+    limitations?: string[] | null;
+  } | null;
+  mixed_allocations?:
+    | {
+        split?: string;
+        adopted?: boolean;
+        allocations?:
+          | {
+              name?: string;
+              budget?: Nullable;
+              feasible?: boolean;
+              exploit_tier_rows?: Nullable;
+              watch_rows?: Nullable;
+              hits?: Nullable;
+              delta_vs_frozen?: Nullable;
+            }[]
+          | null;
+      }[]
+    | null;
+  limitations?: string[] | null;
+}
 export interface Findings {
+  blind_spot?: BlindSpotStudyData | null;
   _status?: string;
   headline?: {
     ours_hits_top500_2025_backtest?: Nullable;
