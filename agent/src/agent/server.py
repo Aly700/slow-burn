@@ -40,7 +40,7 @@ def make_server(settings=None):
 
     @server.tool(annotations=read)
     def explain_score(cve_id: str) -> dict:
-        """Read ranking and unmodified reasons from the model lane's score file; flag invalid seed probabilities."""
+        """Read ranking and unmodified reasons from the ranking pipeline's score file; flag invalid seed probabilities."""
         return source().explain_score(cve_id)
 
     @server.tool(annotations=read)

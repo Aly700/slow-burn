@@ -1,4 +1,4 @@
-# Reproducing the model lane
+# Reproducing the ranking pipeline
 
 Run from this worktree with Python managed by `uv`. The `data/` directory is a read-only symlink to the supplied files; it must never be committed. All source code was written during the event.
 
@@ -22,7 +22,7 @@ The first run downloads the pinned IBM Granite embedding weights. Subsequent run
 | Leak audit cache, used by `model_card.json` | `uv run python -I pipeline/leak_audit.py` |
 | `top500.csv`, `scores_2026_top5000.csv`, `model_card.json`, and refreshed findings, using completed evaluation/audit | `uv run python -I pipeline/run.py` |
 | `findings.json`, including all narrative counts | `uv run python -I pipeline/findings.py` |
-| Local `.lane/model-REPORT.md` | `uv run python -I pipeline/report.py` |
+| Local `artifacts/cache/model-report.md` | `uv run python -I pipeline/report.py` |
 | Baseline metric display | `uv run python -I pipeline/baseline.py` |
 | Temporal and artifact gates | `uv run python -I pipeline/checks.py --artifacts` |
 

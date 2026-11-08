@@ -19,7 +19,7 @@ def run():
     b = json.loads((ARTIFACTS / 'backtest.json').read_text())
     f = json.loads((ARTIFACTS / 'findings.json').read_text())
     card = json.loads((ARTIFACTS / 'model_card.json').read_text())
-    lines = ['# Model lane report', '', f"Selected recipe: **{card['model']}**. Final fit: {card['training_pool']:,} mature rows and {card['training_positives']} later KEV additions.", '',
+    lines = ['# Model report', '', f"Selected recipe: **{card['model']}**. Final fit: {card['training_pool']:,} mature rows and {card['training_positives']} later KEV additions.", '',
              'The production feature allowlist excludes CPEs, severity/weakness enrichment, missingness, references and undated ransomware annotations. Sanitized text is eligible with disclosed residual revision risk, and no-text models remain audit references. Historical labels are available at each training cutoff. The assigning organization is assumed stable; no field-level source history can prove this assumption.', '',
              f"Ranking policy: {b['ranking_policy']}. Selection: {b['selection']['rule']}. Simplicity order: {b['selection']['simplicity_order']}.", '',
              '## Results', '', 'These are historical development results, not a measured 2026 score. The selected-model comparison is optimistic because recipe selection used these forward evaluations.', '']
@@ -88,7 +88,7 @@ def run():
                   '`uv run python -I pipeline/run.py --all` regenerates all five contract artifacts; `uv run python -I pipeline/checks.py --artifacts` validates temporal invariants, row counts, score ranges, reasons and column order. `uv run python -I pipeline/report.py` writes this report. See `pipeline/README.md` and `research/model-research.md` for provenance and method decisions.', '',
                   '## Next work', '',
                   'Obtain authenticated publication-time descriptions and CNA score versions, then re-evaluate semantic features. Acquire additional historical years with matching signals and labels to reserve a truly untouched temporal test. Model delayed catalog inclusion with explicit survival/censoring methods, validate calibration at fixed horizons, and incorporate asset exposure before operational patch decisions. Do not obtain 2026 outcomes before submission.', ''])
-    path = ROOT / '.lane' / 'model-REPORT.md'
+    path = ROOT / 'artifacts' / 'cache' / 'model-report.md'
     path.parent.mkdir(exist_ok=True)
     path.write_text('\n'.join(lines))
     print(path)

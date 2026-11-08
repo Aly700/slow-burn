@@ -20,7 +20,7 @@ uv run --project agent python -m agent.evaluate
 uv run --project agent pytest -q
 ```
 
-Recording rebuilds the content-addressed embedding cache when the model lane changes the candidate set or source descriptions. It writes the exact artifact contract to `artifacts/agent_runs/`. Evaluation writes `artifacts/agent_eval.json` plus auditable per-case runs under `artifacts/agent_runs/eval2025/`. Historical labels are read only by the scorer, after inference finishes.
+Recording rebuilds the content-addressed embedding cache when the ranking pipeline changes the candidate set or source descriptions. It writes the exact artifact contract to `artifacts/agent_runs/`. Evaluation writes `artifacts/agent_eval.json` plus auditable per-case runs under `artifacts/agent_runs/eval2025/`. Historical labels are read only by the scorer, after inference finishes.
 
 ## API
 
@@ -78,7 +78,7 @@ Only provided month-end signals and dated KEV admissions are treated as historic
 
 The supplied ransomware flag has no historical change date. For snapshots before December 31, 2025, the tool returns its count as unknown. Vendor aliases and acquisitions are not resolved: zero exact matches does not imply no exploitation history. Semantic similarity is an analogy, not proof of exploitation. The compact embedding index truncates descriptions at 256 tokens.
 
-The seed ranking contains scores above one and incomplete reason records. They remain visible with warnings and are never silently clamped into probabilities. Re-record after the model lane supplies its final scores.
+The seed ranking contains scores above one and incomplete reason records. They remain visible with warnings and are never silently clamped into probabilities. Re-record after the ranking pipeline supplies its final scores.
 
 ## Models and documentation
 
