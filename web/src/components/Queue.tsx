@@ -163,7 +163,7 @@ export function Queue({
     >
       <SectionHeading
         index="05" label="Fix-first queue"
-        title="The fix-first queue."
+        title="Fix-first queue"
         detail="2026 candidates · evidence at each snapshot"
       />
       <div className="queue-intro">
@@ -382,7 +382,7 @@ export function Queue({
                     )}
                   </span>
                 </td>
-                <td className="mono snapshot" data-label="Snapshot">{row.snapshot_month || "–"}</td>
+                <td className="mono snapshot" data-label="Snapshot">{row.snapshot_month || "-"}</td>
                 <td className="score-cell mono" data-label={ranking ? "Rank score" : "Model score"}>
                   {ranking ? number(row.score, 4) : percent(row.score, 2)}
                 </td>
@@ -452,7 +452,7 @@ export function Queue({
       <div className="queue-footer">
         <span>
           {rows.length
-            ? `${page * pageSize + 1}–${Math.min((page + 1) * pageSize, rows.length)} of ${number(rows.length)}`
+            ? `${page * pageSize + 1}-${Math.min((page + 1) * pageSize, rows.length)} of ${number(rows.length)}`
             : "0 matches"}
           <span className="footer-divider">/</span>Top 500 form the submission
         </span>

@@ -8,13 +8,13 @@ import { Icon } from "./Icon";
 
 export function Hero({ data }: { data: Data }) {
   return (
-    <section id="overview" className="hero replay-hero">
+    <section id="backtest" className="hero replay-hero">
       <div className="replay-intro">
-        <h1>Severity isn’t a forecast.</h1>
+        <h2>2025 ranking backtest</h2>
         <p>
-          Same fix budget. A year of consequences.
+          Four rankings, 500 CVEs each.
           <br />
-          <strong>Watch what each ranking catches.</strong>
+          <strong>Later KEV entries shown by listing date.</strong>
         </p>
       </div>
       <Replay data={data.replay_2025} />
@@ -46,7 +46,7 @@ export function Timing({ findings }: { findings?: Findings | null }) {
     <section id="timing" className="story-section timing">
       <SectionHeading
         index="01" label="Timing"
-        title="Two clocks. Two defences."
+        title="When exploited vulnerabilities get listed"
         detail="2025 discovery · time to KEV inclusion"
       />
       <div className="timing-layout">
@@ -110,11 +110,11 @@ export function Timing({ findings }: { findings?: Findings | null }) {
           <div className="clock-actions">
             <span>
               <span className="legend-square accent-bg" />
-              Patch speed is critical
+              Listed within the first month
             </span>
             <span>
               <span className="legend-square" />
-              Prioritisation buys a window
+              Listed after the first month
             </span>
           </div>
           {histogram.length > 0 && (
@@ -138,26 +138,16 @@ export function Timing({ findings }: { findings?: Findings | null }) {
       <ReadingDetails label="How we measured">
         <div className="timing-copy">
           <h3>
-            The first month is a race.
-            <br />
-            The next is a window.
+            Time from publication to listing
           </h3>
           <p>
-            Most confirmed cases arrive in the publication month. For the rest,
-            prioritisation can buy a security team time to act.
+            110 of 165 were listed in their first month; the other 55 took a median of 45 days.
           </p>
           <p className="caption">
             A calendar-month boundary can be just a few days away.
           </p>
         </div>
       </ReadingDetails>
-      <div className="section-takeaway">
-        <Icon name="arrow" />
-        <p>
-          Prediction has a job to do:{" "}
-          <strong>use the window before the breach.</strong>
-        </p>
-      </div>
     </section>
   );
 }
@@ -207,7 +197,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
     <section id="signals" className="story-section signals-section">
       <SectionHeading
         index="02" label="Signals"
-        title="Find the signal. Question the shortcut."
+        title="Signals in the supplied data"
         detail="2025 cohort · association, not causation"
       />
       <div className="signals-layout">
@@ -250,8 +240,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
                     : ""}
                   .
                 </p>
-                  <p>Reduce queue noise; retain an exposure check.</p>
-                  <div className="aside-bottom"><Icon name="shield" /><span>Fewer distractions.<br /><strong>More attention where it counts.</strong></span></div>
+                  <p>Confirm affected versions and exposure before deprioritising a CVE.</p>
                 </ReadingDetails>
               </div>
             ))
@@ -274,8 +263,7 @@ export function Methods({ data }: { data: Data }) {
     <section id="methods" className="story-section methods">
       <SectionHeading
         index="08" label="Methods"
-        title="The boundary is part of the model."
-        detail="Reproducible decisions · explicit limits"
+        title="Methods and limits"
       />
       <AttackResults evaluation={data.redteam_eval} reading />
       <ReadingDetails label="Model, features and exclusions">
@@ -353,9 +341,7 @@ export function Methods({ data }: { data: Data }) {
         <div className="ibm-method">
           <span className="eyebrow">BUILT AROUND IBM GRANITE</span>
           <h3>
-            Language into signals.
-            <br />
-            Evidence into action.
+            IBM models used in the ranking and briefings
           </h3>
           <p>
             {data.agent_eval?.model ?? "Briefing model pending"}

@@ -14,6 +14,10 @@ npm run preview
 
 Open `http://localhost:4317`. Build always runs data sync first. Development uses `npm run dev`. Stop the local preview with Ctrl+C.
 
+The scroll page opens with the description field from `artifacts/map_2026.json`. Its responsive AVIF and WebP posters live in `public/hero/`. `node scripts/render-hero.mjs` verifies their source hashes on every build and regenerates stale files from the same deterministic projection used by the live canvas. Regeneration uses the existing `avifenc` and `cwebp` command-line tools; unchanged builds use the committed posters without these tools. `--force` regenerates every variant; `--check` fails on stale assets. Colours come from the root OKLCH tokens in `src/styles.css`.
+
+The static field loads before the map JSON. The live canvas enhances it after the initial render. Reduced motion keeps the complete poster and disables pointer drift. The 2025 replay follows the opening, and the six presentation layouts remain separate.
+
 Click **Present** or press **p** for the six-step, approximately one-minute walk. Right/left arrows move between slides; space advances when focus is on the slide. Escape exits and restores focus. Buttons and evidence disclosures keep their normal keyboard behaviour. The step counter and progress controls can also navigate directly.
 
 1. A 12-second replay of the **2025 development backtest**. Four fields show each ranking’s selected CVEs; dots become available at snapshot month end and ignite at their recorded KEV dates. The separate tray contains positives missed by all four rankings. Press **r** to replay, pause, or drag the date scrubber. Reduced motion starts at the final state. Hover burning dots or use **Inspect confirmed CVEs** for dates and product details. The 2026 outcome remains pending judging.

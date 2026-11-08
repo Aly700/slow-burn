@@ -1,4 +1,5 @@
 import { ReadingDetails } from "./ReadingDetails";
+import { storyHeading } from "../copy";
 import { useState } from "react";
 import type { Data, Findings, Run } from "../types";
 import { list, number, percent } from "../lib";
@@ -144,7 +145,7 @@ export function WordPress({ findings }: { findings?: Findings | null }) {
       </div>
       <p>
         <b>{number(item?.n)} WordPress CVEs.</b>
-        <br />A large queue does not imply a high observed attack rate.
+        <br />No later KEV additions were observed in this cohort.
       </p>
       <small>No observed KEV entry does not mean no attacks.</small>
     </div>
@@ -183,8 +184,8 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
     <section id="discovery" className="story-section deeper-discovery">
       <SectionHeading
         index="03" label="Blind spot"
-        title="The blind spot. And the repeat offenders."
-        detail="What an exploit feed alone misses"
+        title="31 of 55 had no public exploit signal"
+        detail="2025 later-exploited CVEs at their snapshot"
       />
       <div className="discovery-blind-grid">
         <BlindSpot findings={findings} />
@@ -197,7 +198,7 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
       <div className="discovery-vendor-block">
         <div>
           <span className="eyebrow">AFTER PUBLIC EXPLOIT CODE APPEARS</span>
-          <h3>Vendor history helps inside the exploit tier.</h3>
+          <h3>Vendor history within the public-exploit tier</h3>
           <VendorHistory findings={findings} />
         </div>
       </div>
@@ -207,7 +208,7 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
         <div className="finding-stories">
           {list(findings?.story).map((story, i) => (
             <article key={i}>
-              <h3>{story.title}</h3>
+              <h3>{storyHeading(story.title)}</h3>
               <p>{story.sentence?.replaceAll("—", ", ")}</p>
               {story.numbers && (
                 <details className="story-counts">
@@ -293,8 +294,8 @@ export function AgentSection({
     <section id="agent" className="story-section agent-section">
       <SectionHeading
         index="07" label="Briefing"
-        title="Let policy decide. Let Granite explain."
-        detail="Evidence checked before a human acts"
+        title="How a briefing is made"
+        detail="Tool results, claim checks and ticket approval"
       />
       <div className="agent-section-grid">
         <div>

@@ -10,6 +10,7 @@ import { Discovery, AgentSection } from "./components/Discovery";
 import { Presentation } from "./components/Presentation";
 import { strongestRun } from "./storyData";
 import { Icon } from "./components/Icon";
+import { AshHero } from "./components/AshHero";
 
 export default function App() {
   const [data, setData] = useState<Data>({});
@@ -144,6 +145,7 @@ export default function App() {
               key={id}
               className={
                 active === id ||
+                (id === "overview" && active === "backtest") ||
                 (id === "timing" && ["signals", "discovery", "granite-map"].includes(active))
                   ? "active"
                   : ""
@@ -173,6 +175,7 @@ export default function App() {
         </div>
       )}
       <main aria-busy={loading}>
+        <AshHero />
         <Hero data={data} />
         <Timing findings={data.findings} />
         <Signals findings={data.findings} />
@@ -211,8 +214,7 @@ export default function App() {
         <a href="#overview">
           Slow Burn <Icon name="arrow" size={16} />
         </a>
-        <span>Know what to fix. Know why.</span>
-        <span>Sheridan Datathon · 07–08 Nov 2026</span>
+        <span>Sheridan Datathon · 07-08 Nov 2026</span>
       </footer>
       {presenting && (
         <Presentation

@@ -359,9 +359,7 @@ export function Briefing({
               <div className="no-run">
                 <span className="badge">Briefing pending</span>
                 <h3>
-                  The record is ready.
-                  <br />
-                  The investigation is next.
+                  No recorded briefing for this CVE
                 </h3>
                 <p>
                   No recorded briefing is available for this CVE. The snapshot

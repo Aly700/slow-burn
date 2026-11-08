@@ -21,6 +21,7 @@
   --accent-dim: oklch(from var(--accent) 0.62 0.10 h);
   --accent-wash: oklch(from var(--accent) 0.22 0.018 h);
   --known: oklch(0.60 0.025 235);
+  --field-ash: oklch(0.57 0.008 70);
   --known-dim: oklch(from var(--known) 0.44 c h);
   --clear: oklch(0 0 0 / 0);
   --scrim: oklch(0 0 0 / 0.6);

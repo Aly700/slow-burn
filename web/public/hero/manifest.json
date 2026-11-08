@@ -1,0 +1,57 @@
+{
+  "inputHash": "be1d5a499fbee7413a19faf80f88a91db1c0ef173acb8e1eaec12da951559e2a",
+  "rows": 72987,
+  "benchmark": 72670,
+  "picks": 500,
+  "anchors": 317,
+  "files": {
+    "desktop-1x.avif": {
+      "bytes": 36866,
+      "sha256": "3850119f67e3dc55eebd15c9c0af10ddb7b064eb3310cb0563a75849f29e4347",
+      "width": 1440,
+      "height": 824
+    },
+    "desktop-1x.webp": {
+      "bytes": 41852,
+      "sha256": "7362faa133a5196170cbc8a93f85321d5843158afb467f32a045b9bbc2d02631",
+      "width": 1440,
+      "height": 824
+    },
+    "desktop-2x.avif": {
+      "bytes": 93288,
+      "sha256": "f5ea132da29fe4e6d0ace1f31e8483f299fd7138afa65a6a40be39be74f55ad0",
+      "width": 2880,
+      "height": 1648
+    },
+    "desktop-2x.webp": {
+      "bytes": 112954,
+      "sha256": "2225893240f1fbd0b75e66b49bf4021846de944052daa7eb0a96031c71db25f9",
+      "width": 2880,
+      "height": 1648
+    },
+    "phone-1x.avif": {
+      "bytes": 18886,
+      "sha256": "ec9fd8a72aeaa380a4c1962d1c14adebbd3cbdad82d802554ff64dc6aeda74ac",
+      "width": 390,
+      "height": 784
+    },
+    "phone-1x.webp": {
+      "bytes": 20612,
+      "sha256": "7d04d55e160c767f777e0fee8e13f177d2597acecea14dfad5f7e3eb161c13d3",
+      "width": 390,
+      "height": 784
+    },
+    "phone-2x.avif": {
+      "bytes": 47257,
+      "sha256": "03e15bee0a55a0c432107271377c091d856b0bf4753db6d0abdbd88b1b4222bd",
+      "width": 780,
+      "height": 1568
+    },
+    "phone-2x.webp": {
+      "bytes": 53780,
+      "sha256": "df3e786a2fb92060a6f69eff10210790fff351b746fd27023f528ddae3022ac4",
+      "width": 780,
+      "height": 1568
+    }
+  }
+}

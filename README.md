@@ -1,6 +1,6 @@
 # Slow Burn
 
-Severity says how bad an attack could be, not whether one is coming. Slow Burn ranks which newly published vulnerabilities attackers will go after next, and an IBM Granite agent explains each one to the engineer who has to fix it.
+Slow Burn ranks newly published vulnerabilities by likelihood of later exploitation. IBM Granite prepares a briefing for each CVE from checked tool results. CVSS scores describe potential attack severity.
 
 Built in 24 hours for the IBM **Before the Breach** track at Sheridan Datathon 2026.
 
@@ -19,15 +19,15 @@ Tested on 2025 the same way the track's benchmark works (train on 2024; rank eac
 | Public exploit code first, then EPSS | 19 |
 | **Slow Burn** | **22** |
 
-- **Two clocks.** Of the 165 vulnerabilities published in 2025 that CISA listed as exploited, 110 were listed within their first month. Only patch speed helps there. The other 55 took a median of 45 days, and that window is where prioritisation pays off.
-- **The blind spot.** 31 of those 55 had no public exploit code at the time, so rankings built on exploit feeds can't see most of them. We tried to close it and could not: EPSS put none of the 31 in its top 500, and neither did a model trained only on that pool, whose design was fixed and committed before it was tested on 2025. One thing did mark them: 15 of the 31 hit a product that was already on the exploited list, against 16% of the pool they came from. Vendor-wide history, which helps inside the exploit tier, made no difference here. When exploit feeds are quiet, the defence is knowing whether you run a product that has been attacked before, not a cleverer score. The [exploratory 2026 watch list](artifacts/watch_2026_top100.csv) is kept separate from the submission.
-- **Granite sees the resemblance.** Using only IBM Granite Embedding's reading of the descriptions, a 2025 vulnerability that was later exploited sat closer to an already-exploited 2024 one than a non-exploited 2025 vulnerability did 64% of the time, against 50% by chance (permutation p = 0.0003). Inside the blind spot it was 65% (p = 0.002). The test and its pass mark were written down in `pipeline/MAP_PLAN.md` before the distances were computed. It's an association, too weak on its own to fill a 500-row list, which is why the watch model still found none, but together with product history it's one of only two signals we found that reach the blind spot at all. The [live page](https://aly700.github.io/slow-burn/) draws the whole 2026 pool as a map.
-- **Repeat vendors.** Among vulnerabilities with public exploit code, vendors with 20 or more earlier KEV entries were later listed 4.35% of the time, against 1.19% for vendors with none.
+- **KEV listing delays.** Of the 165 vulnerabilities published in 2025 that CISA listed as exploited, 110 were listed within their first month. The other 55 took a median of 45 days from publication to listing.
+- **No public exploit signal.** 31 of those 55 had no public exploit code at the time, so rankings built on exploit feeds can't see most of them. We tried to close it and could not: EPSS put none of the 31 in its top 500, and neither did a model trained only on that pool, whose design was fixed and committed before it was tested on 2025. One thing did mark them: 15 of the 31 hit a product that was already on the exploited list, against 16% of the pool they came from. Vendor-wide history, which helps inside the exploit tier, made no difference here. Product history can support an asset review; the dedicated model did not improve ranking within this pool. The [exploratory 2026 watch list](artifacts/watch_2026_top100.csv) is kept separate from the submission.
+- **Description similarity.** Using only IBM Granite Embedding's reading of the descriptions, a 2025 vulnerability that was later exploited sat closer to an already-exploited 2024 one than a non-exploited 2025 vulnerability did 64% of the time, against 50% by chance (permutation p = 0.0003). Inside the blind spot it was 65% (p = 0.002). The test and its pass mark were written down in `pipeline/MAP_PLAN.md` before the distances were computed. It's an association, too weak on its own to fill a 500-row list, which is why the watch model still found none, but together with product history it's one of only two signals we found that reach the blind spot at all. The [live page](https://aly700.github.io/slow-burn/) draws the whole 2026 pool as a map.
+- **Earlier vendor exploitation.** Among vulnerabilities with public exploit code, vendors with 20 or more earlier KEV entries were later listed 4.35% of the time, against 1.19% for vendors with none.
 - **WordPress plugins** were about 9% of all 2025 vulnerabilities, and none was later added to the list.
 
 The 2026 result is scored by the organisers after submission.
 
-![Result](docs/img/result.png)
+[2025 backtest screenshot](docs/img/result.png)
 
 ## How it works
 
@@ -37,9 +37,9 @@ The 2026 result is scored by the organisers after submission.
 
 **`web/` (the page).** A static React page: the 2025 replay, the findings, a fix-first queue you can filter to the vendors and products you run (with the previously-attacked-products list and CSV or ticket JSON export), live Granite investigation, the analyst, and the Granite map of all 2026 descriptions. Press `p` for the six-slide presentation and `m` for the map.
 
-![Briefing](docs/img/briefing.png)
+[Recorded briefing screenshot](docs/img/briefing.png)
 
-![Granite map](docs/img/map.png)
+[Description map screenshot](docs/img/map.png)
 
 ## Run it
 

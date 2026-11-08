@@ -540,7 +540,7 @@ export function GraniteMap({
             [
               flag & bits.in_top500 ? "Top 500" : null,
               flag & bits.is_past_exploited
-                ? "Past exploited · 2024–2025"
+                ? "Past exploited · 2024-2025"
                 : null,
               flag & bits.in_product_watch
                 ? "Product review · all match types"
@@ -702,18 +702,18 @@ export function GraniteMap({
             {story?.caption ??
               "Drag to follow similar descriptions. Choose a guided view to return to its evidence."}
           </p>
-          <small>Similarity, not a risk score.</small>
+          <small>Map distance shows description similarity; it does not estimate risk.</small>
         </div>
   );
   return (
     <div className={`granite-map ${appendix ? "map-appendix" : ""}`} ref={root}>
       <SectionHeading
         index="04" label="IBM Granite / Description space"
-        title="What Granite reads"
-        dek="Similar descriptions gather. Earlier attacks leave reference points."
+        title="Granite’s map of 2026 descriptions"
+        dek="Description similarity with past-exploited CVEs and the top 500 marked."
         meta={<div className="map-total">
           <strong>{number(map?.n ?? data.findings?.map?.rows)}</strong>
-          <span>vulnerabilities · one field of language</span>
+          <span>vulnerability descriptions</span>
         </div>}
       />
       <div className="map-toolbar" aria-label="Map overlays">
@@ -825,7 +825,7 @@ export function GraniteMap({
           </div>
         )}
       </div>
-      {!appendix && <p className="caption reading-caution">Similarity, not a risk score.</p>}
+      {!appendix && <p className="caption reading-caution">Map distance shows description similarity; it does not estimate risk.</p>}
       {!appendix && <ReadingDetails label="About this view">{guidance}</ReadingDetails>}
       <ReadingDetails label="Explore a region" collapsed={!appendix}>
       <div className="map-under">
@@ -874,7 +874,7 @@ export function GraniteMap({
           evidence of risk.
         </p>
         <p>
-          Past exploited anchors were published in 2024–2025 and listed by the
+          Past exploited anchors were published in 2024-2025 and listed by the
           end of 2025. The quantitative check uses only 2024 anchors known by
           the end of 2024, and the primary pre-registered cohort.{" "}
           {number(map?.artifact.layout?.duplicate_vector_rows)} duplicate

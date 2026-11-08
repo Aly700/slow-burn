@@ -20,12 +20,12 @@ import { useInvestigation } from "../useInvestigation";
 import { LiveControls, LiveTrace } from "./LiveInvestigation";
 
 const chapters = [
-  "The result",
-  "The window",
-  "The blind spot",
-  "The repeat offenders",
-  "The briefing",
-  "The decision",
+  "Ranking results",
+  "Listing delays",
+  "No public exploit signal",
+  "Vendor history",
+  "Briefing",
+  "Ticket approval",
 ];
 const stages = ["RECEIVED", "INVESTIGATING", "VERIFIED", "WAITING_APPROVAL"];
 
@@ -214,35 +214,35 @@ export function Presentation({
           </div>
           {step === 0 && (
             <>
-              <h1>Severity isn’t a forecast.</h1>
+              <h1>2025 ranking results</h1>
               <p className="slide-lead">
-                Same top-500 budget. How many later-exploited CVEs did we find?
+                Later-exploited CVEs in each top-500 ranking.
               </p>
               <Replay data={data.replay_2025} presentation />
             </>
           )}
           {step === 1 && (
             <>
-              <h1>Two clocks. Two defences.</h1>
+              <h1>When exploited CVEs get listed</h1>
               <div
                 className={`present-clocks ${firstShare == null ? "clocks-pending" : ""}`}
               >
                 <div>
                   <strong className="accent">{percent(firstShare, 0)}</strong>
-                  <h2>In the publication month.</h2>
-                  <p>Patch speed is critical.</p>
+                  <h2>Listed in the first month</h2>
+                  <p>110 of 165 vulnerabilities</p>
                 </div>
                 <div>
                   <strong>{percent(laterShare, 0)}</strong>
-                  <h2>Arrive later.</h2>
-                  <p>Prioritisation buys a window.</p>
+                  <h2>Listed after the first month</h2>
+                  <p>55 of 165 vulnerabilities</p>
                 </div>
                 <div className="median-stat">
                   <strong>
                     {number(clock?.later_lag_days?.median)}
                     <small> days</small>
                   </strong>
-                  <h2>Median lag, later entries.</h2>
+                  <h2>Median lag for later entries</h2>
                 </div>
               </div>
               <LagHistogram findings={findings} />
@@ -254,7 +254,7 @@ export function Presentation({
           )}
           {step === 2 && (
             <>
-              <h1>Exploit feeds have a blind spot.</h1>
+              <h1>31 of 55 had no public exploit signal</h1>
               <div className="present-blind">
                 <div className="blind-overview">
                   <BlindSpot findings={findings} />
@@ -266,10 +266,9 @@ export function Presentation({
           )}
           {step === 3 && (
             <>
-              <h1>Look for repeat offenders.</h1>
+              <h1>Earlier exploitation by vendor</h1>
               <p className="slide-lead">
-                Inside the public-exploit tier, does earlier vendor exploitation
-                separate risk?
+                Later KEV rates by earlier vendor exploitation, within the public-exploit tier.
               </p>
               <div className="present-vendors">
                 <VendorHistory findings={findings} />
@@ -283,7 +282,7 @@ export function Presentation({
           )}
           {step === 4 && (
             <>
-              <h1>Policy decides. Granite briefs.</h1>
+              <h1>How a briefing is made</h1>
               <LiveControls live={live} disabled={busy} />
               {onAsk && (
                 <div className="present-ask-link">
@@ -374,7 +373,7 @@ export function Presentation({
           )}
           {step === 5 && (
             <>
-              <h1>The last step is yours.</h1>
+              <h1>Ticket approval and injection tests</h1>
               <div className="present-gate">
                 <div>
                   <AttackResults evaluation={data.redteam_eval} compact />
@@ -416,7 +415,7 @@ export function Presentation({
                   </div>
                   <h2>
                     {pending
-                      ? "Ready for your decision."
+                      ? "Ticket awaiting approval"
                       : `${notice.startsWith("Simulated") ? "Simulated: " : ""}${state.toLowerCase().replaceAll("_", " ")}`}
                   </h2>
                   <div className="gate-proposal">
@@ -434,7 +433,7 @@ export function Presentation({
                   </div>
                   <p>
                     {pending
-                      ? "Review the evidence. Authorise the ticket."
+                      ? "Review the proposed action before approving or rejecting the ticket."
                       : "The decision is retained for this session."}
                   </p>
                   {pending && (
@@ -464,11 +463,6 @@ export function Presentation({
                   </p>
                 </div>
               </div>
-              <blockquote>
-                IBM Concert proves what is exploitable in your environment.
-                <br />
-                <strong>We tell you what to prove first.</strong>
-              </blockquote>
             </>
           )}
         </section>

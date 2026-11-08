@@ -80,8 +80,8 @@ export function StackFilter({
       <div className="stack-heading">
         <div>
           <span className="eyebrow">YOUR ENVIRONMENT</span>
-          <h3>What do you run?</h3>
-          <p>Choose vendors and products to make this queue yours.</p>
+          <h3>Your vendors and products</h3>
+          <p>Filter the queue by the vendors and products you run.</p>
         </div>
         <div className="stack-impact" aria-live="polite">
           <strong>

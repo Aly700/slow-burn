@@ -80,7 +80,7 @@ export function BlindSpotStudy({ findings, reading = false }: { findings?: Findi
         <div className="contrast-heading">
           <h3>
             {known(s.product?.lift) && s.product.lift > 1
-              ? "Previously attacked products stood out."
+              ? "Previously attacked product matches"
               : "Product-history comparison."}
           </h3>
           <strong className={known(s.product?.lift) ? "" : "is-pending"}>
@@ -130,8 +130,7 @@ export function BlindSpotStudy({ findings, reading = false }: { findings?: Findi
       </div>
       {reading && <ReadingDetails label="Watch model test: no demonstrated gain">{experiment}</ReadingDetails>}
       <p className="watch-takeaway">
-        When exploit feeds are quiet, check whether you run a product that has
-        been attacked before.
+        Review previously attacked products against your asset inventory.
       </p>
       <p className="watch-caution">
         Exploratory association, not a validated predictor. Product matching
