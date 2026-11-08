@@ -13,6 +13,7 @@ import {
 } from "./Discovery";
 import { Icon } from "./Icon";
 import { AttackResults } from "./AttackResults";
+import { GraniteMap } from "./GraniteMap";
 import { Replay } from "./Replay";
 import { BlindSpotStudy, WatchMethods } from "./BlindSpotStudy";
 import { useInvestigation } from "../useInvestigation";
@@ -42,6 +43,9 @@ export function Presentation({
   onUpdate: (run: Run, notice: string) => void;
 }) {
   const [step, setStep] = useState(0);
+  const [appendix, setAppendix] = useState(false);
+  const appendixRef = useRef(false);
+  appendixRef.current = appendix;
   const container = useRef<HTMLDivElement>(null);
   const selected = strongestRun(data);
   const {
@@ -78,25 +82,36 @@ export function Presentation({
       if (event.metaKey || event.ctrlKey || event.altKey) return;
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        if (appendixRef.current) setAppendix(false);
+        else onClose();
+        return;
       }
       const target = event.target as HTMLElement;
       if (/INPUT|SELECT|TEXTAREA/.test(target.tagName)) return;
+      if (event.key.toLowerCase() === "m") {
+        event.preventDefault();
+        setAppendix((value) => !value);
+        return;
+      }
       if (
-        ["ArrowRight", "ArrowDown", "PageDown"].includes(event.key) ||
-        (event.key === " " && !/BUTTON|SUMMARY/.test(target.tagName))
+        !appendixRef.current &&
+        (["ArrowRight", "ArrowDown", "PageDown"].includes(event.key) ||
+          (event.key === " " && !/BUTTON|SUMMARY/.test(target.tagName)))
       ) {
         event.preventDefault();
         advance(1);
       }
-      if (["ArrowLeft", "ArrowUp", "PageUp"].includes(event.key)) {
+      if (
+        !appendixRef.current &&
+        ["ArrowLeft", "ArrowUp", "PageUp"].includes(event.key)
+      ) {
         event.preventDefault();
         advance(-1);
       }
       if (event.key === "Tab") {
         const nodes = Array.from(
           container.current?.querySelectorAll<HTMLElement>(
-            "button:not(:disabled), input, select, summary, a[href]",
+            'button:not(:disabled), input, select, summary, a[href], canvas[tabindex="0"]',
           ) ?? [],
         );
         const first = nodes[0],
@@ -123,7 +138,7 @@ export function Presentation({
   }, [onClose]);
   useEffect(() => {
     container.current?.focus({ preventScroll: true });
-  }, [step]);
+  }, [step, appendix]);
   const findings = data.findings;
   const clock = findings?.two_clocks;
   const total = clock?.kev_2025_total;
@@ -152,6 +167,13 @@ export function Presentation({
         </strong>
         <span>IBM Before the Breach track · Sheridan Datathon 2026</span>
         <button
+          className="map-appendix-button"
+          onClick={() => setAppendix((value) => !value)}
+          aria-pressed={appendix}
+        >
+          {appendix ? "Back to story" : "Explore map"} <kbd>M</kbd>
+        </button>
+        <button
           className="icon-button"
           onClick={onClose}
           aria-label="Exit presentation"
@@ -159,200 +181,211 @@ export function Presentation({
           <Icon name="close" size={24} />
         </button>
       </header>
-      <section
-        className={`present-slide slide-${step + 1}`}
-        aria-label={`Slide ${step + 1}: ${chapters[step]}`}
-        key={step}
-      >
-        <div className="slide-kicker">
-          <span>
-            {String(step + 1).padStart(2, "0")} / {chapters[step]}
-          </span>
-          <span>
-            {step === 2
-              ? `${blindSpotSummary(findings?.blind_spot).year ?? "pending"} no-signal study`
-              : step < 4
-                ? "2025 historical evidence · development analysis"
-                : data.meta?.runs_source === "fixtures"
-                  ? "Illustrative fixture"
-                  : live.session.status !== "idle"
-                    ? live.session.mode === "live"
-                      ? "Live IBM Granite investigation"
-                      : "Replay of a recorded run"
-                    : "Recorded IBM Granite run"}
-          </span>
-        </div>
-        {step === 0 && (
-          <>
-            <h1>Severity isn’t a forecast.</h1>
-            <p className="slide-lead">
-              Same top-500 budget. How many later-exploited CVEs did we find?
-            </p>
-            <Replay data={data.replay_2025} presentation />
-          </>
-        )}
-        {step === 1 && (
-          <>
-            <h1>Two clocks. Two defences.</h1>
-            <div
-              className={`present-clocks ${firstShare == null ? "clocks-pending" : ""}`}
-            >
-              <div>
-                <strong className="accent">{percent(firstShare, 0)}</strong>
-                <h2>In the publication month.</h2>
-                <p>Patch speed is critical.</p>
+      {appendix ? (
+        <section
+          className="present-map"
+          aria-label="Appendix: What Granite reads"
+        >
+          <GraniteMap data={data} appendix />
+        </section>
+      ) : (
+        <section
+          className={`present-slide slide-${step + 1}`}
+          aria-label={`Slide ${step + 1}: ${chapters[step]}`}
+          key={step}
+        >
+          <div className="slide-kicker">
+            <span>
+              {String(step + 1).padStart(2, "0")} / {chapters[step]}
+            </span>
+            <span>
+              {step === 2
+                ? `${blindSpotSummary(findings?.blind_spot).year ?? "pending"} no-signal study`
+                : step < 4
+                  ? "2025 historical evidence · development analysis"
+                  : data.meta?.runs_source === "fixtures"
+                    ? "Illustrative fixture"
+                    : live.session.status !== "idle"
+                      ? live.session.mode === "live"
+                        ? "Live IBM Granite investigation"
+                        : "Replay of a recorded run"
+                      : "Recorded IBM Granite run"}
+            </span>
+          </div>
+          {step === 0 && (
+            <>
+              <h1>Severity isn’t a forecast.</h1>
+              <p className="slide-lead">
+                Same top-500 budget. How many later-exploited CVEs did we find?
+              </p>
+              <Replay data={data.replay_2025} presentation />
+            </>
+          )}
+          {step === 1 && (
+            <>
+              <h1>Two clocks. Two defences.</h1>
+              <div
+                className={`present-clocks ${firstShare == null ? "clocks-pending" : ""}`}
+              >
+                <div>
+                  <strong className="accent">{percent(firstShare, 0)}</strong>
+                  <h2>In the publication month.</h2>
+                  <p>Patch speed is critical.</p>
+                </div>
+                <div>
+                  <strong>{percent(laterShare, 0)}</strong>
+                  <h2>Arrive later.</h2>
+                  <p>Prioritisation buys a window.</p>
+                </div>
+                <div className="median-stat">
+                  <strong>
+                    {number(clock?.later_lag_days?.median)}
+                    <small> days</small>
+                  </strong>
+                  <h2>Median lag, later entries.</h2>
+                </div>
               </div>
-              <div>
-                <strong>{percent(laterShare, 0)}</strong>
-                <h2>Arrive later.</h2>
-                <p>Prioritisation buys a window.</p>
+              <LagHistogram findings={findings} />
+              <p className="slide-caveat">
+                KEV inclusion is a proxy for observed exploitation, not the date
+                of the first attack.
+              </p>
+            </>
+          )}
+          {step === 2 && (
+            <>
+              <h1>Exploit feeds have a blind spot.</h1>
+              <div className="present-blind">
+                <div className="blind-overview">
+                  <BlindSpot findings={findings} />
+                  <WatchMethods findings={findings} compact />
+                </div>
+                <BlindSpotStudy findings={findings} />
               </div>
-              <div className="median-stat">
-                <strong>
-                  {number(clock?.later_lag_days?.median)}
-                  <small> days</small>
-                </strong>
-                <h2>Median lag, later entries.</h2>
+            </>
+          )}
+          {step === 3 && (
+            <>
+              <h1>Look for repeat offenders.</h1>
+              <p className="slide-lead">
+                Inside the public-exploit tier, does earlier vendor exploitation
+                separate risk?
+              </p>
+              <div className="present-vendors">
+                <VendorHistory findings={findings} />
+                <WordPress findings={findings} />
               </div>
-            </div>
-            <LagHistogram findings={findings} />
-            <p className="slide-caveat">
-              KEV inclusion is a proxy for observed exploitation, not the date
-              of the first attack.
-            </p>
-          </>
-        )}
-        {step === 2 && (
-          <>
-            <h1>Exploit feeds have a blind spot.</h1>
-            <div className="present-blind">
-              <div className="blind-overview">
-                <BlindSpot findings={findings} />
-                <WatchMethods findings={findings} compact />
-              </div>
-              <BlindSpotStudy findings={findings} />
-            </div>
-          </>
-        )}
-        {step === 3 && (
-          <>
-            <h1>Look for repeat offenders.</h1>
-            <p className="slide-lead">
-              Inside the public-exploit tier, does earlier vendor exploitation
-              separate risk?
-            </p>
-            <div className="present-vendors">
-              <VendorHistory findings={findings} />
-              <WordPress findings={findings} />
-            </div>
-            <p className="slide-caveat">
-              Historical associations guide investigation. They do not establish
-              that a particular installation is exposed.
-            </p>
-          </>
-        )}
-        {step === 4 && (
-          <>
-            <h1>Policy decides. Granite briefs.</h1>
-            <LiveControls live={live} disabled={busy} />
-            {onAsk && (
-              <div className="present-ask-link">
-                <button onClick={onAsk}>
-                  Ask a question about the ranking ↗
-                </button>
-              </div>
-            )}
-            <div className="present-investigation">
-              <div className="present-briefing">
-                <LiveTrace live={live} />
-                {!showingStream && (
-                  <>
-                    <div className="present-run-title">
-                      <span className="verdict urgent">
-                        {run?.briefing?.verdict?.replaceAll("_", " ") ??
-                          "pending"}
-                      </span>
-                      <span>{run?.cve_id ?? "pending"}</span>
-                      <strong>
-                        {number(run?.verifier?.claims_verified)} verified
-                      </strong>
-                    </div>
-                    <h2>{run?.briefing?.headline ?? "Briefing pending"}</h2>
-                    <div className="present-claims">
-                      {list(run?.briefing?.claims).map((claim) => (
-                        <article key={claim.id}>
-                          <Icon
-                            name={claim.verified ? "check" : "warning"}
-                            size={18}
-                          />
-                          <div>
-                            {(claim.text?.length ?? 0) > 260 ? (
-                              <details className="long-claim">
-                                <summary>
-                                  <p>{claim.text}</p>
-                                  <span>Expand claim</span>
-                                </summary>
-                              </details>
-                            ) : (
-                              <p>{claim.text ?? "pending"}</p>
-                            )}
-                            <div className="present-evidence">
-                              {list(claim.evidence).map((evidence, index) => (
-                                <details key={index}>
-                                  <summary>{evidence.field}</summary>
-                                  <p>
-                                    <code>{evidence.tool}</code>
-                                    <br />
-                                    {displayValue(evidence.value)}
-                                  </p>
-                                </details>
-                              ))}
-                            </div>
-                          </div>
-                        </article>
-                      ))}
-                    </div>
-                    {dropped ? (
-                      <div className="present-dropped">
-                        <span>
-                          REMOVED BY THE VERIFIER
-                          {droppedRun?.cve_id !== run?.cve_id
-                            ? ` · ${droppedRun?.cve_id}`
-                            : ""}
+              <p className="slide-caveat">
+                Historical associations guide investigation. They do not
+                establish that a particular installation is exposed.
+              </p>
+            </>
+          )}
+          {step === 4 && (
+            <>
+              <h1>Policy decides. Granite briefs.</h1>
+              <LiveControls live={live} disabled={busy} />
+              {onAsk && (
+                <div className="present-ask-link">
+                  <button onClick={onAsk}>
+                    Ask a question about the ranking ↗
+                  </button>
+                </div>
+              )}
+              <div className="present-investigation">
+                <div className="present-briefing">
+                  <LiveTrace live={live} />
+                  {!showingStream && (
+                    <>
+                      <div className="present-run-title">
+                        <span className="verdict urgent">
+                          {run?.briefing?.verdict?.replaceAll("_", " ") ??
+                            "pending"}
                         </span>
-                        <p>
-                          <s>
-                            {dropped.text ?? `Unsupported claim ${dropped.id}`}
-                          </s>
-                        </p>
-                        <small>{dropped.why}</small>
+                        <span>{run?.cve_id ?? "pending"}</span>
+                        <strong>
+                          {number(run?.verifier?.claims_verified)} verified
+                        </strong>
                       </div>
-                    ) : null}
-                    {run?.injection?.detected && (
-                      <p className="injection-warning">
-                        Instruction injection detected. Human approval is still
-                        required.
-                      </p>
-                    )}
-                  </>
-                )}
+                      <h2>{run?.briefing?.headline ?? "Briefing pending"}</h2>
+                      <div className="present-claims">
+                        {list(run?.briefing?.claims).map((claim) => (
+                          <article key={claim.id}>
+                            <Icon
+                              name={claim.verified ? "check" : "warning"}
+                              size={18}
+                            />
+                            <div>
+                              {(claim.text?.length ?? 0) > 260 ? (
+                                <details className="long-claim">
+                                  <summary>
+                                    <p>{claim.text}</p>
+                                    <span>Expand claim</span>
+                                  </summary>
+                                </details>
+                              ) : (
+                                <p>{claim.text ?? "pending"}</p>
+                              )}
+                              <div className="present-evidence">
+                                {list(claim.evidence).map((evidence, index) => (
+                                  <details key={index}>
+                                    <summary>{evidence.field}</summary>
+                                    <p>
+                                      <code>{evidence.tool}</code>
+                                      <br />
+                                      {displayValue(evidence.value)}
+                                    </p>
+                                  </details>
+                                ))}
+                              </div>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                      {dropped ? (
+                        <div className="present-dropped">
+                          <span>
+                            REMOVED BY THE VERIFIER
+                            {droppedRun?.cve_id !== run?.cve_id
+                              ? ` · ${droppedRun?.cve_id}`
+                              : ""}
+                          </span>
+                          <p>
+                            <s>
+                              {dropped.text ??
+                                `Unsupported claim ${dropped.id}`}
+                            </s>
+                          </p>
+                          <small>{dropped.why}</small>
+                        </div>
+                      ) : null}
+                      {run?.injection?.detected && (
+                        <p className="injection-warning">
+                          Instruction injection detected. Human approval is
+                          still required.
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+                <EvalComparison data={data} />
               </div>
-              <EvalComparison data={data} />
-            </div>
-          </>
-        )}
-        {step === 5 && (
-          <>
-            <h1>The last step is yours.</h1>
-            <div className="present-gate">
-              <div>
-                <AttackResults evaluation={data.redteam_eval} compact />
-                <div
-                  className="gate-states"
-                  aria-label="Approval state machine"
-                >
-                  {[...stages, pending ? "TICKET_FILED / REJECTED" : state].map(
-                    (stage, i) => (
+            </>
+          )}
+          {step === 5 && (
+            <>
+              <h1>The last step is yours.</h1>
+              <div className="present-gate">
+                <div>
+                  <AttackResults evaluation={data.redteam_eval} compact />
+                  <div
+                    className="gate-states"
+                    aria-label="Approval state machine"
+                  >
+                    {[
+                      ...stages,
+                      pending ? "TICKET_FILED / REJECTED" : state,
+                    ].map((stage, i) => (
                       <div
                         key={`${stage}-${i}`}
                         className={
@@ -373,73 +406,73 @@ export function Presentation({
                         </span>
                         {stage.replaceAll("_", " ")}
                       </div>
-                    ),
-                  )}
-                </div>
-              </div>
-              <div className="gate-control">
-                <div className="gate-control-heading">
-                  <Icon name="shield" size={24} />
-                  <span className="eyebrow">HUMAN APPROVAL GATE</span>
-                </div>
-                <h2>
-                  {pending
-                    ? "Ready for your decision."
-                    : `${notice.startsWith("Simulated") ? "Simulated: " : ""}${state.toLowerCase().replaceAll("_", " ")}`}
-                </h2>
-                <div className="gate-proposal">
-                  <span className="mono">
-                    {run?.cve_id ?? "BRIEFING PENDING"}
-                  </span>
-                  <h3>{run?.briefing?.headline ?? "Briefing pending"}</h3>
-                  <details>
-                    <summary>Review proposed action</summary>
-                    <p className="gate-action">
-                      {run?.briefing?.action ??
-                        "The proposed action will appear after investigation."}
-                    </p>
-                  </details>
-                </div>
-                <p>
-                  {pending
-                    ? "Review the evidence. Authorise the ticket."
-                    : "The decision is retained for this session."}
-                </p>
-                {pending && (
-                  <div className="approval-buttons">
-                    <button
-                      className="button secondary"
-                      disabled={busy}
-                      onClick={() => void decide(false)}
-                    >
-                      Reject
-                    </button>
-                    <button
-                      className="button primary"
-                      disabled={busy}
-                      onClick={() => void decide(true)}
-                    >
-                      {busy ? "Submitting…" : "Approve ticket"}
-                      <Icon name="arrow" />
-                    </button>
+                    ))}
                   </div>
-                )}
-                <p className="approval-note" role="status">
-                  {notice ||
-                    (data.meta?.runs_source === "fixtures"
-                      ? "Fixture mode. Approval is simulated locally; no ticket will be created."
-                      : "Uses localhost:8765. If unreachable, a labelled local simulation is shown.")}
-                </p>
+                </div>
+                <div className="gate-control">
+                  <div className="gate-control-heading">
+                    <Icon name="shield" size={24} />
+                    <span className="eyebrow">HUMAN APPROVAL GATE</span>
+                  </div>
+                  <h2>
+                    {pending
+                      ? "Ready for your decision."
+                      : `${notice.startsWith("Simulated") ? "Simulated: " : ""}${state.toLowerCase().replaceAll("_", " ")}`}
+                  </h2>
+                  <div className="gate-proposal">
+                    <span className="mono">
+                      {run?.cve_id ?? "BRIEFING PENDING"}
+                    </span>
+                    <h3>{run?.briefing?.headline ?? "Briefing pending"}</h3>
+                    <details>
+                      <summary>Review proposed action</summary>
+                      <p className="gate-action">
+                        {run?.briefing?.action ??
+                          "The proposed action will appear after investigation."}
+                      </p>
+                    </details>
+                  </div>
+                  <p>
+                    {pending
+                      ? "Review the evidence. Authorise the ticket."
+                      : "The decision is retained for this session."}
+                  </p>
+                  {pending && (
+                    <div className="approval-buttons">
+                      <button
+                        className="button secondary"
+                        disabled={busy}
+                        onClick={() => void decide(false)}
+                      >
+                        Reject
+                      </button>
+                      <button
+                        className="button primary"
+                        disabled={busy}
+                        onClick={() => void decide(true)}
+                      >
+                        {busy ? "Submitting…" : "Approve ticket"}
+                        <Icon name="arrow" />
+                      </button>
+                    </div>
+                  )}
+                  <p className="approval-note" role="status">
+                    {notice ||
+                      (data.meta?.runs_source === "fixtures"
+                        ? "Fixture mode. Approval is simulated locally; no ticket will be created."
+                        : "Uses localhost:8765. If unreachable, a labelled local simulation is shown.")}
+                  </p>
+                </div>
               </div>
-            </div>
-            <blockquote>
-              IBM Concert proves what is exploitable in your environment.
-              <br />
-              <strong>We tell you what to prove first.</strong>
-            </blockquote>
-          </>
-        )}
-      </section>
+              <blockquote>
+                IBM Concert proves what is exploitable in your environment.
+                <br />
+                <strong>We tell you what to prove first.</strong>
+              </blockquote>
+            </>
+          )}
+        </section>
+      )}
       <footer className="present-footer">
         <span className="present-counter" aria-live="polite">
           {String(step + 1).padStart(2, "0")}{" "}
@@ -451,23 +484,28 @@ export function Presentation({
               key={chapter}
               aria-label={`Go to slide ${i + 1}: ${chapter}`}
               aria-current={step === i ? "step" : undefined}
-              onClick={() => setStep(i)}
+              onClick={() => {
+                setAppendix(false);
+                setStep(i);
+              }}
             />
           ))}
         </div>
         <span className="present-key-hint">
-          ← → / space to advance · esc to exit
+          {appendix
+            ? "Appendix · esc / M returns to story"
+            : "← → / space to advance · M map · esc to exit"}
         </span>
         <button
           onClick={() => advance(-1)}
-          disabled={step === 0}
+          disabled={appendix || step === 0}
           aria-label="Previous slide"
         >
           ←
         </button>
         <button
           onClick={() => advance(1)}
-          disabled={step === chapters.length - 1}
+          disabled={appendix || step === chapters.length - 1}
           aria-label="Next slide"
         >
           →
