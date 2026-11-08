@@ -153,8 +153,10 @@ class AskRunner:
                     if key in safe_payload: safe_payload[key]=sanitized(safe_payload[key])
                 result=await complete(self.model,[{'role':'system','content':SYSTEM},
                     {'role':'user','content':json.dumps(safe_payload,ensure_ascii=False)}],tokens,deadline,cancel_event)
+                for key in ('prompt_tokens', 'generation_tokens', 'total_tokens'):
+                    metrics[key] = metrics.get(key, 0) + result.metrics.get(key, 0)
                 event={'t_ms':elapsed(),'kind':'model','name':payload['phase'],'input':{'schema':schema.__name__},
-                       'output_sha256':hashlib.sha256(result.text.encode()).hexdigest(),'duration_ms':round((time.monotonic()-t)*1000)}
+                       'output_sha256':hashlib.sha256(result.text.encode()).hexdigest(),'duration_ms':round((time.monotonic()-t)*1000), 'metrics':result.metrics}
                 trace.append(event)
                 try:
                     obj=schema.model_validate(parse_json(result.text))

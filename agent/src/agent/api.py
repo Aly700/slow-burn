@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, model_validator
 
 from .client import ToolClient
 from .config import IBM_MODEL, Settings
-from .model import Granite
+from .model import create_model
 from .runtime import Runner
 from .store import Store
 from .record import save_record
@@ -44,7 +44,7 @@ class Approval(BaseModel):
 
 def create_app(settings=None, model=None):
     settings = settings or Settings()
-    model = model or Granite(settings.model)
+    model = model or create_model(settings)
     store = Store(settings.state, settings.tickets)
     service = LiveService(settings,store,model)
     approval_lock = asyncio.Lock()
@@ -61,10 +61,21 @@ def create_app(settings=None, model=None):
 
     app = FastAPI(title="Fix-first triage", version="0.1.0", lifespan=lifespan)
     app.state.service = service
-    app.add_middleware(CORSMiddleware, allow_origins=ORIGINS, allow_private_network=True, allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
+    from .public import PublicBoundary, LOCAL_ORIGIN
+    if settings.public:
+        app.add_middleware(PublicBoundary, settings=settings, model=model)
+    app.add_middleware(CORSMiddleware, allow_origins=ORIGINS, allow_origin_regex=LOCAL_ORIGIN if settings.public else None,
+                       allow_private_network=not settings.public, allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
 
     @app.middleware("http")
     async def local_mutation_boundary(request: Request, call_next):
+        if settings.public:
+            from .public import allowed_origin
+            origin = request.headers.get('origin')
+            if origin and not allowed_origin(origin):
+                from fastapi.responses import PlainTextResponse
+                return PlainTextResponse('Origin is not allowed.', status_code=403)
+            return await call_next(request)
         if request.method == 'OPTIONS':
             response = await call_next(request)
             if response.status_code != 200 and 'Access-Control-Allow-Private-Network' in response.headers:
@@ -85,12 +96,18 @@ def create_app(settings=None, model=None):
 
     @app.get("/health")
     async def health():
-        return {"ready": service.loaded_at is not None and service.error is None, "model": model.name, "queue_depth": service.queue.qsize(), "ticket_destination": "local artifacts/tickets.jsonl"}
+        return {**await live_health(), "queue_depth": service.queue.qsize(), "ticket_destination": "disabled" if settings.public else "local artifacts/tickets.jsonl"}
 
     @app.get('/live/health')
     async def live_health():
-        return {'ready': service.loaded_at is not None and service.error is None,
-                'model':getattr(model,'source_name',model.name), 'loaded_at':service.loaded_at}
+        try:
+            budget = await asyncio.to_thread(model.budget.status) if getattr(model, 'budget', None) else None
+        except RuntimeError:
+            return {'ready':False, 'model':model.name, 'backend':settings.backend, 'public':settings.public,
+                    'loaded_at':service.loaded_at, 'message':'Daily token budget unavailable; showing recorded answers.'}
+        return {'ready': service.loaded_at is not None and service.error is None and not (budget and budget['exhausted']),
+                'model':getattr(model,'source_name',model.name), 'loaded_at':service.loaded_at,
+                'backend':getattr(model, 'backend', settings.backend), 'public':settings.public, 'budget':budget}
 
     def submit(cve_id, streamed=True, fixture=None):
         try:
@@ -178,7 +195,9 @@ app = create_app()
 
 def main():
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8765, workers=1)
+    public = os.getenv('SLOWBURN_PUBLIC') == '1'
+    uvicorn.run(app, host="0.0.0.0" if public else "127.0.0.1", port=int(os.getenv('PORT', '8765')), workers=1,
+                access_log=not public, proxy_headers=False)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,8 @@ import fcntl
 import hashlib
 import json
 import math
+import os
+from pathlib import Path
 import re
 from collections import Counter
 
@@ -46,6 +48,11 @@ def signals(row):
 
 
 def build_cache(settings):
+    if os.getenv('SLOWBURN_CORPUS'):
+        path = Path(os.environ['SLOWBURN_CORPUS'])
+        if not path.is_file():
+            raise FileNotFoundError('bundled corpus is missing')
+        return path
     settings.cache.mkdir(parents=True, exist_ok=True)
     names = ["vulnerabilities", "known_exploited", "weakness_types", "scoreboard_2026", "affected_products", "exploit_signals_2024", "exploit_signals_2025"]
     manifest = [(name, (settings.data / f"{name}.csv").stat().st_size, (settings.data / f"{name}.csv").stat().st_mtime_ns) for name in names]

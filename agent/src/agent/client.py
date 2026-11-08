@@ -19,6 +19,11 @@ class ToolClient:
 
     async def __aenter__(self):
         env = dict(os.environ)
+        for key in list(env):
+            if key.startswith(('WATSONX_', 'SLOWBURN_BUDGET_COS_')):
+                env.pop(key)
+        env['SLOWBURN_PUBLIC'] = '1' if self.settings.public else '0'
+        env['SLOWBURN_CACHE'] = str(self.settings.cache)
         env.update({"TRIAGE_ROOT": str(self.settings.root), "TRIAGE_STATE_DB": str(self.settings.state), "TRIAGE_TICKETS": str(self.settings.tickets), "TOKENIZERS_PARALLELISM": "false"})
         env["TRIAGE_SCORES"] = str(self.settings.scores)
         if self.prepare_live:

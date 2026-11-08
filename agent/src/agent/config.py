@@ -16,6 +16,11 @@ EMBED_REVISION = "9b5b096411652ec1189c68fcfb90d0a82c5b45af"
 
 @dataclass
 class Settings:
+    backend: str = field(default_factory=lambda: os.getenv('SLOWBURN_MODEL_BACKEND', 'mlx'))
+    public: bool = field(default_factory=lambda: os.getenv('SLOWBURN_PUBLIC') == '1')
+    daily_tokens: int = field(default_factory=lambda: int(os.getenv('SLOWBURN_DAILY_TOKENS', '100000')))
+    rate_limit: int = field(default_factory=lambda: int(os.getenv('SLOWBURN_RATE_LIMIT', '6')))
+    rate_window: int = field(default_factory=lambda: int(os.getenv('SLOWBURN_RATE_WINDOW', '60')))
     root: Path = field(default_factory=lambda: Path(os.getenv("TRIAGE_ROOT", ROOT)).resolve())
     model: str = field(default_factory=lambda: os.getenv("TRIAGE_MODEL", MODEL))
     max_seconds: float = 55.0
@@ -34,7 +39,11 @@ class Settings:
 
     @property
     def cache(self):
-        return self.artifacts / "cache"
+        return Path(os.getenv('SLOWBURN_CACHE', self.artifacts / 'cache'))
+
+    @property
+    def budget_path(self):
+        return Path(os.getenv('SLOWBURN_BUDGET_PATH', self.cache / 'token-budget.sqlite'))
 
     @property
     def scores(self):

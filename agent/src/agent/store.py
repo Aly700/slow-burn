@@ -137,6 +137,8 @@ class Store:
         return run["briefing_hash"]
 
     def approve(self, run_id, approve: bool, ttl=900):
+        if os.getenv('SLOWBURN_PUBLIC') == '1':
+            raise PermissionError('Public mode is read-only; ticket filing is disabled.')
         with self.db() as db:
             db.execute("BEGIN IMMEDIATE")
             run = self._get(db, run_id)
@@ -163,6 +165,8 @@ class Store:
             return token
 
     def file_ticket(self, cve_id, briefing_hash, approval_token):
+        if os.getenv('SLOWBURN_PUBLIC') == '1':
+            raise PermissionError('Public mode is read-only; ticket filing is disabled.')
         operation_started = time.monotonic()
         token_hash = hashlib.sha256(approval_token.encode()).hexdigest()
         with self.db() as db:
