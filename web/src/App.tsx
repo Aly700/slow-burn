@@ -133,13 +133,13 @@ export default function App() {
         </a>
         <nav aria-label="Main navigation">
           {[
-            ["overview", "Overview", ""],
-            ["timing", "Discovery", "01–04"],
-            ["queue", "Fix-first queue", "05"],
-            ["analyst", "Ask Slow Burn", "06"],
-            ["agent", "Briefing", "07"],
-            ["methods", "Methods", "08"],
-          ].map(([id, label, index]) => (
+            ["overview", "Overview"],
+            ["timing", "Discovery"],
+            ["queue", "Fix-first queue"],
+            ["analyst", "Ask Slow Burn"],
+            ["agent", "Briefing"],
+            ["methods", "Methods"],
+          ].map(([id, label]) => (
             <a
               key={id}
               className={
@@ -150,7 +150,7 @@ export default function App() {
               }
               href={`#${id}`}
             >
-              {index && <span className="nav-index">{index}</span>}{label}
+              {label}
             </a>
           ))}
         </nav>

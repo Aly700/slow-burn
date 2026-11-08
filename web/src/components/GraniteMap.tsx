@@ -1,3 +1,4 @@
+import { ReadingDetails } from "./ReadingDetails";
 import { SectionHeading } from "./SectionHeading";
 import { readCanvasTheme } from "../theme";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -821,6 +822,7 @@ export function GraniteMap({
           </div>
         )}
       </div>
+      <ReadingDetails label="Explore a region" collapsed={!appendix}>
       <div className="map-under">
         <label>
           Explore a region{" "}
@@ -846,13 +848,16 @@ export function GraniteMap({
           Drag to pan · scroll or + / − to zoom · hover or tap a point
         </span>
       </div>
+      </ReadingDetails>
       {layers.watch && (
         <p className="map-overlay-note">
           Product review overlay includes looser name matches. Use the stack
           review list to filter for vendor-supported matches.
         </p>
       )}
-      <MapEvidence data={data} />
+      <ReadingDetails label="How we checked similarity" collapsed={!appendix}>
+        <MapEvidence data={data} />
+      </ReadingDetails>
       <details className="map-methods">
         <summary>How to read this map</summary>
         <p>

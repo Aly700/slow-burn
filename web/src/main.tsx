@@ -9,6 +9,7 @@ import "./styles.css";
 import "./presentation.css";
 import App from "./App";
 import "./system.css";
+import "./scroll.css";
 document.querySelector('meta[name="theme-color"]')?.setAttribute(
   "content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim(),
 );

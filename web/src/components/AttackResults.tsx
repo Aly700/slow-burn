@@ -1,3 +1,4 @@
+import { ReadingDetails } from "./ReadingDetails";
 import type { AttackEvaluation, RedTeamEvaluation } from "../types";
 import { list, number, percent } from "../lib";
 import { attackSummary } from "../attackResults";
@@ -30,9 +31,11 @@ function Families({
 export function AttackResults({
   evaluation,
   compact = false,
+  reading = false,
 }: {
   evaluation?: RedTeamEvaluation | null;
   compact?: boolean;
+  reading?: boolean;
 }) {
   const summary = attackSummary(evaluation);
   const { before, development, heldOut } = summary;
@@ -138,6 +141,7 @@ export function AttackResults({
       </div>
       {!compact && (
         <>
+          <ReadingDetails label="Attack results, families and limits" collapsed={reading}>
           <p className="attack-detector">
             Held-out detector recall:{" "}
             <strong>{percent(heldOut?.detector_recall)}</strong>. Detection is
@@ -187,6 +191,7 @@ export function AttackResults({
               <p key={i}>{limit}</p>
             ))}
           </details>
+          </ReadingDetails>
         </>
       )}
     </div>

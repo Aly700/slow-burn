@@ -1,0 +1,83 @@
+/* The reading page has its own rhythm; presentation compositions stay fixed. */
+main .reading-details { border-top: var(--border); margin-top: 18px; }
+main .reading-details > summary { padding-block: 14px; }
+main .reading-evidence { padding: 12px 0 24px; }
+main .reading-evidence > p + p { margin-top: 12px; }
+main .story-section { padding-block: 64px; }
+main .section-heading { margin-bottom: 32px; }
+main .timing-layout { display: block; }
+main .timing-chart { width: 100%; }
+main .clock-numbers { gap: 64px; }
+main .clock-numbers .metric { font-size: var(--type-metric); }
+main .timing .histogram { max-width: none; }
+main .timing-copy { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 64px; }
+main .timing-copy .caption { grid-column: 2; margin: 0; }
+main .section-takeaway { margin-top: 20px; padding-top: 20px; }
+main .signals-layout { grid-template-columns: minmax(0, 1fr) 300px; gap: 48px; }
+main .signal-row { padding-block: 15px; }
+main .deprioritize { padding: 24px; }
+main .discovery-blind-grid { gap: 64px; }
+main .blind-study { border-left: var(--border); padding-left: 40px; }
+main .product-contrast { padding-top: 0; }
+main .discovery-vendor-block { margin-top: 0; padding-top: 0; border-top: 0; }
+main .finding-stories { margin-top: 0; }
+main .watch-methods { margin-top: 0; }
+main .map-section { padding-block: 80px; }
+main .map-field { height: 620px; }
+main .map-methods { margin-top: 0; border-top: var(--border); padding-top: 8px; }
+main .map-evidence { margin-top: 0; }
+main .analyst-lead { max-width: 65ch; margin-bottom: 28px; }
+main .analyst-scope { margin: 0; border: 0; padding: 0; }
+main .analyst-idle { min-height: 90px; }
+main .agent-section-grid { gap: 64px; }
+main .methods .attack-results { margin-top: 0; border-top: 0; padding-top: 0; }
+main .methods .attack-results > h3 { margin-bottom: 24px; }
+main .methods .attack-kicker { margin-bottom: 12px; }
+main .method-footnote { margin-top: 24px; padding-block: 20px; }
+main .methods-grid { padding-top: 16px; }
+@media (max-width: 700px) {
+  main .story-section { padding-block: 40px; }
+  main .section-heading { margin-bottom: 24px; }
+  main .section-heading h2 { font-size: var(--type-subhead); }
+  main .section-heading .section-meta { margin-top: 12px; }
+  main .replay-hero { padding-top: 32px; }
+  main .replay-intro { margin-bottom: 22px; }
+  main .replay-intro p { margin-top: 16px; }
+  main .replay-lanes { gap: 10px; }
+  main .replay-dots { height: 115px; }
+  main .lane-heading { min-height: 78px; padding: 10px 10px 0; }
+  main .replay-legend { gap: 8px; }
+  main .missed-dots { height: 50px; }
+  main .benchmark-strip { gap: 16px; padding-block: 20px; }
+  main .clock-numbers { grid-template-columns: 1fr; gap: 24px; }
+  main .clock-numbers > div { display: grid; grid-template-columns: 148px 1fr; column-gap: 20px; align-items: center; }
+  main .clock-numbers .metric { font-size: var(--type-display); grid-row: 1 / 3; }
+  main .clock-numbers > div > span:last-child { margin-top: 6px; }
+  main .clock-numbers .metric small { font-size: var(--type-lead); }
+  main .clock-bar { margin-top: 24px; }
+  main .clock-actions { gap: 12px; }
+  main .timing-copy { display: block; }
+  main .timing-copy > p { margin-top: 16px; }
+  main .signals-layout { display: flex; flex-direction: column; gap: 28px; }
+  main .signals-chart { width: 100%; }
+  main .signal-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; }
+  main .signal-row > div:first-child { grid-column: 1 / -1; }
+  main .signal-bar-cell { width: 100%; }
+  main .signal-count { display: block; }
+  main .deprioritize { width: 100%; }
+  main .discovery-blind-grid { display: flex; flex-direction: column; gap: 28px; }
+  main .blind-study { border-left: 0; padding-left: 0; }
+  main .map-section { padding-block: 48px; }
+  main .map-field { height: 440px; }
+  main .map-guidance { max-width: 220px; padding: 12px; }
+  main .map-guidance p { font-size: var(--type-body); }
+  main .analyst-workspace { gap: 24px; }
+  main .analyst-suggestions .question-chips { display: grid; grid-template-columns: 1fr; }
+  main .analyst-suggestions .question-chips button { min-height: 44px; }
+  main .agent-section-grid { gap: 28px; }
+  main .methods .attack-evidence { gap: 24px; }
+  main .methods .attack-survival { flex-wrap: wrap; gap: 12px; }
+  main .methods .attack-survival > strong { font-size: var(--type-display); }
+  main .methods .attack-reason { font-size: var(--type-base); margin-block: 20px; }
+  main .methods .attack-family-groups { gap: 20px; }
+}

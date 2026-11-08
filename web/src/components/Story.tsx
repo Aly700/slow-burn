@@ -1,3 +1,4 @@
+import { ReadingDetails } from "./ReadingDetails";
 import { SectionHeading } from "./SectionHeading";
 import { AttackResults } from "./AttackResults";
 import type { Data, Findings } from "../types";
@@ -49,21 +50,6 @@ export function Timing({ findings }: { findings?: Findings | null }) {
         detail="2025 discovery · time to KEV inclusion"
       />
       <div className="timing-layout">
-        <div className="timing-copy">
-          <h3>
-            The first month is a race.
-            <br />
-            The next is a window.
-          </h3>
-          <p>
-            Most confirmed cases arrive in the publication month. For the rest,
-            prioritisation can buy a security team time to act.
-          </p>
-          <p className="caption">
-            KEV inclusion is an observed proxy, not the date of the first
-            attack. A calendar-month boundary can be just a few days away.
-          </p>
-        </div>
         <div className="timing-chart">
           <div className="clock-numbers">
             <div>
@@ -147,6 +133,23 @@ export function Timing({ findings }: { findings?: Findings | null }) {
           )}
         </div>
       </div>
+      <ReadingDetails label="How we measured">
+        <div className="timing-copy">
+          <h3>
+            The first month is a race.
+            <br />
+            The next is a window.
+          </h3>
+          <p>
+            Most confirmed cases arrive in the publication month. For the rest,
+            prioritisation can buy a security team time to act.
+          </p>
+          <p className="caption">
+            KEV inclusion is an observed proxy, not the date of the first
+            attack. A calendar-month boundary can be just a few days away.
+          </p>
+        </div>
+      </ReadingDetails>
       <div className="section-takeaway">
         <Icon name="arrow" />
         <p>
@@ -164,22 +167,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
     1,
     ...signals.filter((s) => s.leak_risk === "low").map((s) => s.lift ?? 0),
   );
-  return (
-    <section id="signals" className="story-section signals-section">
-      <SectionHeading
-        index="02" label="Signals"
-        title="Find the signal. Question the shortcut."
-        detail="2025 cohort · association, not causation"
-      />
-      <div className="signals-layout">
-        <div className="signals-chart">
-          <div className="chart-head">
-            <span>Signal in the supplied record</span>
-            <span>Lift over base rate</span>
-            <span>Later KEV / CVEs</span>
-          </div>
-          {signals.length ? (
-            signals.map((signal, index) => {
+  const signalRow = (signal: (typeof signals)[number], index: number) => {
               const risky = signal.leak_risk !== "low";
               return (
                 <div
@@ -212,10 +200,30 @@ export function Signals({ findings }: { findings?: Findings | null }) {
                   </span>
                 </div>
               );
-            })
+            };
+  const featuredSignals = signals.filter(signal => /^(any exploit|exploitdb|metasploit|nuclei|poc_github)|^Vendor has earlier|^Current description mentions|^WordPress wording/i.test(signal.name ?? ""));
+  return (
+    <section id="signals" className="story-section signals-section">
+      <SectionHeading
+        index="02" label="Signals"
+        title="Find the signal. Question the shortcut."
+        detail="2025 cohort · association, not causation"
+      />
+      <div className="signals-layout">
+        <div className="signals-chart">
+          <div className="chart-head">
+            <span>Signal in the supplied record</span>
+            <span>Lift over base rate</span>
+            <span>Later KEV / CVEs</span>
+          </div>
+          {signals.length ? (
+            featuredSignals.map(signalRow)
           ) : (
             <p className="empty-inline">Signal analysis pending.</p>
           )}
+          <ReadingDetails label={`All ${signals.length} signals`}>
+            {signals.map(signalRow)}
+          </ReadingDetails>
           <p className="caption">
             Base rate: {percent(findings?.base_rate_2025, 3)}. Bars scaled to
             low-risk signals; hatching marks revision risk. Description wording
@@ -236,7 +244,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
                   Across <strong>{number(item.n)}</strong> vulnerabilities in
                   the eligible 2025 cohort
                   {item.share_of_pool != null
-                    ? ` – ${percent(item.share_of_pool)} of the queue`
+                    ? `, ${percent(item.share_of_pool)} of the queue`
                     : ""}
                   .
                 </p>
@@ -272,6 +280,8 @@ export function Methods({ data }: { data: Data }) {
         title="The boundary is part of the model."
         detail="Reproducible decisions · explicit limits"
       />
+      <AttackResults evaluation={data.redteam_eval} reading />
+      <ReadingDetails label="Model, features and exclusions">
       <div className="methods-grid">
         <div>
           <span className="eyebrow">USED BY THE CURRENT MODEL</span>
@@ -373,7 +383,7 @@ export function Methods({ data }: { data: Data }) {
           </p>
         </div>
       </div>
-      <AttackResults evaluation={data.redteam_eval} />
+      </ReadingDetails>
       <div className="method-footnote">
         <Icon name="shield" size={17} />
         <p>
