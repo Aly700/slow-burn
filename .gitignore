@@ -13,3 +13,4 @@ artifacts/scores_2026_full.csv
 .DS_Store
 /data
 scratch/
+!docs/img/*.png
