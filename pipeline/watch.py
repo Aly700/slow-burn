@@ -231,19 +231,9 @@ def apply_findings(result):
     product = next(c for c in result['profile']['contrasts'] if c['name'] == 'product_prior_kev_any')
     story['numbers'].update(prior_product_positives=product['no_signal_positives'],
                             prior_product_pool=product['no_signal_pool'], prior_product_pool_share=product['pool_share'])
-    f['blind_spot'] = result
+    f['blind_spot'] = {**f.get('blind_spot', {}), **result}
     f['story'] = [story] + [entry for entry in f.get('story', []) if entry['title'] != STORY_TITLE]
     write_json(path, f)
-    root_readme = ROOT / 'README.md'
-    text = root_readme.read_text()
-    prefix = '- **A separate watch queue.**'
-    line = f'{prefix} {sentence} [Watch list](artifacts/watch_2026_top100.csv).'
-    lines = [item for item in text.splitlines() if not item.startswith(prefix)]
-    position = next(i for i, item in enumerate(lines) if item.startswith('- **The blind spot.**')) + 1
-    lines.insert(position, line)
-    updated = '\n'.join(lines) + '\n'
-    if updated != text:
-        root_readme.write_text(updated)
 
 
 def run():

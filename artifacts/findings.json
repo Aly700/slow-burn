@@ -3479,6 +3479,78 @@
       "The main submission is frozen; mixed allocations are comparisons for a separate decision."
     ],
     "generator": "pipeline/watch.py",
-    "profile_generator": "pipeline/watch_profile.py"
+    "profile_generator": "pipeline/watch_profile.py",
+    "product_watch": {
+      "artifact_path": "artifacts/product_watch_2026.csv",
+      "definition": "Every no-signal row with a positive prior count for the profile matcher\u2019s chosen product alias; dated history stops at snapshot end and 2025-12-31.",
+      "purpose": "A complete review queue for teams running the matched products; no top-k performance or ranking improvement is claimed.",
+      "sort": "prior_kev_count descending, EPSS descending with missing last, cve_id ascending",
+      "historical_2025": {
+        "rows": 7483,
+        "no_signal_pool": 46955,
+        "pool_share": 0.15936534980300288,
+        "vendors": 141,
+        "products": 287,
+        "confidence_counts": {
+          "psirt_supported": 3443,
+          "product_alias_only": 3331,
+          "vendor_text_supported": 709
+        },
+        "missing_snapshot_observations": 694,
+        "positives": 15,
+        "no_signal_positives": 31,
+        "recall": 0.4838709677419355,
+        "rate": 0.0020045436322330616,
+        "base_rate": 0.0006602065807688213,
+        "lift": 3.0362369758549486,
+        "positive_ids": [
+          "CVE-2024-13159",
+          "CVE-2024-13160",
+          "CVE-2024-13161",
+          "CVE-2025-24054",
+          "CVE-2025-24472",
+          "CVE-2025-2746",
+          "CVE-2025-2747",
+          "CVE-2025-27915",
+          "CVE-2025-32463",
+          "CVE-2025-35939",
+          "CVE-2025-3935",
+          "CVE-2025-55177",
+          "CVE-2025-61757",
+          "CVE-2025-6554",
+          "CVE-2025-9242"
+        ]
+      },
+      "target_2026": {
+        "rows": 21736,
+        "no_signal_pool": 71025,
+        "pool_share": 0.3060330869412179,
+        "vendors": 145,
+        "products": 293,
+        "confidence_counts": {
+          "psirt_supported": 10892,
+          "product_alias_only": 9150,
+          "vendor_text_supported": 1694
+        },
+        "missing_snapshot_observations": 367
+      },
+      "confidence": {
+        "kind": "Categorical support for a heuristic match, not a calibrated correctness probability.",
+        "definitions": {
+          "psirt_supported": "Vendor PSIRT domain supports the vendor and a unique compatible product alias matches sanitized text.",
+          "vendor_text_supported": "Vendor wording and a compatible unique product alias match sanitized text; these may overlap and are not independent evidence.",
+          "product_alias_only": "A unique product alias supplies both product and vendor identity without vendor-domain or separate vendor-name support."
+        }
+      },
+      "limitations": [
+        "Current descriptions may have changed after the snapshot; explicit incident wording is removed but revision risk remains.",
+        "Aliases can cover broad product families and do not verify affected versions or whether a team runs the product.",
+        "A zero-flag pool includes missing monthly observations, not proof that public code was absent.",
+        "The 2025 product-history contrast was identified descriptively in the previous round.",
+        "Current CVSS is display-only metadata; it does not select or order this queue."
+      ],
+      "artifact_sha256": "4b2094b6ec63a5d44b637f1fe3c67f75a858f49d270d13317a985204323706bb",
+      "generator": "pipeline/product_watch.py"
+    }
   }
 }

@@ -314,6 +314,9 @@ def artifact_checks(include_watch=True):
     if include_watch and 'blind_spot' in findings:
         from pipeline.watch import watch_checks
         watch_checks()
+        if 'product_watch' in findings['blind_spot']:
+            from pipeline.product_watch import product_checks
+            product_checks()
     for name in ['backtest', 'findings']:
         json.loads((ARTIFACTS / f'{name}.json').read_text())
     print('Artifact contracts: passed (500 / 5000 rows, probabilities, reasons, membership, column order)')
@@ -338,7 +341,10 @@ def historical_checks():
 
 
 if __name__ == '__main__':
-    result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(TemporalChecks))
+    from pipeline import capability_checks
+    suite = unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(TemporalChecks),
+                               unittest.defaultTestLoader.loadTestsFromModule(capability_checks)])
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
     if not result.wasSuccessful():
         raise SystemExit(1)
     if '--artifacts' in sys.argv:

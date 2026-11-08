@@ -14,7 +14,8 @@ The first run downloads the pinned IBM Granite embedding weights. Subsequent run
 | Artifact or stage | One command |
 |---|---|
 | Every contract artifact, from the supplied data | `uv run python -I pipeline/run.py --all` |
-| Watch list, blind-spot findings and root README bullet | `uv run python -I pipeline/watch.py` |
+| Watch list and blind-spot findings | `uv run python -I pipeline/watch.py` |
+| Complete product watch queue and coverage | `uv run python -I pipeline/product_watch.py` |
 | Reproduce the committed 2024-only watch choice | `uv run python -I pipeline/watch.py --select-only` |
 | Round-three local report | `uv run python -I pipeline/watch_report.py` |
 | Cached cohorts and input hashes | `uv run python -I pipeline/data.py` |
@@ -92,3 +93,9 @@ Only the committed winner is evaluated on the two existing 2025 splits after fil
 `watch_2026_top100.csv` is trained on mature no-signal 2024+2025 rows. Its conditional scores are not directly calibrated against scores from the full-pool model. The submitted ranking, score export, model card and main backtest are frozen by SHA-256. Mixed allocations are reported at the same 500-review budget without adoption; allocations with too few available exploit-tier rows are explicitly infeasible. Profile contrasts are exploratory, do not select the model, and include counts, base rates and revision/matching risks.
 
 `run.py --all` regenerates the original pipeline followed by the watch queue. `findings.py` preserves the watch block and story when rebuilding the original findings; rerun `watch.py` or the full command to refresh the watch evidence. The check suite validates watch membership, 100 unique rows, score ordering, reason reconstruction and unchanged submission hashes. Every narrative watch number comes from `watch.py` or `watch_profile.py`.
+
+## Product watch
+
+`product_watch.py` uses the profile's exact identities and no-signal definition, then reconstructs the distinct source KEV records for the selected product alias. Both the alias dictionary and counts are dated at the snapshot, with a 2025-12-31 ceiling. Counts must reconcile with the profile before export. The latest dated record accompanies each row. Match confidence describes its support (`psirt_supported`, `vendor_text_supported`, `product_alias_only`); no calibrated identity probability is asserted.
+
+The complete 2026 queue sorts by prior KEV count, snapshot EPSS and CVE ID. Current CVSS is display-only. Findings report how many 2025 no-signal positives fall in this complete queue and the number of reviews that requires; they do not claim top-500 improvement. `run.py --all` regenerates it after the learned watch queue and before the replay. Earlier findings extensions and the manually edited root README are preserved.
