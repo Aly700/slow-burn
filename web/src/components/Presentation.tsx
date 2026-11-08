@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Data, Run } from "../types";
 import { displayValue, list, number, percent } from "../lib";
-import { standardRankings, strongestRun } from "../storyData";
+import { strongestRun } from "../storyData";
 import { useApproval } from "../useApproval";
 import {
   BlindSpot,
@@ -11,6 +11,9 @@ import {
   WordPress,
 } from "./Discovery";
 import { Icon } from "./Icon";
+import { Replay } from "./Replay";
+import { useInvestigation } from "../useInvestigation";
+import { LiveControls, LiveTrace } from "./LiveInvestigation";
 
 const chapters = [
   "The result",
@@ -41,11 +44,21 @@ export function Presentation({
     notice,
     busy,
     decide,
+    replaceRun,
   } = useApproval(
     selected,
     data.meta?.runs_source === "fixtures",
     initialNotice,
     onUpdate,
+  );
+  const live = useInvestigation(
+    data,
+    selected?.cve_id ?? "",
+    () => replaceRun(undefined),
+    replaceRun,
+  );
+  const showingStream = ["running", "error", "cancelled"].includes(
+    live.session.status,
   );
   const advance = (delta: number) =>
     setStep((previous) =>
@@ -78,7 +91,7 @@ export function Presentation({
       if (event.key === "Tab") {
         const nodes = Array.from(
           container.current?.querySelectorAll<HTMLElement>(
-            "button:not(:disabled), summary, a[href]",
+            "button:not(:disabled), input, select, summary, a[href]",
           ) ?? [],
         );
         const first = nodes[0],
@@ -112,13 +125,6 @@ export function Presentation({
   const firstShare =
     clock?.first_month != null && total ? clock.first_month / total : null;
   const laterShare = clock?.later != null && total ? clock.later / total : null;
-  const ours = findings?.headline?.ours_hits_top500_2025_backtest;
-  const methods = standardRankings(data);
-  const maxHits = Math.max(
-    1,
-    ours ?? 0,
-    ...methods.map((method) => method.hits_at_500 ?? 0),
-  );
   const droppedRun = list(run?.verifier?.dropped).length
     ? run
     : (data.verifier_example ??
@@ -162,7 +168,11 @@ export function Presentation({
               ? "2025 historical evidence · development analysis"
               : data.meta?.runs_source === "fixtures"
                 ? "Illustrative fixture"
-                : "Recorded IBM Granite run"}
+                : live.session.status !== "idle"
+                  ? live.session.mode === "live"
+                    ? "Live IBM Granite investigation"
+                    : "Replay of a recorded run"
+                  : "Recorded IBM Granite run"}
           </span>
         </div>
         {step === 0 && (
@@ -171,47 +181,7 @@ export function Presentation({
             <p className="slide-lead">
               Same top-500 budget. How many later-exploited CVEs did we find?
             </p>
-            <div className="present-results">
-              <div className="present-ours">
-                <span>Slow Burn</span>
-                <strong className={ours == null ? "is-pending" : ""}>
-                  {number(ours)}
-                </strong>
-                <p>
-                  later KEV entries caught
-                  <br />
-                  in the top 500
-                </p>
-              </div>
-              <div className="present-baselines">
-                {methods.map((method) => (
-                  <div key={method.name}>
-                    <span>{method.name}</span>
-                    <div>
-                      <i
-                        style={{
-                          width: `${((method.hits_at_500 ?? 0) / maxHits) * 100}%`,
-                        }}
-                      />
-                    </div>
-                    <strong
-                      className={method.hits_at_500 == null ? "is-pending" : ""}
-                    >
-                      {number(method.hits_at_500)}
-                    </strong>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="slide-bottom-note">
-              <strong>2025 DEVELOPMENT BACKTEST</strong>
-              <span>
-                {number(findings?.headline?.positives_2025)} later KEV entries ·{" "}
-                {number(findings?.headline?.pool_2025)} eligible CVEs · outcome
-                cutoff 31 Dec 2025
-              </span>
-              <span>2026 result: pending judging</span>
-            </div>
+            <Replay data={data.replay_2025} presentation />
           </>
         )}
         {step === 1 && (
@@ -286,75 +256,80 @@ export function Presentation({
         {step === 4 && (
           <>
             <h1>Policy decides. Granite briefs.</h1>
+            <LiveControls live={live} disabled={busy} />
             <div className="present-investigation">
               <div className="present-briefing">
-                <div className="present-run-title">
-                  <span className="verdict urgent">
-                    {run?.briefing?.verdict?.replaceAll("_", " ") ?? "pending"}
-                  </span>
-                  <span>{run?.cve_id ?? "pending"}</span>
-                  <strong>
-                    {number(run?.verifier?.claims_verified)} verified
-                  </strong>
-                </div>
-                <h2>{run?.briefing?.headline ?? "Briefing pending"}</h2>
-                <div className="present-claims">
-                  {list(run?.briefing?.claims).map((claim) => (
-                    <article key={claim.id}>
-                      <Icon
-                        name={claim.verified ? "check" : "warning"}
-                        size={18}
-                      />
-                      <div>
-                        {(claim.text?.length ?? 0) > 260 ? (
-                          <details className="long-claim">
-                            <summary>
-                              <p>{claim.text}</p>
-                              <span>Expand claim</span>
-                            </summary>
-                          </details>
-                        ) : (
-                          <p>{claim.text ?? "pending"}</p>
-                        )}
-                        <div className="present-evidence">
-                          {list(claim.evidence).map((evidence, index) => (
-                            <details key={index}>
-                              <summary>{evidence.field}</summary>
-                              <p>
-                                <code>{evidence.tool}</code>
-                                <br />
-                                {displayValue(evidence.value)}
-                              </p>
-                            </details>
-                          ))}
-                        </div>
+                <LiveTrace live={live} />
+                {!showingStream && (
+                  <>
+                    <div className="present-run-title">
+                      <span className="verdict urgent">
+                        {run?.briefing?.verdict?.replaceAll("_", " ") ??
+                          "pending"}
+                      </span>
+                      <span>{run?.cve_id ?? "pending"}</span>
+                      <strong>
+                        {number(run?.verifier?.claims_verified)} verified
+                      </strong>
+                    </div>
+                    <h2>{run?.briefing?.headline ?? "Briefing pending"}</h2>
+                    <div className="present-claims">
+                      {list(run?.briefing?.claims).map((claim) => (
+                        <article key={claim.id}>
+                          <Icon
+                            name={claim.verified ? "check" : "warning"}
+                            size={18}
+                          />
+                          <div>
+                            {(claim.text?.length ?? 0) > 260 ? (
+                              <details className="long-claim">
+                                <summary>
+                                  <p>{claim.text}</p>
+                                  <span>Expand claim</span>
+                                </summary>
+                              </details>
+                            ) : (
+                              <p>{claim.text ?? "pending"}</p>
+                            )}
+                            <div className="present-evidence">
+                              {list(claim.evidence).map((evidence, index) => (
+                                <details key={index}>
+                                  <summary>{evidence.field}</summary>
+                                  <p>
+                                    <code>{evidence.tool}</code>
+                                    <br />
+                                    {displayValue(evidence.value)}
+                                  </p>
+                                </details>
+                              ))}
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                    {dropped ? (
+                      <div className="present-dropped">
+                        <span>
+                          REMOVED BY THE VERIFIER
+                          {droppedRun?.cve_id !== run?.cve_id
+                            ? ` · ${droppedRun?.cve_id}`
+                            : ""}
+                        </span>
+                        <p>
+                          <s>
+                            {dropped.text ?? `Unsupported claim ${dropped.id}`}
+                          </s>
+                        </p>
+                        <small>{dropped.why}</small>
                       </div>
-                    </article>
-                  ))}
-                </div>
-                {dropped ? (
-                  <div className="present-dropped">
-                    <span>
-                      REMOVED BY THE VERIFIER
-                      {droppedRun?.cve_id !== run?.cve_id
-                        ? ` · ${droppedRun?.cve_id}`
-                        : ""}
-                    </span>
-                    <p>
-                      <s>{dropped.text ?? `Unsupported claim ${dropped.id}`}</s>
-                    </p>
-                    <small>{dropped.why}</small>
-                  </div>
-                ) : (
-                  <p className="caption">
-                    No dropped claims in the available recorded runs.
-                  </p>
-                )}
-                {run?.injection?.detected && (
-                  <p className="injection-warning">
-                    Instruction injection detected. Human approval is still
-                    required.
-                  </p>
+                    ) : null}
+                    {run?.injection?.detected && (
+                      <p className="injection-warning">
+                        Instruction injection detected. Human approval is still
+                        required.
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
               <EvalComparison data={data} />

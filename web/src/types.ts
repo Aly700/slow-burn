@@ -18,6 +18,7 @@ export interface Score {
   cwe_ids?: string;
   assigner?: string;
   vendor_identity?: string;
+  product_identity?: string;
   description?: string;
   reasons?: Reason[];
 }
@@ -110,7 +111,9 @@ export interface ModelCard {
 }
 export interface Run {
   run_id: string;
+  list?: "top500" | "watch" | "live";
   briefing_hash?: string;
+  fixture?: string | null;
   snapshot_month?: string;
   cve_id: string;
   state: string;
@@ -157,6 +160,8 @@ export interface Data {
   scores?: Score[];
   runs?: Run[];
   agent_eval?: AgentEval | null;
+  replay_2025?: ReplayData | null;
+  live_examples?: LiveRecording[];
   verifier_example?: Run | null;
   meta?: {
     synced_at?: string;
@@ -185,4 +190,76 @@ export interface AgentEval {
   snapshot_end?: string;
   outcome_end?: string;
   limitations?: string[];
+}
+
+export interface ReplayItem {
+  cve_id: string;
+  rank?: number;
+  snapshot_month?: string;
+  published?: string;
+  kev_date?: string | null;
+}
+export interface ReplayPositive extends ReplayItem {
+  vendor?: string;
+  product?: string;
+  public_exploit_signal?: boolean;
+  rank_in?: Record<string, number | null>;
+}
+export interface ReplayData {
+  split?: string;
+  pool?: number;
+  positives?: number;
+  start: string;
+  end: string;
+  methods?: {
+    key: string;
+    name: string;
+    hits?: number | null;
+    items?: ReplayItem[];
+  }[];
+  later_exploited?: ReplayPositive[];
+}
+
+export interface LiveEvent {
+  event: string;
+  data: Record<string, unknown>;
+  t_ms: number;
+}
+export interface LiveRecording {
+  cve_id: string;
+  fixture?: string | null;
+  events: LiveEvent[];
+}
+export interface LiveTool {
+  call_id: string;
+  tool: string;
+  args?: unknown;
+  kind?: string;
+  working: boolean;
+  ms?: number;
+  preview?: unknown;
+}
+export interface LiveClaim {
+  id: string;
+  text?: string;
+  evidence?: { tool: string; field: string; value: unknown }[];
+  verified: boolean;
+  reason?: string;
+}
+export interface Investigation {
+  mode: "live" | "replay";
+  illustrative?: boolean;
+  fixture?: string | null;
+  queued?: boolean;
+  queue_position?: number;
+  status: "idle" | "running" | "complete" | "error" | "cancelled";
+  cve_id: string;
+  run_id?: string;
+  model?: string;
+  state?: string;
+  tools: LiveTool[];
+  claims: LiveClaim[];
+  run?: Run;
+  message?: string;
+  duration_ms?: number;
 }

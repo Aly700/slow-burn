@@ -1,0 +1,346 @@
+.live-controls {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 13px 16px;
+  margin-bottom: 20px;
+}
+.live-availability {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.live-availability i {
+  width: 5px;
+  height: 5px;
+  background: var(--subtle);
+  border-radius: 50%;
+}
+.live-availability.ready i {
+  background: #aec5b6;
+}
+.live-availability button {
+  margin-left: auto;
+  background: none;
+  border: 0;
+  font-size: 10px;
+  color: var(--muted);
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.live-controls form {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+.live-controls label {
+  flex: 1;
+  min-width: 0;
+}
+.live-controls input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line-bright);
+  font: 13px var(--mono);
+}
+.live-controls .button {
+  min-height: 40px;
+  padding: 10px 14px;
+  font-size: 12px;
+  gap: 14px;
+}
+.live-stop {
+  border: 1px solid var(--line-bright);
+  background: transparent;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+.live-message {
+  margin-top: 10px;
+  color: var(--accent);
+  font-size: 12px;
+}
+.live-trace {
+  border: 1px solid var(--line);
+  background: #141819;
+  margin-bottom: 22px;
+}
+.live-trace > header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.live-trace > header > div {
+  flex: 1;
+  min-width: 0;
+}
+.live-trace header strong {
+  display: block;
+  font: 16px var(--mono);
+  margin-top: 7px;
+}
+.live-trace .eyebrow {
+  font-size: 10px;
+  color: var(--muted);
+}
+.live-stage {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font: 10px var(--mono);
+  color: #aec5b6;
+}
+.live-stage small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.working-ring {
+  flex-shrink: 0;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--line-bright);
+  border-top-color: #aec5b6;
+  border-right-color: #aec5b6;
+  border-radius: 50%;
+  animation: working-spin 1s linear infinite;
+}
+@keyframes working-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.live-event-scroll {
+  padding: 0 18px;
+  max-height: 355px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: auto;
+  scrollbar-width: thin;
+}
+.live-tool {
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+}
+.live-tool > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.live-tool strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.live-tool > div > span {
+  color: var(--subtle);
+  font-size: 10px;
+}
+.live-tool small {
+  margin-left: auto;
+  color: var(--muted);
+  font: 10px var(--mono);
+}
+.live-tool p {
+  margin: 8px 0 0 23px;
+  color: var(--muted);
+  font: 11px/1.5 var(--mono);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  max-height: 72px;
+  overflow: auto;
+}
+.live-tool details {
+  margin: 6px 0 0 23px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.live-tool pre {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.live-tool svg {
+  color: #aec5b6;
+}
+.live-claims {
+  padding-block: 18px;
+}
+.live-claims article {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+}
+.live-claims p,
+.live-claims s {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.live-claims svg {
+  margin-top: 3px;
+  color: #aec5b6;
+}
+.live-claims .dropped svg,
+.live-claims .dropped small {
+  color: var(--accent);
+}
+.live-claims small {
+  display: block;
+  font-size: 11px;
+  margin-top: 5px;
+}
+.live-trace-note {
+  border-top: 1px solid var(--line);
+  padding: 10px 18px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.live-waiting {
+  color: var(--muted);
+  padding: 28px 0;
+  font-size: 14px;
+}
+.live-complete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 12px 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+.live-complete button {
+  font: inherit;
+  color: var(--text);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.slide-5 > .live-controls {
+  max-width: 800px;
+  margin: 8px 0 18px;
+}
+.slide-5 .present-investigation {
+  margin-top: 16px;
+  gap: 36px;
+}
+.slide-5 > h1 {
+  font-size: clamp(40px, 4vw, 64px);
+  margin: 20px 0;
+}
+.slide-5 .present-claims article {
+  padding: 8px 0;
+}
+.slide-5 .present-claims p {
+  font-size: 13px;
+}
+.slide-5 .present-briefing h2 {
+  font-size: 21px;
+  margin: 12px 0;
+}
+.slide-5 .present-dropped {
+  margin-top: 12px;
+  padding-top: 12px;
+}
+.slide-5 .present-briefing {
+  min-width: 0;
+}
+.slide-5 .live-event-scroll {
+  max-height: 330px;
+}
+@media (min-width: 1700px) {
+  .slide-5 .present-claims p {
+    font-size: 16px;
+  }
+  .slide-5 .present-claims article {
+    padding: 12px 0;
+  }
+  .slide-5 .live-event-scroll {
+    max-height: 460px;
+  }
+  .slide-5 .live-tool strong {
+    font-size: 16px;
+  }
+  .slide-5 .live-tool p {
+    font-size: 13px;
+  }
+}
+@media (max-width: 700px) {
+  .live-controls form {
+    flex-wrap: wrap;
+  }
+  .live-controls label {
+    flex-basis: 100%;
+  }
+  .live-controls .button {
+    flex: 1;
+  }
+  .live-trace > header {
+    align-items: start;
+    flex-wrap: wrap;
+  }
+  .live-availability {
+    flex-wrap: wrap;
+  }
+  .live-availability button {
+    margin-left: 0;
+  }
+  .live-complete {
+    align-items: start;
+  }
+  .live-stage {
+    max-width: 140px;
+  }
+  .live-tool > div > span {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .working-ring {
+    animation: none;
+  }
+}
+@media (min-width: 1000px) {
+  .slide-5 > h1 {
+    margin-block: 14px;
+  }
+  .slide-5 > .live-controls {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(250px, 0.7fr) 1fr;
+    align-items: center;
+    gap: 12px 32px;
+    padding: 10px 16px;
+  }
+  .slide-5 .live-availability {
+    margin: 0;
+    flex-wrap: wrap;
+  }
+  .slide-5 .live-availability button {
+    flex-basis: 100%;
+    text-align: left;
+    margin-left: 13px;
+  }
+  .slide-5 .live-message {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+  .slide-5 .present-investigation .eval-arms > div {
+    padding-block: 14px;
+  }
+  .slide-5 .present-investigation .eval-arms .active-arm {
+    padding: 14px;
+  }
+}
+.slide-5 .live-complete {
+  margin: 0 0 10px;
+}

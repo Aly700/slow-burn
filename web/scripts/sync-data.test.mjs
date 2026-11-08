@@ -19,7 +19,7 @@ test("sync handles absent inputs, then replaces fixtures with recorded runs with
   try {
     await mkdir(path.join(web, "scripts"), { recursive: true });
     await mkdir(path.join(web, "fixtures"));
-    for (const name of ["sync-data.mjs", "csv.mjs"])
+    for (const name of ["sync-data.mjs", "csv.mjs", "live-recordings.mjs"])
       await cp(new URL(name, import.meta.url), path.join(web, "scripts", name));
     await writeFile(
       path.join(web, "fixtures", "CVE-2026-1.json"),
@@ -63,12 +63,29 @@ test("sync handles absent inputs, then replaces fixtures with recorded runs with
       "rank,cve_id,score,epss,reasons\n1,CVE-2026-2,0.2,,[]\n",
     );
     await mkdir(path.join(root, "artifacts/agent_runs/eval"));
-    await writeFile(path.join(root, "artifacts/agent_runs/eval/review.json"), JSON.stringify({
-      run_id: "verifier-example", cve_id: "CVE-2025-3",
-      verifier: { dropped: [{ id: "unsupported", text: "Unsupported example", why: "No evidence" }] },
-    }));
+    await writeFile(
+      path.join(root, "artifacts/agent_runs/eval/review.json"),
+      JSON.stringify({
+        run_id: "verifier-example",
+        cve_id: "CVE-2025-3",
+        verifier: {
+          dropped: [
+            {
+              id: "unsupported",
+              text: "Unsupported example",
+              why: "No evidence",
+            },
+          ],
+        },
+      }),
+    );
+    await writeFile(
+      path.join(root, "artifacts/replay_2025.json"),
+      JSON.stringify({ start: "2025-01-01", end: "2025-12-31", methods: [] }),
+    );
     sync();
     const result = await bundle();
+    assert.equal(result.replay_2025.start, "2025-01-01");
     assert.equal(result.verifier_example.run_id, "verifier-example");
     assert.equal(result.meta.runs_source, "recorded");
     assert.equal(result.meta.score_mode, "probability");
