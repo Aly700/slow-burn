@@ -18,13 +18,17 @@ class EmbeddingIndex:
         self.texts = [r.get("short_description") or "" for r in self.kev] + [r.get("description") or "" for r in candidate_rows]
         payload = json.dumps({"model": EMBED_MODEL, "revision": EMBED_REVISION, "ids": [r["cve_id"] for r in self.kev] + candidate_ids, "texts": self.texts}, sort_keys=True)
         key = hashlib.sha256(payload.encode()).hexdigest()[:20]
-        self.path = settings.cache / f"granite-embeddings-v1-{key}.npz"
+        self.path = Path(os.getenv('SLOWBURN_INDEX_DIR', settings.cache)) / f"granite-embeddings-v1-{key}.npz"
         self.meta_path = self.path.with_suffix(".json")
         if not self.path.exists() or not self.meta_path.exists():
             raise FileNotFoundError("Granite embedding cache is missing or stale. Run python -m agent.prepare --embeddings.")
         cached = np.load(self.path, allow_pickle=False)
         self.vectors = cached["kev"]
         self.queries = dict(zip(cached["ids"].tolist(), cached["candidates"]))
+        query_path = self.path.parent / 'scoreboard-queries.npz'
+        if query_path.exists():
+            with np.load(query_path, allow_pickle=False) as queries:
+                self.queries.update(zip(queries['ids'].tolist(), queries['vectors']))
         self.metadata = json.loads(self.meta_path.read_text())
         self._model = None
 
@@ -63,6 +67,8 @@ class EmbeddingIndex:
     def search(self, cve_id, description, cutoff, k):
         query = self.queries.get(cve_id)
         if query is None:
+            if os.getenv('SLOWBURN_BUNDLED') == '1':
+                raise ValueError('CVE has no bundled Granite query vector')
             key = hashlib.sha256(json.dumps([EMBED_MODEL,EMBED_REVISION,description]).encode()).hexdigest()
             cache = self.settings.cache/'query_vectors'
             cache.mkdir(exist_ok=True)

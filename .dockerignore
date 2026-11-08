@@ -1,0 +1,16 @@
+**
+!Dockerfile
+!agent/
+!agent/requirements-runtime.txt
+!agent/src/
+!agent/src/agent/
+!agent/src/agent/*.py
+!agent/evals/
+!agent/evals/injections.json
+!agent/evals/heldout_injections.json
+!.lane/
+!.lane/container-assets/
+!.lane/container-assets/*.duckdb
+!.lane/container-assets/*.npz
+!.lane/container-assets/*.json
+!.lane/container-assets/scores_2026_top5000.csv

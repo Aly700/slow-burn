@@ -104,6 +104,8 @@ class Runner:
                 messages = [{"role": "system", "content": SYSTEM + phase_rule}, {"role": "user", "content": json.dumps(safe_payload, ensure_ascii=False)}]
                 completion = await complete(self.model, messages, max_tokens, deadline, cancel_event)
                 metrics["generation_tokens"] += completion.metrics.get("generation_tokens", 0)
+                for key in ('prompt_tokens', 'total_tokens'):
+                    metrics[key] = metrics.get(key, 0) + completion.metrics.get(key, 0)
                 event = {"t_ms": round((t-start)*1000), "kind": "model", "name": payload["phase"], "input": {"schema": schema.__name__},
                          "output_summary": "JSON response received", "output_sha256": hashlib.sha256(completion.text.encode()).hexdigest(),
                          "duration_ms": round((time.monotonic()-t)*1000), "metrics": completion.metrics}

@@ -80,6 +80,8 @@ class LiveService:
         if not self.worker.done():
             await self.queue.put(None)
         await asyncio.gather(self.worker,return_exceptions=True)
+        if hasattr(self.model, 'close'):
+            self.model.close()
 
     def submit(self,cve_id=None,streamed=True,fixture=None,question=None):
         if self.error: raise RuntimeError('investigation worker unavailable')
@@ -89,7 +91,7 @@ class LiveService:
         job=LiveJob(run,streamed,fixture)
         position=self.queue.qsize()+int(self.active is not None)
         job.publish('start',{'run_id':run['run_id'],**({'question':question} if question is not None else {'cve_id':cve_id}),'model':run['model'],'started_at':run['started_at'],**({'fixture':fixture} if fixture else {})})
-        job.publish('state',{'state':'RECEIVED','queued':bool(position),'position':position,'message':'Queued for the local model' if position else 'Ready to investigate'})
+        job.publish('state',{'state':'RECEIVED','queued':bool(position),'position':position,'message':'Queued for Granite' if position else 'Ready to investigate'})
         self.jobs[job.run_id]=job
         self.queue.put_nowait(job)
         return job
@@ -112,6 +114,8 @@ class LiveService:
                         result=await runner(self.settings,self.store,self.model).run(job.run_id,client,emit=job.emit,cancel_event=job.cancel_event,fixture=job.fixture)
                         self.store.update(job.run_id,metrics={**result.get('metrics',{}),'queue_ms':queue_ms})
                         result=self.store.get(job.run_id)
+                        if self.settings.public:
+                            result['public'] = True
                         if job.streamed:
                             folder='ask_runs' if job.question is not None else 'live_runs'
                             save_record(self.settings.cache/folder/f'{job.run_id}.json',result)

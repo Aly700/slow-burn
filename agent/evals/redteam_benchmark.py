@@ -1,5 +1,7 @@
 """Real paired investigations with a fixed adversarial catalog and local data only."""
 import json
+import os
+from benchmark_config import BASE_URL, destination, accounting
 import argparse
 import random
 import re
@@ -72,12 +74,12 @@ def main():
     settings=Settings()
     if args.rescore:
         rescore(settings);return
-    archive_path=settings.artifacts/'redteam_eval.json'
+    archive_path=destination(settings.artifacts/'redteam_eval.json')
     archive=json.loads(archive_path.read_text()) if archive_path.exists() else {}
     previous=archive.get('before',archive)
-    revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=settings.root,text=True).strip()
+    revision=os.getenv('SLOWBURN_EVAL_REVISION') or subprocess.check_output(['git','rev-parse','HEAD'],cwd=settings.root,text=True).strip()
     if args.suite=='heldout':
-        if subprocess.check_output(['git','diff','HEAD','--','agent/src'],cwd=settings.root):
+        if not os.getenv('SLOWBURN_EVAL_REVISION') and subprocess.check_output(['git','diff','HEAD','--','agent/src'],cwd=settings.root):
             raise SystemExit('commit the final runtime fix before the first held-out evaluation')
         if archive.get('held_out'): raise SystemExit('held-out results already exist; do not retest after seeing outcomes')
         cases=heldout_variants()
@@ -94,7 +96,7 @@ def main():
     score_hash=data.score_hash;data.close()
     before=settings.tickets.read_bytes() if settings.tickets.exists() else b''
     results=[];twins={}
-    with httpx.Client(base_url='http://127.0.0.1:8765',timeout=75) as client:
+    with httpx.Client(base_url=BASE_URL,timeout=75) as client:
         for _ in range(120):
             try:
                 if client.get('/live/health').json()['ready']: break
@@ -104,11 +106,12 @@ def main():
         else: raise RuntimeError('local service not ready')
         if args.suite=='heldout':
             receipt={'payload_sha256':HOLDOUT_SHA256,'runtime_commit':revision,'started_at':time.time()}
-            with (settings.cache/'heldout_first_attempt.json').open('x') as file:
+            with destination(settings.cache/'heldout_first_attempt.json').open('x') as file:
                 json.dump(receipt,file)
         for cve in cves:
             stream,_,_=read_stream(client,f'/live/{cve}')
             run=client.get(f"/runs/{stream[0]['data']['run_id']}").json()
+            accounting(run)
             twins[cve]={'run_id':run['run_id'],'verdict':run['briefing']['verdict'] if run.get('briefing') else None,'error':run.get('error')}
         for i,attack in enumerate(cases):
             cve=cves[i%len(cves)]
@@ -134,7 +137,7 @@ def main():
                     'write_probes':len(probes),'write_probes_denied':sum(p.get('allowed') is False for p in probes),
                     'unsafe_writes':sum(p.get('allowed') is True for p in probes),'evidence_fidelity':fidelity,
                     'verified_claims_including_headline_action':claim_count,'unverified_claims':len(dropped),'verification_failures':dropped,'surviving_injected_text':survived,
-                    'first_event_ms':first,'duration_ms':total,'error':run.get('error')}
+                    'first_event_ms':first,'duration_ms':total,'error':run.get('error'),**accounting(run)}
             results.append(result)
             print(json.dumps({k:result[k] for k in ('id','successful','detected','verdict_changed','unsafe_writes')}|{'survived':len(survived)}),flush=True)
     after=settings.tickets.read_bytes() if settings.tickets.exists() else b''

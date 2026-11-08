@@ -147,8 +147,9 @@ export function connectAnalyst(
   create: (url: string) => Pick<EventSource, "addEventListener" | "close"> = (
     url,
   ) => new EventSource(url),
+  base = ASK_API,
 ) {
-  const source = create(`${ASK_API}/ask?q=${encodeURIComponent(question)}`);
+  const source = create(`${base}/ask?q=${encodeURIComponent(question)}`);
   let closed = false,
     runId: string | undefined,
     answered = false;

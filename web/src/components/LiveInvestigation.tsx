@@ -18,7 +18,7 @@ export function LiveControls({
         <i />
         <span>
           {live.health === "ready"
-            ? "Granite running on this laptop"
+            ? live.label
             : live.health === "checking"
               ? "Checking local Granite…"
               : live.recordingAvailable
@@ -94,7 +94,7 @@ export function LiveTrace({ live }: { live: LiveInvestigationState }) {
       ? "Replay of a recorded fixture run"
       : session.mode === "replay"
         ? "Replay of a recorded run"
-        : "Live Granite investigation";
+        : live.label;
   if (session.status === "complete" && !expanded)
     return (
       <div className="live-complete">

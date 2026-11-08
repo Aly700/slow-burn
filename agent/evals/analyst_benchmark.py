@@ -1,5 +1,6 @@
 """Fifteen fixed question intents, graded against precomputed local facts."""
 import json
+from benchmark_config import BASE_URL, destination, accounting
 import statistics
 import time
 from urllib.parse import urlencode
@@ -57,9 +58,9 @@ def prepare():
 def main():
     settings=Settings();cases=prepare()
     # Expected facts are frozen before the first model invocation.
-    save_record(settings.root/'agent/evals/analyst_questions.json',cases)
+    save_record(destination(settings.root/'agent/evals/analyst_questions.json'),cases)
     results=[]
-    with httpx.Client(base_url='http://127.0.0.1:8765',timeout=75) as client:
+    with httpx.Client(base_url=BASE_URL,timeout=75) as client:
         for _ in range(120):
             try:
                 if client.get('/live/health').json()['ready']: break
@@ -98,14 +99,14 @@ def main():
             assert not any(c['tool']=='file_fix_ticket' for c in run['tool_results'])
             result={**case,'grade':grade,'matched_facts':matches,'expected_facts':len(case['expected']),
                     'run_id':rid,'first_event_ms':first,'duration_ms':total,'answer':answer,'verifier':report,
-                    'query':plan,'errors':[e['data']['message'] for e in stream if e['event']=='error']}
+                    'query':plan,**accounting(run),'errors':[e['data']['message'] for e in stream if e['event']=='error']}
             results.append(result)
             print(json.dumps({k:result[k] for k in ('id','grade','matched_facts','expected_facts','duration_ms','errors')}),flush=True)
-    summary={'cases':len(cases),'model':'ibm-granite/granite-4.0-h-small',
+    summary={'cases':len(cases),'model':run['model'],
              'grading':'Fixed intents and source facts written before inference. Full requires all expected facts and intended filters. These are functional questions, not exploitation-outcome tests.',
              **{k:sum(r['grade']==k for r in results) for k in ('fully','partly','not_at_all')},
              'evidence_fidelity':1.0,'unauthorized_writes':0,'duration_ms_p50':statistics.median(r['duration_ms'] for r in results),'results':results}
-    save_record(settings.root/'agent/evals/analyst_eval.json',summary)
+    save_record(destination(settings.root/'agent/evals/analyst_eval.json'),summary)
     print(json.dumps({k:v for k,v in summary.items() if k!='results'},indent=2))
 
 

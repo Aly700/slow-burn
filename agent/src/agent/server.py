@@ -82,6 +82,8 @@ def make_server(settings=None):
     @server.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False, idempotentHint=True, openWorldHint=False))
     def file_fix_ticket(cve_id: str, briefing_hash: str, approval_token: str) -> dict:
         """Append a local ticket only with an unexpired backend-issued capability for this exact CVE and immutable briefing hash."""
+        if settings.public:
+            return {'allowed': False, 'reason': 'Public mode is read-only; ticket filing is disabled.'}
         validate_cve(cve_id)
         store = Store(settings.state, settings.tickets)
         try:
@@ -90,7 +92,11 @@ def make_server(settings=None):
         except PermissionError as exc:
             return {"allowed": False, "reason": str(exc)}
 
-    if os.getenv('TRIAGE_PREPARE_LIVE') == '1':
+    if os.getenv('SLOWBURN_BUNDLED') == '1':
+        from .embeddings import EmbeddingIndex
+        source().index = EmbeddingIndex(settings, source())
+        ranking()
+    elif os.getenv('TRIAGE_PREPARE_LIVE') == '1':
         from .embeddings import EmbeddingIndex
         EmbeddingIndex.build(settings, source())
         source().index = EmbeddingIndex(settings, source())

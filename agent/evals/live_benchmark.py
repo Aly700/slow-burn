@@ -1,6 +1,7 @@
 """Measure actual HTTP SSE arrivals; never loads an instruct model."""
 import argparse
 import json
+from benchmark_config import BASE_URL, destination, accounting
 import random
 import statistics
 import time
@@ -49,7 +50,7 @@ def main():
     parser.add_argument('--approve-demo-ticket',action='store_true')
     args=parser.parse_args()
     settings=Settings();cases,pool=sample(settings);results=[];example_runs={}
-    with httpx.Client(base_url='http://127.0.0.1:8765',timeout=70) as client:
+    with httpx.Client(base_url=BASE_URL,timeout=70) as client:
         for _ in range(60):
             try:
                 if client.get('/live/health').json()['ready']: break
@@ -65,16 +66,16 @@ def main():
                 assert not verify(run['briefing']['claims'],run['tool_results'])[1]['dropped']
             result={'group':group,'cve_id':cve,'run_id':stream[0]['data']['run_id'],'first_event_ms':first,'duration_ms':total,
                     'successful':bool(run),'claims_verified':run['verifier']['claims_verified'] if run else 0,
-                    'errors':[e['data']['message'] for e in stream if e['event']=='error']}
+                    **accounting(run or client.get(f"/runs/{stream[0]['data']['run_id']}").json()),'errors':[e['data']['message'] for e in stream if e['event']=='error']}
             results.append(result);print(json.dumps(result),flush=True)
             if group in {'top500','no_signal'} and group not in example_runs and run:
-                save_record(settings.artifacts/'agent_runs/live-examples'/f'{group}.json',{'schema_version':1,'source':'live','cve_id':cve,'fixture':None,'events':stream})
+                save_record(destination(settings.artifacts/'agent_runs/live-examples'/f'{group}.json'),{'schema_version':1,'source':'live','cve_id':cve,'fixture':None,'events':stream})
                 example_runs[group]=run
         target=cases[0][1]
         attack,first,total=read_stream(client,f'/live/{target}?fixture=injection-direct')
         attack_run=next(e['data']['run'] for e in attack if e['event']=='briefing')
         assert attack_run['injection']['detected'] and not attack_run['policy']['write_allowed']
-        save_record(settings.artifacts/'agent_runs/live-examples/injection.json',{'schema_version':1,'source':'live','cve_id':target,'fixture':'injection-direct','events':attack})
+        save_record(destination(settings.artifacts/'agent_runs/live-examples/injection.json'),{'schema_version':1,'source':'live','cve_id':target,'fixture':'injection-direct','events':attack})
         approval=None
         if args.approve_demo_ticket:
             run=example_runs['top500'];url=f"/runs/{run['run_id']}/approval"
@@ -91,7 +92,7 @@ def main():
              'first_event_ms':{'p50':statistics.median(first),'p95':float(np.percentile(first,95)),'max':max(first)},
              'duration_ms':{'p50':statistics.median(duration),'p95':float(np.percentile(duration,95)),'max':max(duration)},
              'approval':approval,'injection_blocked':True,'results':results}
-    save_record(settings.root/'agent/evals/live_metrics.json',summary)
+    save_record(destination(settings.root/'agent/evals/live_metrics.json'),summary)
     print(json.dumps({k:v for k,v in summary.items() if k!='results'},indent=2))
     if summary['successful']!=20 or max(first)>=300: raise SystemExit('Live performance gate failed')
 

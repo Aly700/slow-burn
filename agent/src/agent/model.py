@@ -12,6 +12,7 @@ class Completion:
 
 
 class Granite:
+    backend = 'mlx'
     supports_cancellation = True
     def __init__(self, name=MODEL):
         self.name = name
@@ -69,3 +70,23 @@ class Granite:
                        "prompt_tps": round(last.prompt_tps, 2), "generation_tps": round(last.generation_tps, 2),
                        "peak_memory_gb": round(last.peak_memory, 3)} if last else {}
             return Completion("".join(parts), metrics)
+
+
+def create_model(settings):
+    if settings.backend == 'mlx':
+        return Granite(settings.model)
+    if settings.backend == 'watsonx':
+        import os
+        from .budget import TokenBudget
+        from .watsonx import Watsonx
+        model = Watsonx()
+        if os.getenv('SLOWBURN_BUDGET_COS_URL'):
+            from .cos_budget import CosBudget
+            model.budget = CosBudget(os.environ['SLOWBURN_BUDGET_COS_URL'], settings.daily_tokens,
+                                     lambda: model._bearer(time.monotonic()+10))
+        else:
+            if settings.public and (os.getenv('CE_APP') or os.getenv('K_SERVICE')):
+                raise ValueError('Code Engine public mode requires a durable COS token budget')
+            model.budget = TokenBudget(settings.budget_path, settings.daily_tokens)
+        return model
+    raise ValueError('SLOWBURN_MODEL_BACKEND must be mlx or watsonx')

@@ -1,0 +1,82 @@
+{
+  "watsonx_analyst": {
+    "cases": 15,
+    "success": 15,
+    "p50_ms": 1610.92,
+    "p95_ms": 2668.9179999999997,
+    "claims_retained": 50,
+    "claims_dropped": 0,
+    "structured_rejections": 5,
+    "prompt_tokens": 29110,
+    "generation_tokens": 1385,
+    "total_tokens": 30495
+  },
+  "mlx_analyst": {
+    "cases": 15,
+    "success": 12,
+    "p50_ms": 4617.98,
+    "p95_ms": 7174.576999999998,
+    "claims_retained": 48,
+    "claims_dropped": 0,
+    "structured_rejections": null,
+    "prompt_tokens": null,
+    "generation_tokens": null,
+    "total_tokens": null
+  },
+  "watsonx_live": {
+    "cases": 20,
+    "success": 20,
+    "p50_ms": 1501.545,
+    "p95_ms": 1752.4735,
+    "claims_retained": 87,
+    "claims_dropped": 0,
+    "structured_rejections": 0,
+    "prompt_tokens": 26706,
+    "generation_tokens": 1455,
+    "total_tokens": 28161
+  },
+  "mlx_live": {
+    "cases": 20,
+    "success": 20,
+    "p50_ms": 2054.06,
+    "p95_ms": 2351.886000000002,
+    "claims_retained": 88,
+    "claims_dropped": 0,
+    "structured_rejections": null,
+    "prompt_tokens": null,
+    "generation_tokens": null,
+    "total_tokens": null
+  },
+  "watsonx_redteam": {
+    "cases": 32,
+    "success": 32,
+    "p50_ms": 1572.79,
+    "p95_ms": 2018.346,
+    "claims_retained": 117,
+    "claims_dropped": 0,
+    "structured_rejections": 0,
+    "prompt_tokens": 42030,
+    "generation_tokens": 2407,
+    "total_tokens": 44437,
+    "tickets_filed_without_approval": 0,
+    "verdict_changes": 0,
+    "injected_content_survived_runs": 3,
+    "unverified_claims": 0
+  },
+  "mlx_redteam": {
+    "cases": 32,
+    "success": 32,
+    "p50_ms": 2193.895,
+    "p95_ms": 2379.592,
+    "claims_retained": 116,
+    "claims_dropped": 0,
+    "structured_rejections": null,
+    "prompt_tokens": null,
+    "generation_tokens": null,
+    "total_tokens": null,
+    "tickets_filed_without_approval": 0,
+    "verdict_changes": 0,
+    "injected_content_survived_runs": 4,
+    "unverified_claims": 0
+  }
+}
