@@ -1,6 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Data } from "../types";
-import { decodeMap, overlaps, zoomAt } from "../graniteMap";
+import {
+  decodeMap,
+  overlaps,
+  zoomAt,
+  robustBounds,
+  fitBounds,
+  easeCamera,
+  entranceOpacity,
+  mapStories,
+} from "../graniteMap";
 import type { DecodedMap, LabelBox, MapView } from "../graniteMap";
 import { number, percent } from "../lib";
 import "../graniteMap.css";
@@ -97,11 +106,18 @@ export function GraniteMap({
     index: number;
   } | null>(null);
   const [zoom, setZoom] = useState(1);
+  const [selectedStory, setSelectedStory] = useState("whole");
+  const stories = useMemo(() => (map ? mapStories(map) : []), [map]);
+  const story = stories.find((item) => item.id === selectedStory);
+  const entranceDone = useRef(false);
+  const caption = useRef<HTMLDivElement>(null);
+  const field = useRef<HTMLDivElement>(null);
   const [selectedRegion, setSelectedRegion] = useState("");
   const controls = useRef<{
     zoom: (factor: number) => void;
     reset: () => void;
     region: (id: number) => void;
+    story: (id: string) => void;
   } | null>(null);
   const file = data.lazy?.map?.file;
   useEffect(() => {
@@ -133,12 +149,12 @@ export function GraniteMap({
       active = false;
     };
   }, [ready, file, attempt]);
-  const drawOptions = useRef({ layers, labels });
+  const drawOptions = useRef({ layers, labels, selectedStory });
   const redraw = useRef<() => void>(() => {});
   useEffect(() => {
-    drawOptions.current = { layers, labels };
+    drawOptions.current = { layers, labels, selectedStory };
     redraw.current();
-  }, [layers, labels]);
+  }, [layers, labels, selectedStory, hover]);
   useEffect(() => {
     const element = canvas.current;
     if (!map || !element) return;
@@ -152,6 +168,36 @@ export function GraniteMap({
     let view: MapView = { x: 0, y: 0, zoom: 1 };
     let pointer: { x: number; y: number; moved: boolean } | null = null;
     let selected: number | null = null;
+    const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    let entranceStart: number | null =
+      entranceDone.current || motion.matches ? -Infinity : null;
+    let flight: { start: number; from: MapView; to: MapView } | null = null;
+    let defaultZoom = 1;
+    const overview = stories.find((item) => item.id === "whole")!.bounds;
+    const wordpress = stories.find((item) => item.id === "wordpress")?.region;
+    let reserved: LabelBox[] = [];
+    const reservedBoxes = () => {
+      const base = element.getBoundingClientRect();
+      reserved = Array.from(
+        field.current?.querySelectorAll<HTMLElement>(
+          ".map-guidance, .map-controls, .map-tooltip",
+        ) ?? [],
+      ).map((node) => {
+        const b = node.getBoundingClientRect();
+        return {
+          x: b.x - base.x,
+          y: b.y - base.y,
+          width: b.width,
+          height: b.height,
+        };
+      });
+    };
+    const plotBox = () => ({
+      x: width < 600 ? 16 : 22,
+      y: width < 600 ? 140 : 18,
+      width: width - (width < 600 ? 32 : 44),
+      height: height - (width < 600 ? 200 : 68),
+    });
     const sorted = [...map.regions.values()]
       .filter((region) => region.id >= 0)
       .sort((a, b) => b.rows - a.rows);
@@ -177,10 +223,23 @@ export function GraniteMap({
       view.x = Math.min(width * 0.8, Math.max(width * 0.2 - extent, view.x));
       view.y = Math.min(height * 0.8, Math.max(height * 0.2 - extent, view.y));
     };
-    function draw() {
+    function draw(now = performance.now()) {
       frame = 0;
       if (disposed || !ctx) return;
       const start = performance.now();
+      reservedBoxes();
+      element!.dataset.labels = "[]";
+      if (flight) {
+        view = easeCamera(flight.from, flight.to, (now - flight.start) / 1000);
+        if (now - flight.start >= 1000) {
+          view = flight.to;
+          flight = null;
+        }
+      }
+      const elapsed = entranceStart == null ? -1 : now - entranceStart;
+      const opacity = entranceOpacity(elapsed, motion.matches);
+      if (elapsed >= 2000) entranceDone.current = true;
+      const worldScale = unit * view.zoom;
       ctx.fillStyle = "#090f12";
       ctx.fillRect(0, 0, width, height);
       const visible = drawOptions.current.layers;
@@ -201,7 +260,9 @@ export function GraniteMap({
           : layer === "watch"
             ? 1.25
             : 1.05;
-        const radius = size * Math.min(1.8, Math.sqrt(view.zoom));
+        const radius =
+          size *
+          Math.min(1.5, Math.max(0.8, Math.sqrt(view.zoom / defaultZoom)));
         ctx.globalAlpha = lit
           ? 1
           : layer === "watch"
@@ -209,13 +270,12 @@ export function GraniteMap({
             : layer === "wordpress"
               ? 0.65
               : 0.58;
+        ctx.globalAlpha *= opacity[layer];
         ctx.fillStyle = colors[layer];
         if (!lit) ctx.beginPath();
         for (const index of map!.groups[layer]) {
-          const [x, y] = project(
-            map!.coordinates[index * 2],
-            map!.coordinates[index * 2 + 1],
-          );
+          const x = view.x + map!.coordinates[index * 2] * worldScale,
+            y = view.y + map!.coordinates[index * 2 + 1] * worldScale;
           if (x < -12 || x > width + 12 || y < -12 || y > height + 12) continue;
           if (lit) {
             const glowSize = layer === "anchors" ? 12 : 9;
@@ -235,20 +295,32 @@ export function GraniteMap({
       }
       ctx.globalAlpha = 1;
       if (drawOptions.current.labels) {
-        const reserved: LabelBox[] = [
-          { x: 10, y: 8, width: 280, height: 55 },
-          { x: width - 210, y: height - 62, width: 200, height: 54 },
-        ];
         const occupied: LabelBox[] = [];
         ctx.font = '11px "IBM Plex Sans", sans-serif';
         ctx.textBaseline = "middle";
         const limit = width < 500 ? 4 : view.zoom < 2 ? 8 : 12;
         const usedLabels = new Set<string>();
-        for (const region of sorted) {
+        const activeRegion = stories.find(
+          (item) => item.id === drawOptions.current.selectedStory,
+        )?.region;
+        const priority = [wordpress, activeRegion].filter(
+          (region): region is NonNullable<typeof region> => !!region,
+        );
+        const candidatesByPriority = [
+          ...priority,
+          ...sorted.filter(
+            (region) => !priority.some((item) => item.id === region.id),
+          ),
+        ];
+        const placements: (LabelBox & { id: number })[] = [];
+        for (const region of candidatesByPriority) {
           if (occupied.length >= limit) break;
           const [x, y] = project(...region.centroid);
           if (x < 15 || x > width - 15 || y < 30 || y > height - 30) continue;
-          const text = region.label.split(" · ").slice(0, 2).join(" / ");
+          const text =
+            region.id === wordpress?.id
+              ? "WordPress / plugins"
+              : region.label.split(" · ").slice(0, 2).join(" / ");
           if (usedLabels.has(text)) continue;
           const boxWidth = ctx.measureText(text).width + 16;
           const candidates = [
@@ -258,6 +330,14 @@ export function GraniteMap({
             [x - boxWidth - 36, y + 16],
             [x - boxWidth / 2, y - 62],
             [x - boxWidth / 2, y + 45],
+            [
+              Math.max(10, Math.min(width - boxWidth - 10, x - boxWidth / 2)),
+              y - 82,
+            ],
+            [
+              Math.max(10, Math.min(width - boxWidth - 10, x - boxWidth / 2)),
+              y + 68,
+            ],
           ];
           const box = candidates
             .map(([x, y]) => ({ x, y, width: boxWidth, height: 23 }))
@@ -273,6 +353,7 @@ export function GraniteMap({
             );
           if (!box) continue;
           occupied.push(box);
+          placements.push({ ...box, id: region.id });
           usedLabels.add(text);
           ctx.strokeStyle = "#5f727860";
           ctx.lineWidth = 0.6;
@@ -285,6 +366,7 @@ export function GraniteMap({
           ctx.fillStyle = "#b1c3c9";
           ctx.fillText(text, box.x + 8, box.y + box.height / 2);
         }
+        element!.dataset.labels = JSON.stringify(placements);
       }
       if (selected != null) {
         const [x, y] = project(
@@ -298,21 +380,46 @@ export function GraniteMap({
         ctx.stroke();
       }
       element!.dataset.renderMs = (performance.now() - start).toFixed(2);
-      element!.dataset.zoom = view.zoom.toFixed(2);
+      element!.dataset.zoom = (view.zoom / defaultZoom).toFixed(2);
+      element!.dataset.view = JSON.stringify(view);
+      element!.dataset.entrance =
+        elapsed < 0
+          ? "waiting"
+          : elapsed < 2000 && !motion.matches
+            ? "running"
+            : "done";
+      element!.dataset.opacity = JSON.stringify(opacity);
+      element!.dataset.flying = String(!!flight);
+      if (
+        flight ||
+        (entranceStart != null && elapsed < 2000 && !motion.matches)
+      )
+        request();
     }
     const request = () => {
       if (!frame) frame = requestAnimationFrame(draw);
     };
-    redraw.current = request;
-    const reset = () => {
-      view = {
-        x: (width - 65535 * unit) / 2,
-        y: (height - 65535 * unit) / 2,
-        zoom: 1,
-      };
-      setZoom(1);
-      setSelectedRegion("");
+    redraw.current = () => {
+      reservedBoxes();
       request();
+    };
+    const clearSelection = () => {
+      selected = null;
+      setHover(null);
+    };
+    const fly = (to: MapView) => {
+      clearSelection();
+      if (motion.matches) {
+        view = to;
+        flight = null;
+      } else flight = { start: performance.now(), from: { ...view }, to };
+      setZoom(to.zoom / defaultZoom);
+      request();
+    };
+    const reset = () => {
+      setSelectedStory("whole");
+      setSelectedRegion("");
+      fly(fitBounds(overview, plotBox(), unit));
     };
     const resize = () => {
       const bounds = element.getBoundingClientRect();
@@ -323,27 +430,61 @@ export function GraniteMap({
       element.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       unit = Math.max(1, Math.min(width - 60, height - 50)) / 65535;
-      reset();
+      view = fitBounds(overview, plotBox(), unit);
+      defaultZoom = view.zoom;
+      flight = null;
+      setZoom(1);
+      setSelectedRegion("");
+      setSelectedStory("whole");
+      reservedBoxes();
+      request();
+    };
+    const manual = () => {
+      flight = null;
+      clearSelection();
+      setZoom(view.zoom / defaultZoom);
+      setSelectedStory("explore");
+      setSelectedRegion("");
     };
     const changeZoom = (factor: number, x = width / 2, y = height / 2) => {
+      manual();
       view = zoomAt(view, factor, x, y);
       constrain();
-      setZoom(view.zoom);
+      setZoom(view.zoom / defaultZoom);
       request();
+    };
+    const regionView = (id: number) => {
+      const guided = stories.find((item) => item.region?.id === id);
+      if (guided) return fitBounds(guided.bounds, plotBox(), unit);
+      const indices: number[] = [];
+      for (let i = 0; i < map.n; i++)
+        if (map.clusters[i] === id) indices.push(i);
+      const box = robustBounds(map.coordinates, indices, 0.02);
+      const cx = (box[0] + box[2]) / 2,
+        cy = (box[1] + box[3]) / 2;
+      const sx = Math.max(6500, (box[2] - box[0]) * 1.7),
+        sy = Math.max(6500, (box[3] - box[1]) * 1.7);
+      return fitBounds(
+        [cx - sx / 2, cy - sy / 2, cx + sx / 2, cy + sy / 2],
+        plotBox(),
+        unit,
+      );
     };
     controls.current = {
       zoom: changeZoom,
       reset,
+      story: (id: string) => {
+        const target = stories.find((item) => item.id === id);
+        if (!target) return;
+        setSelectedStory(id);
+        setSelectedRegion(target.region ? String(target.region.id) : "");
+        fly(fitBounds(target.bounds, plotBox(), unit));
+      },
       region: (id: number) => {
-        const region = map.regions.get(id);
-        if (!region) return;
-        view = {
-          zoom: 4,
-          x: width / 2 - region.centroid[0] * unit * 4,
-          y: height / 2 - region.centroid[1] * unit * 4,
-        };
-        setZoom(4);
-        request();
+        setSelectedStory(
+          stories.find((item) => item.region?.id === id)?.id ?? "explore",
+        );
+        fly(regionView(id));
       },
     };
     const position = (event: PointerEvent | WheelEvent) => {
@@ -409,6 +550,7 @@ export function GraniteMap({
     };
     const down = (event: PointerEvent) => {
       if (event.button !== 0) return;
+      if (flight) manual();
       pointer = { ...position(event), moved: false };
       element.setPointerCapture(event.pointerId);
       element.focus({ preventScroll: true });
@@ -418,6 +560,7 @@ export function GraniteMap({
       if (pointer) {
         const dx = p.x - pointer.x,
           dy = p.y - pointer.y;
+        if (dx || dy) manual();
         view.x += dx;
         view.y += dy;
         pointer = {
@@ -473,6 +616,7 @@ export function GraniteMap({
       else if (event.key === "-") changeZoom(1 / 1.4);
       else if (event.key === "0") reset();
       else if (event.key.startsWith("Arrow")) {
+        manual();
         view.x +=
           event.key === "ArrowLeft" ? 50 : event.key === "ArrowRight" ? -50 : 0;
         view.y +=
@@ -481,6 +625,37 @@ export function GraniteMap({
         request();
       }
     };
+    const visibility = new IntersectionObserver(
+      (entries) => {
+        if (
+          entries.some((entry) => entry.isIntersecting) &&
+          entranceStart == null
+        ) {
+          entranceStart = performance.now();
+          request();
+          visibility.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    visibility.observe(element);
+    const onMotion = () => {
+      if (motion.matches) {
+        entranceStart = -Infinity;
+        entranceDone.current = true;
+        if (flight) {
+          view = flight.to;
+          flight = null;
+        }
+        request();
+      }
+    };
+    motion.addEventListener("change", onMotion);
+    const overlayObserver = new ResizeObserver(() => {
+      reservedBoxes();
+      request();
+    });
+    if (caption.current) overlayObserver.observe(caption.current);
     const observer = new ResizeObserver(resize);
     observer.observe(element);
     resize();
@@ -495,6 +670,9 @@ export function GraniteMap({
       disposed = true;
       cancelAnimationFrame(frame);
       observer.disconnect();
+      visibility.disconnect();
+      overlayObserver.disconnect();
+      motion.removeEventListener("change", onMotion);
       redraw.current = () => {};
       controls.current = null;
       element.removeEventListener("pointerdown", down);
@@ -505,7 +683,7 @@ export function GraniteMap({
       element.removeEventListener("wheel", wheel);
       element.removeEventListener("keydown", key);
     };
-  }, [map]);
+  }, [map, stories]);
   const largest = map
     ? [...map.regions.values()]
         .filter((region) => region.id >= 0)
@@ -562,7 +740,19 @@ export function GraniteMap({
           Region labels
         </label>
       </div>
-      <div className="map-field">
+      <div className="map-stories" aria-label="Guided map views">
+        {stories.map((item) => (
+          <button
+            key={item.id}
+            aria-pressed={selectedStory === item.id}
+            onClick={() => controls.current?.story(item.id)}
+          >
+            {item.title}
+            <span aria-hidden="true">↗</span>
+          </button>
+        ))}
+      </div>
+      <div className="map-field" ref={field}>
         <canvas
           ref={canvas}
           tabIndex={0}
@@ -585,9 +775,13 @@ export function GraniteMap({
             )}
           </div>
         )}
-        <div className="map-corner">
-          <span>DESCRIPTION SIMILARITY</span>
-          <small>Nearness ≠ risk · no 2026 outcome labels</small>
+        <div className="map-guidance" ref={caption} aria-live="polite">
+          <span className="eyebrow">{story?.title ?? "Explore the field"}</span>
+          <p>
+            {story?.caption ??
+              "Drag to follow similar descriptions. Choose a guided view to return to its evidence."}
+          </p>
+          <small>Similarity, not a risk score.</small>
         </div>
         <div className="map-controls">
           <button
