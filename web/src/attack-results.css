@@ -1,16 +1,16 @@
 .attack-results {
   margin-top: 48px;
-  border-top: 1px solid var(--line-bright);
+  border-top: 1px solid var(--line-strong);
   padding-top: 32px;
 }
 .attack-results > h3 {
-  font-size: 32px;
+  font-size: var(--type-subhead);
   font-weight: 500;
   margin: 0 0 24px;
 }
 .attack-kicker {
   color: var(--accent);
-  font: 12px/1.5 var(--mono);
+  font: var(--type-label)/1.5 var(--mono);
   letter-spacing: 1.3px;
   margin: 0 0 12px;
 }
@@ -26,32 +26,32 @@
   gap: 32px;
 }
 .attack-survival > strong {
-  font-size: 88px;
+  font-size: var(--type-metric);
   font-weight: 500;
-  letter-spacing: -4px;
+  letter-spacing: -0.035em;
   line-height: 1.1;
   white-space: nowrap;
 }
 .attack-survival small {
   margin-left: 5px;
-  font-size: 36px;
+  font-size: var(--type-heading);
   letter-spacing: -1px;
   color: var(--muted);
 }
 .attack-survival > p {
-  font-size: 26px;
+  font-size: var(--type-subhead);
   line-height: 1.35;
   margin: 0;
   max-width: 420px;
 }
 .attack-heldout-note {
-  font-size: 13px;
+  font-size: var(--type-body);
   line-height: 1.5;
   color: var(--muted);
   margin: 12px 0 0;
 }
 .attack-comparison {
-  border-left: 1px solid var(--line-bright);
+  border-left: 1px solid var(--line-strong);
   padding-left: 24px;
   display: grid;
   gap: 16px;
@@ -63,24 +63,24 @@
   gap: 3px 14px;
 }
 .attack-comparison span {
-  font-size: 13px;
+  font-size: var(--type-body);
   color: var(--muted);
 }
 .attack-comparison strong {
-  font: 22px/1.2 var(--mono);
+  font: var(--type-lead)/1.2 var(--mono);
   white-space: nowrap;
 }
 .attack-comparison small {
-  font-size: 13px;
+  font-size: var(--type-body);
   color: var(--muted);
 }
 .attack-comparison .attack-tuned {
   flex-basis: 100%;
-  font: 11px/1.5 var(--mono);
+  font: var(--type-label)/1.5 var(--mono);
   color: var(--text);
 }
 .attack-reason {
-  font-size: 24px;
+  font-size: var(--type-lead);
   line-height: 1.4;
   margin: 20px 0 24px;
 }
@@ -88,7 +88,7 @@
   display: none;
 }
 .attack-suite {
-  font-size: 15px;
+  font-size: var(--type-body);
   color: var(--muted);
   margin: 0 0 10px;
   display: flex;
@@ -102,7 +102,7 @@
 }
 .attack-suite > span {
   margin-left: auto;
-  font: 11px/1.5 var(--mono);
+  font: var(--type-label)/1.5 var(--mono);
 }
 .attack-boundaries {
   display: grid;
@@ -121,19 +121,19 @@
   padding-left: 30px;
 }
 .attack-boundaries strong {
-  font-size: 48px;
+  font-size: var(--type-heading);
   font-weight: 500;
   line-height: 1;
-  letter-spacing: -2px;
+  letter-spacing: -0.035em;
 }
 .attack-boundaries span {
   color: var(--muted);
-  font-size: 16px;
+  font-size: var(--type-base);
   line-height: 1.4;
 }
 .attack-detector,
 .attack-scope {
-  font-size: 13px;
+  font-size: var(--type-body);
   line-height: 1.6;
   color: var(--muted);
   margin: 16px 0 0;
@@ -151,7 +151,7 @@
 .attack-family-group h4 {
   font-weight: 500;
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--type-body);
   margin: 0 0 12px;
 }
 .attack-families {
@@ -161,12 +161,12 @@
 }
 .attack-families span {
   padding: 7px 10px;
-  border: 1px solid var(--line-bright);
-  font: 12px/1.5 var(--mono);
+  border: 1px solid var(--line-strong);
+  font: var(--type-label)/1.5 var(--mono);
 }
 .attack-methods {
   margin-top: 18px;
-  font-size: 13px;
+  font-size: var(--type-body);
   color: var(--muted);
   line-height: 1.6;
 }
@@ -187,10 +187,10 @@
   gap: 20px;
 }
 .compact .attack-survival > strong {
-  font-size: 78px;
+  font-size: var(--type-display);
 }
 .compact .attack-survival > p {
-  font-size: 20px;
+  font-size: var(--type-lead);
   margin-top: 0;
   max-width: 300px;
 }
@@ -203,18 +203,18 @@
   gap: 5px;
 }
 .compact .attack-heldout-note {
-  font-size: 11px;
+  font-size: var(--type-body);
   margin-top: 10px;
 }
 .compact .attack-reason {
-  font-size: 19px;
+  font-size: var(--type-lead);
   margin: 12px 0 16px;
 }
 .compact .attack-suite {
-  font-size: 13px;
+  font-size: var(--type-body);
 }
 .compact .attack-suite > span {
-  font-size: 10px;
+  font-size: var(--type-body);
 }
 .compact .attack-boundaries > div {
   display: block;
@@ -225,11 +225,11 @@
 }
 .compact .attack-boundaries strong {
   display: block;
-  font-size: 34px;
+  font-size: var(--type-subhead);
   margin-bottom: 6px;
 }
 .compact .attack-boundaries span {
-  font-size: 12px;
+  font-size: var(--type-body);
 }
 .slide-6 .present-gate {
   gap: 48px;
@@ -256,31 +256,31 @@
   align-items: center;
 }
 .slide-6 .gate-control h2 {
-  font-size: 28px;
+  font-size: var(--type-subhead);
   margin: 16px 0;
 }
 .gate-proposal {
-  border-top: 1px solid var(--line-bright);
-  border-bottom: 1px solid var(--line-bright);
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
   padding: 16px 0;
 }
 .gate-proposal > span {
-  font-size: 12px;
+  font-size: var(--type-body);
   color: var(--muted);
 }
 .gate-proposal h3 {
   margin: 8px 0 12px;
-  font-size: 19px;
+  font-size: var(--type-lead);
   line-height: 1.4;
   font-weight: 500;
 }
 .gate-proposal summary {
-  font-size: 13px;
+  font-size: var(--type-body);
   color: var(--muted);
   cursor: pointer;
 }
 .slide-6 .gate-proposal .gate-action {
-  font-size: 15px;
+  font-size: var(--type-body);
   line-height: 1.5;
   margin: 12px 0 0;
   max-height: 110px;
@@ -290,7 +290,7 @@
   margin: 20px 0 12px;
 }
 .slide-6 blockquote {
-  font-size: 27px;
+  font-size: var(--type-subhead);
   margin-top: 0;
   padding-top: 20px;
 }
@@ -301,62 +301,62 @@
     gap: 80px;
   }
   .compact .attack-kicker {
-    font-size: 14px;
+    font-size: var(--type-body);
   }
   .compact .attack-evidence {
     grid-template-columns: minmax(0, 1fr) 190px;
   }
   .compact .attack-survival > strong {
-    font-size: 108px;
+    font-size: var(--type-metric);
   }
   .compact .attack-survival small {
-    font-size: 48px;
+    font-size: var(--type-heading);
   }
   .compact .attack-survival > p {
-    font-size: 28px;
+    font-size: var(--type-subhead);
     max-width: 390px;
   }
   .compact .attack-comparison span {
-    font-size: 15px;
+    font-size: var(--type-body);
   }
   .compact .attack-comparison strong {
-    font-size: 28px;
+    font-size: var(--type-subhead);
   }
   .compact .attack-comparison small {
-    font-size: 16px;
+    font-size: var(--type-base);
   }
   .compact .attack-comparison .attack-tuned {
-    font-size: 13px;
+    font-size: var(--type-label);
   }
   .compact .attack-heldout-note {
-    font-size: 13px;
+    font-size: var(--type-body);
   }
   .compact .attack-reason {
-    font-size: 28px;
+    font-size: var(--type-subhead);
   }
   .compact .attack-suite {
-    font-size: 17px;
+    font-size: var(--type-base);
   }
   .compact .attack-suite > span {
-    font-size: 12px;
+    font-size: var(--type-body);
   }
   .compact .attack-boundaries strong {
-    font-size: 48px;
+    font-size: var(--type-heading);
   }
   .compact .attack-boundaries span {
-    font-size: 16px;
+    font-size: var(--type-base);
   }
   .slide-6 .gate-control {
     padding: 32px;
   }
   .slide-6 .gate-control h2 {
-    font-size: 36px;
+    font-size: var(--type-heading);
   }
   .gate-proposal h3 {
-    font-size: 24px;
+    font-size: var(--type-lead);
   }
   .slide-6 blockquote {
-    font-size: 34px;
+    font-size: var(--type-subhead);
   }
 }
 @media (max-width: 1000px) {
@@ -376,7 +376,7 @@
 }
 @media (max-width: 700px) {
   .attack-results > h3 {
-    font-size: 26px;
+    font-size: var(--type-subhead);
   }
   .attack-evidence,
   .compact .attack-evidence {
@@ -385,14 +385,14 @@
   }
   .attack-survival > strong,
   .compact .attack-survival > strong {
-    font-size: 72px;
+    font-size: var(--type-display);
   }
   .compact .attack-survival {
     display: block;
   }
   .attack-survival > p,
   .compact .attack-survival > p {
-    font-size: 23px;
+    font-size: var(--type-lead);
   }
   .attack-comparison,
   .compact .attack-comparison {
@@ -408,7 +408,7 @@
   }
   .attack-reason,
   .compact .attack-reason {
-    font-size: 21px;
+    font-size: var(--type-lead);
   }
   .attack-suite > span,
   .compact .attack-suite > span {
@@ -438,7 +438,7 @@
   }
   .attack-boundaries span,
   .compact .attack-boundaries span {
-    font-size: 14px;
+    font-size: var(--type-body);
   }
   .attack-family-groups {
     grid-template-columns: 1fr;
@@ -451,18 +451,18 @@
     padding: 20px;
   }
   .slide-6 blockquote {
-    font-size: 22px;
+    font-size: var(--type-lead);
   }
 }
 .attack-boundaries strong.is-pending {
-  font-size: 22px;
+  font-size: var(--type-lead);
   letter-spacing: 0;
 }
 .attack-survival > strong.is-pending {
-  font-size: 30px;
+  font-size: var(--type-subhead);
   letter-spacing: 0;
   white-space: normal;
 }
 .attack-survival > strong.is-pending small {
-  font-size: 24px;
+  font-size: var(--type-lead);
 }

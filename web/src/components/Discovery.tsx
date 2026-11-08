@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Data, Findings, Run } from "../types";
 import { list, number, percent } from "../lib";
 import { evaluationArms } from "../storyData";
-import { SectionHeading } from "./Story";
+import { SectionHeading } from "./SectionHeading";
 import { Icon } from "./Icon";
 import { blindSpotSummary } from "../blindSpot";
 import { BlindSpotStudy, WatchMethods } from "./BlindSpotStudy";
@@ -181,7 +181,7 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
   return (
     <section id="discovery" className="story-section deeper-discovery">
       <SectionHeading
-        index="02 / DEEPER"
+        index="03" label="Blind spot"
         title="The blind spot. And the repeat offenders."
         detail="What an exploit feed alone misses"
       />
@@ -282,7 +282,7 @@ export function AgentSection({
   return (
     <section id="agent" className="story-section agent-section">
       <SectionHeading
-        index="04"
+        index="07" label="Briefing"
         title="Let policy decide. Let Granite explain."
         detail="Evidence checked before a human acts"
       />

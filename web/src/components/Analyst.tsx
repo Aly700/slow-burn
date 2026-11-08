@@ -3,7 +3,7 @@ import type { AnalystSession, Data, LiveClaim } from "../types";
 import { displayValue, number } from "../lib";
 import { suggestions } from "../analyst";
 import { useAnalyst } from "../useAnalyst";
-import { SectionHeading } from "./Story";
+import { SectionHeading } from "./SectionHeading";
 import { Icon } from "./Icon";
 import "../analyst.css";
 
@@ -167,7 +167,7 @@ export function Analyst({
   return (
     <section id="analyst" className="story-section analyst-section">
       <SectionHeading
-        index="03 / ASK"
+        index="06" label="Ask Slow Burn"
         title="Ask Slow Burn"
         detail="Local ranking · read-only analysis"
       />

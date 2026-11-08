@@ -1,28 +1,9 @@
+import { SectionHeading } from "./SectionHeading";
 import { AttackResults } from "./AttackResults";
 import type { Data, Findings } from "../types";
 import { list, number, percent } from "../lib";
 import { Replay } from "./Replay";
 import { Icon } from "./Icon";
-
-export function SectionHeading({
-  index,
-  title,
-  detail,
-}: {
-  index: string;
-  title: string;
-  detail?: string;
-}) {
-  return (
-    <div className="section-heading">
-      <div className="section-title">
-        <span className="section-index">{index}</span>
-        <h2>{title}</h2>
-      </div>
-      {detail && <p>{detail}</p>}
-    </div>
-  );
-}
 
 export function Hero({ data }: { data: Data }) {
   return (
@@ -63,7 +44,7 @@ export function Timing({ findings }: { findings?: Findings | null }) {
   return (
     <section id="timing" className="story-section timing">
       <SectionHeading
-        index="01"
+        index="01" label="Timing"
         title="Two clocks. Two defences."
         detail="2025 discovery · time to KEV inclusion"
       />
@@ -186,7 +167,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
   return (
     <section id="signals" className="story-section signals-section">
       <SectionHeading
-        index="02"
+        index="02" label="Signals"
         title="Find the signal. Question the shortcut."
         detail="2025 cohort · association, not causation"
       />
@@ -287,7 +268,7 @@ export function Methods({ data }: { data: Data }) {
   return (
     <section id="methods" className="story-section methods">
       <SectionHeading
-        index="05"
+        index="08" label="Methods"
         title="The boundary is part of the model."
         detail="Reproducible decisions · explicit limits"
       />

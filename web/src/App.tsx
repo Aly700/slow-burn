@@ -133,24 +133,24 @@ export default function App() {
         </a>
         <nav aria-label="Main navigation">
           {[
-            ["overview", "Overview"],
-            ["timing", "Discovery"],
-            ["queue", "Fix-first queue"],
-            ["analyst", "Ask Slow Burn"],
-            ["agent", "Briefing"],
-            ["methods", "Methods"],
-          ].map(([id, label]) => (
+            ["overview", "Overview", ""],
+            ["timing", "Discovery", "01–04"],
+            ["queue", "Fix-first queue", "05"],
+            ["analyst", "Ask Slow Burn", "06"],
+            ["agent", "Briefing", "07"],
+            ["methods", "Methods", "08"],
+          ].map(([id, label, index]) => (
             <a
               key={id}
               className={
                 active === id ||
-                (id === "timing" && ["signals", "discovery"].includes(active))
+                (id === "timing" && ["signals", "discovery", "granite-map"].includes(active))
                   ? "active"
                   : ""
               }
               href={`#${id}`}
             >
-              {label}
+              {index && <span className="nav-index">{index}</span>}{label}
             </a>
           ))}
         </nav>

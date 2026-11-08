@@ -1,3 +1,4 @@
+import { readCanvasTheme } from "../theme";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
 import type { ReplayData, ReplayItem, ReplayPositive } from "../types";
@@ -41,6 +42,7 @@ function DotField({
     const node = canvas.current;
     const ctx = node?.getContext("2d");
     if (!node || !ctx) return;
+    const theme = readCanvasTheme();
     let frame = 0,
       width = 0,
       height = 0,
@@ -85,16 +87,16 @@ function DotField({
               ? 0
               : Math.max(0, 1 - age / 14 - (now - lastChange) / 600);
             ctx.globalAlpha = 1;
-            ctx.shadowColor = "#ed914e";
+            ctx.shadowColor = theme.accent;
             ctx.shadowBlur = 10 + flare * 15;
-            ctx.fillStyle = flare > 0.4 ? "#fff1ce" : "#f5b474";
+            ctx.fillStyle = flare > 0.4 ? theme.strong : theme.accent;
             ctx.beginPath();
             ctx.arc(x, y, radius + 0.7 + flare * 1.5, 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
             if (flare > 0) {
               ctx.globalAlpha = flare * 0.55;
-              ctx.strokeStyle = "#f5b474";
+              ctx.strokeStyle = theme.accent;
               ctx.lineWidth = 0.8;
               ctx.beginPath();
               ctx.arc(x, y, radius + 3 + (1 - flare) * 9, 0, Math.PI * 2);
@@ -106,7 +108,7 @@ function DotField({
                 ? 0.6 + 0.4 * Math.min(1, (time - known) / (86_400_000 * 8))
                 : 0;
             ctx.globalAlpha = 0.24 + fade * 0.6;
-            ctx.fillStyle = "#72817f";
+            ctx.fillStyle = theme.known;
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, Math.PI * 2);
             ctx.fill();

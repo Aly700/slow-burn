@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Data, Score } from "../types";
 import { list, number, percent, reasonLabel, compactReasonLabel } from "../lib";
 import { Icon } from "./Icon";
-import { SectionHeading } from "./Story";
+import { SectionHeading } from "./SectionHeading";
 import { ProductWatch } from "./ProductWatch";
 import { decodeWatch, filterWatch } from "../productWatch";
 import type { ProductWatchRow } from "../productWatch";
@@ -160,7 +160,7 @@ export function Queue({
       aria-label="Fix-first queue"
     >
       <SectionHeading
-        index="03"
+        index="05" label="Fix-first queue"
         title="The fix-first queue."
         detail="2026 candidates · evidence at each snapshot"
       />
