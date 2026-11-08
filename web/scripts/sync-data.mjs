@@ -2,6 +2,7 @@ import { readFile, writeFile, readdir, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { convertScores } from "./csv.mjs";
+import { normalizeRecording } from "./live-recordings.mjs";
 
 const web = fileURLToPath(new URL("../", import.meta.url));
 const source = path.resolve(web, "../artifacts");
@@ -84,11 +85,25 @@ async function findVerifierExample(directory) {
   return null;
 }
 const verifierExample = useFixtures ? null : await findVerifierExample(runDir);
+const liveExamples = [];
+const liveDir = path.join(runDir, "live-examples");
+for (const name of (await files(liveDir)).filter(name => /\.jsonl?$/.test(name)).sort()) {
+  try {
+    const raw = await readFile(path.join(liveDir, name), "utf8");
+    const source = name.endsWith(".jsonl") ? raw.trim().split("\n").filter(Boolean).map(line => JSON.parse(line)) : JSON.parse(raw);
+    const recording = normalizeRecording(source);
+    if (!recording) { warnings.push(`${name}: incomplete live recording; using trace fallback`); continue; }
+    liveExamples.push(recording);
+    await mkdir(path.join(dest, "agent_runs/live-examples"), { recursive: true });
+    await write(`agent_runs/live-examples/${name.replace(/\.jsonl$/, ".json")}`, recording);
+  } catch { warnings.push(`${name}: unreadable live recording; using trace fallback`); }
+}
 const bundle = {
   ...artifacts,
   scores,
   runs,
   verifier_example: verifierExample,
+  live_examples: liveExamples,
   meta: {
     synced_at: new Date().toISOString(),
     runs_source: useFixtures ? "fixtures" : "recorded",

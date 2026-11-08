@@ -12,6 +12,8 @@ import {
 } from "./Discovery";
 import { Icon } from "./Icon";
 import { Replay } from "./Replay";
+import { useInvestigation } from "../useInvestigation";
+import { LiveControls, LiveTrace } from "./LiveInvestigation";
 
 const chapters = [
   "The result",
@@ -42,12 +44,15 @@ export function Presentation({
     notice,
     busy,
     decide,
+    replaceRun,
   } = useApproval(
     selected,
     data.meta?.runs_source === "fixtures",
     initialNotice,
     onUpdate,
   );
+  const live = useInvestigation(data, selected?.cve_id ?? "", () => replaceRun(undefined), replaceRun);
+  const showingStream = ["running", "error", "cancelled"].includes(live.session.status);
   const advance = (delta: number) =>
     setStep((previous) =>
       Math.max(0, Math.min(chapters.length - 1, previous + delta)),
@@ -156,7 +161,9 @@ export function Presentation({
               ? "2025 historical evidence · development analysis"
               : data.meta?.runs_source === "fixtures"
                 ? "Illustrative fixture"
-                : "Recorded IBM Granite run"}
+                : live.session.status !== "idle"
+                  ? live.session.mode === "live" ? "Live IBM Granite investigation" : "Replay of a recorded run"
+                  : "Recorded IBM Granite run"}
           </span>
         </div>
         {step === 0 && (
@@ -240,8 +247,11 @@ export function Presentation({
         {step === 4 && (
           <>
             <h1>Policy decides. Granite briefs.</h1>
+            <LiveControls live={live} disabled={busy} />
             <div className="present-investigation">
               <div className="present-briefing">
+                <LiveTrace live={live} />
+                {!showingStream && <>
                 <div className="present-run-title">
                   <span className="verdict urgent">
                     {run?.briefing?.verdict?.replaceAll("_", " ") ?? "pending"}
@@ -299,17 +309,14 @@ export function Presentation({
                     </p>
                     <small>{dropped.why}</small>
                   </div>
-                ) : (
-                  <p className="caption">
-                    No dropped claims in the available recorded runs.
-                  </p>
-                )}
+                ) : null}
                 {run?.injection?.detected && (
                   <p className="injection-warning">
                     Instruction injection detected. Human approval is still
                     required.
                   </p>
                 )}
+                </>}
               </div>
               <EvalComparison data={data} />
             </div>

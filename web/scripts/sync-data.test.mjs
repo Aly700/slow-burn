@@ -19,7 +19,7 @@ test("sync handles absent inputs, then replaces fixtures with recorded runs with
   try {
     await mkdir(path.join(web, "scripts"), { recursive: true });
     await mkdir(path.join(web, "fixtures"));
-    for (const name of ["sync-data.mjs", "csv.mjs"])
+    for (const name of ["sync-data.mjs", "csv.mjs", "live-recordings.mjs"])
       await cp(new URL(name, import.meta.url), path.join(web, "scripts", name));
     await writeFile(
       path.join(web, "fixtures", "CVE-2026-1.json"),

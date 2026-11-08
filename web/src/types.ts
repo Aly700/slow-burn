@@ -110,6 +110,7 @@ export interface ModelCard {
 }
 export interface Run {
   run_id: string;
+  list?: "top500" | "watch" | "live";
   briefing_hash?: string;
   snapshot_month?: string;
   cve_id: string;
@@ -158,6 +159,7 @@ export interface Data {
   runs?: Run[];
   agent_eval?: AgentEval | null;
   replay_2025?: ReplayData | null;
+  live_examples?: LiveRecording[];
   verifier_example?: Run | null;
   meta?: {
     synced_at?: string;
@@ -209,4 +211,44 @@ export interface ReplayData {
   end: string;
   methods?: { key: string; name: string; hits?: number | null; items?: ReplayItem[] }[];
   later_exploited?: ReplayPositive[];
+}
+
+export interface LiveEvent {
+  event: string;
+  data: Record<string, unknown>;
+  t_ms: number;
+}
+export interface LiveRecording {
+  cve_id: string;
+  events: LiveEvent[];
+}
+export interface LiveTool {
+  call_id: string;
+  tool: string;
+  args?: unknown;
+  kind?: string;
+  working: boolean;
+  ms?: number;
+  preview?: unknown;
+}
+export interface LiveClaim {
+  id: string;
+  text?: string;
+  evidence?: { tool: string; field: string; value: unknown }[];
+  verified: boolean;
+  reason?: string;
+}
+export interface Investigation {
+  mode: 'live' | 'replay';
+  illustrative?: boolean;
+  status: 'idle' | 'running' | 'complete' | 'error' | 'cancelled';
+  cve_id: string;
+  run_id?: string;
+  model?: string;
+  state?: string;
+  tools: LiveTool[];
+  claims: LiveClaim[];
+  run?: Run;
+  message?: string;
+  duration_ms?: number;
 }

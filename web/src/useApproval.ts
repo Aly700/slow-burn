@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { requestApproval } from "./approval";
 import { list } from "./lib";
+import { localViewer } from "./investigation";
 import type { Run } from "./types";
 
 export function useApproval(
@@ -12,6 +13,14 @@ export function useApproval(
   const [currentRun, setCurrentRun] = useState(run);
   const [notice, setNotice] = useState(initialNotice);
   const [busy, setBusy] = useState(false);
+  const [simulation, setSimulation] = useState(fixture || initialNotice.startsWith("Replay") || !localViewer(window.location.hostname));
+  function replaceRun(next: Run | undefined, replay = false) {
+    setCurrentRun(next);
+    setSimulation(replay || fixture || !localViewer(window.location.hostname));
+    const message = replay ? "Replay of a recorded run. Approval is simulated locally; no ticket will be created." : "";
+    setNotice(message);
+    if (next) onUpdate(next, message);
+  }
   async function decide(approved: boolean) {
     if (!currentRun || currentRun.state !== "WAITING_APPROVAL" || busy) return;
     setBusy(true);
@@ -42,7 +51,7 @@ export function useApproval(
         `Simulated ${approved ? "approval" : "rejection"} only. No ticket was created by this page.`,
       );
     };
-    if (fixture) local();
+    if (simulation) local();
     else {
       const result = await requestApproval(
         currentRun.run_id,
@@ -60,5 +69,5 @@ export function useApproval(
     }
     setBusy(false);
   }
-  return { currentRun, notice, busy, decide };
+  return { currentRun, notice, busy, decide, replaceRun };
 }

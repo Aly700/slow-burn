@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import type { Run, Score } from "../types";
+import type { Data, Run, Score } from "../types";
 import { displayValue, list, number, percent, reasonLabel } from "../lib";
 import { Icon } from "./Icon";
 import { useApproval } from "../useApproval";
+import { useInvestigation } from "../useInvestigation";
+import { LiveControls, LiveTrace } from "./LiveInvestigation";
 
 const stages = ["RECEIVED", "INVESTIGATING", "VERIFIED", "WAITING_APPROVAL"];
 const stageLabel = (state: string) => state.toLowerCase().replaceAll("_", " ");
 
 export function Briefing({
   score,
+  data,
   run,
   fixture,
   initialNotice = "",
@@ -16,18 +19,21 @@ export function Briefing({
   onClose,
 }: {
   score: Score;
+  data: Data;
   run?: Run;
   fixture: boolean;
   initialNotice?: string;
   onUpdate: (run: Run, notice: string) => void;
   onClose: () => void;
 }) {
-  const { currentRun, notice, busy, decide } = useApproval(
+  const { currentRun, notice, busy, decide, replaceRun } = useApproval(
     run,
     fixture,
     initialNotice,
     onUpdate,
   );
+  const live = useInvestigation(data, score.cve_id, () => replaceRun(undefined), replaceRun);
+  const showingStream = ["running", "error", "cancelled"].includes(live.session.status);
   const [tab, setTab] = useState("evidence");
   const panel = useRef<HTMLElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
@@ -81,7 +87,7 @@ export function Briefing({
         <header className="drawer-header">
           <div>
             <span className="eyebrow">EVIDENCE → DECISION</span>
-            <h2 id="briefing-title">{score.cve_id}</h2>
+            <h2 id="briefing-title">{currentRun?.cve_id ?? (showingStream ? live.session.cve_id : score.cve_id)}</h2>
           </div>
           <button
             ref={closeButton}
@@ -94,18 +100,20 @@ export function Briefing({
         </header>
         <div className="drawer-context">
           <span>
-            {fixture && currentRun
+            {showingStream ? live.session.mode === "live" ? "Live investigation" : "Recorded replay" : fixture && currentRun
               ? "Illustrative fixture · simulated workflow"
               : currentRun
-                ? "Recorded investigation"
+                ? currentRun.list === "live" ? "Live investigation" : "Recorded investigation"
                 : "Snapshot record"}
           </span>
           <span className="mono">
-            Snapshot {score.snapshot_month ?? "unknown"}
+            Snapshot {currentRun?.snapshot_month ?? (showingStream ? "pending" : score.snapshot_month ?? "unknown")}
           </span>
         </div>
         <div className="drawer-scroll">
-          {currentRun ? (
+          <LiveControls live={live} disabled={busy} />
+          <LiveTrace live={live} />
+          {!showingStream && (currentRun ? (
             <>
               <div className="verdict-line">
                 <span
@@ -361,7 +369,7 @@ export function Briefing({
                 demonstration.
               </p>
             </div>
-          )}
+          ))}
         </div>
         <footer className="approval-footer">
           {currentRun ? (

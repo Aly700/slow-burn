@@ -178,6 +178,7 @@ export default function App() {
       {selected && (
         <Briefing
           key={selected.cve_id}
+          data={data}
           score={selected}
           run={
             decisions[selected.cve_id]?.run ??
