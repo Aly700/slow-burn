@@ -274,7 +274,7 @@ try {
       await present(page, 3);
       assert.match(
         await page.locator(".presentation .watch-feature-boundary").innerText(),
-        /earlier 2025 exposure/,
+        /features came from the main model, which was developed with 2025 results in view/,
       );
       assert.match(
         await page.locator(".presentation .watch-takeaway").innerText(),

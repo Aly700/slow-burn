@@ -173,8 +173,8 @@ export function WatchMethods({
           item.includes("shared feature family"),
         ) ? (
           <>
-            The shared feature family had earlier {s.year ?? "test-year"}{" "}
-            exposure.
+            The watch model’s features came from the main model, which was
+            developed with {s.year ?? "test-year"} results in view.
           </>
         ) : (
           "Feature-development boundary pending."

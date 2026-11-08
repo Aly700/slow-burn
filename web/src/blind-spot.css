@@ -402,3 +402,11 @@
 .blind-number.is-pending > span {
   white-space: nowrap;
 }
+
+.present-blind .blind-legend {
+  margin: 18px 0 10px;
+}
+.present-blind .watch-methods.compact {
+  margin-top: 14px;
+  padding-top: 10px;
+}
