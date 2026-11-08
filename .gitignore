@@ -14,3 +14,7 @@ artifacts/scores_2026_full.csv
 /data
 scratch/
 !docs/img/*.png
+
+# local secrets
+.env
+.env.*
