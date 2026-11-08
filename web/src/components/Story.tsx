@@ -1,3 +1,4 @@
+import { GraniteAblation } from "./GraniteAblation";
 import { ReadingDetails } from "./ReadingDetails";
 import { SectionHeading } from "./SectionHeading";
 import { AttackResults } from "./AttackResults";
@@ -265,6 +266,7 @@ export function Methods({ data }: { data: Data }) {
         index="10" label="Methods"
         title="Methods and limits"
       />
+      <GraniteAblation data={data} />
       <AttackResults evaluation={data.redteam_eval} reading />
       <ReadingDetails label="Model, features and exclusions">
       <div className="methods-grid">

@@ -7,6 +7,7 @@ export interface Reason {
   contribution?: number;
 }
 export interface Score {
+  software_matches?: import("./software").SoftwareEvidence[];
   rank: number;
   cve_id: string;
   published?: string;
@@ -241,7 +242,9 @@ export interface RedTeamEvaluation extends AttackEvaluation {
   held_out?: AttackEvaluation | null;
 }
 export interface Data {
+  granite_ablation_2025?: import("./components/GraniteAblation").GraniteAblationData;
   lazy?: {
+    software_index?: { file: string };
     map?: { file: string };
     product_watch?: {
       file: string;

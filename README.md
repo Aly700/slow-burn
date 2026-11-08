@@ -19,6 +19,7 @@ Tested on 2025 the same way the track's benchmark works (train on 2024; rank eac
 | Public exploit code first, then EPSS | 19 |
 | **Slow Burn** | **22** |
 
+- **Granite on and off.** I removed only the Granite embeddings from the selected model, keeping the configuration, splits and seeds fixed. In full-year 2025, Granite on/off found 8/7 at 50 picks, 13/11 at 100, 18/19 at 250 and 22/21 at 500. The second forward split found 5/6 at 500. This is a small, mixed change on development data, not a consistent gain. I kept the submission unchanged. [Results and five-seed ranges](artifacts/granite_ablation_2025.json).
 - **KEV listing delays.** Of the 165 vulnerabilities published in 2025 that CISA listed as exploited, 110 were listed within their first month. The other 55 took a median of 45 days from publication to listing.
 - **Fixes before listing.** At 10 fixes a month, Slow Burn completed 5 of the 55 before their listing date while each baseline completed 1. At 42 a month (about the yearly 500 benchmark budget), it ties the exploit-code rule, 11 to 11; CVSS completes 3 and EPSS 5. With only 55 positives, the month-block bootstrap is noisy: all four 95% intervals for month-end completion include zero. At 10/month, Slow Burn is ahead in 77.7% of draws, tied in 10.2% and behind in 12.1%, with an interval of -2 to 8 additional fixes; at 42/month the shares are 45.2%, 27.4% and 27.4%. Fixes count at month end, starting the month after the snapshot. Slow Burn also leads at 25/month and ties at 100/month. If the same fixes complete at month start, the 42/month counts become 21 for Slow Burn and 18 for exploit-first. KEV can lag attacks; this assumes equal effort per fix on 2025 development data.
 - **No public exploit signal.** 31 of those 55 had no public exploit code at the time, so rankings built on exploit feeds can't see most of them. I tried to close it and could not: EPSS put none of the 31 in its top 500, and neither did a model trained only on that pool, whose design was fixed and committed before it was tested on 2025. One thing did mark them: 15 of the 31 hit a product that was already on the exploited list, against 16% of the pool they came from. Vendor-wide history, which helps inside the exploit tier, made no difference here. Product history can support an asset review; the dedicated model did not improve ranking within this pool. The [exploratory 2026 watch list](artifacts/watch_2026_top100.csv) is kept separate from the submission.
@@ -41,6 +42,16 @@ The 2026 result is scored by the organisers after submission.
 [Recorded briefing screenshot](docs/img/briefing.png)
 
 [Description map screenshot](docs/img/map.png)
+
+## After the datathon
+
+I preserved the judged version at the tag `sheridan-datathon-2026` and left its ranking and results unchanged.
+
+- I added browser-only matching for CycloneDX, SPDX, npm lockfiles and Python requirements, with version evidence and CSV or ticket exports.
+- I measured the same selected model with Granite embeddings on and off, using the original splits and five seeds.
+- I added results at 50, 100, 250 and 500 picks so the page shows what smaller review budgets catch.
+
+Reproduce the additions with `uv run python -I pipeline/granite_ablation.py` and `uv run python -I pipeline/software_index.py`, then rebuild the page. Both scripts use the supplied data and the original local prediction caches; neither writes a judged artifact.
 
 ## Run it
 

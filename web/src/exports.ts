@@ -18,6 +18,7 @@ export function ticketDrafts(rows: Score[], runs: Run[], review: ProductWatchRow
       .filter(Boolean)
       .join("; ");
     return {
+      ...(row.software_matches ? { software_matches: row.software_matches } : {}),
       source_list: "fix_first",
       cve_id: row.cve_id,
       rank: row.rank,
@@ -66,6 +67,7 @@ export function queueCsv(rows: Score[], runs: Run[], review: ProductWatchRow[] =
     "latest_prior_kev_cve",
     "latest_prior_kev_date",
     "description",
+    "software_matches",
   ];
   const body = rows.map((row, index) => {
     const ticket = drafts[index];
@@ -82,7 +84,8 @@ export function queueCsv(rows: Score[], runs: Run[], review: ProductWatchRow[] =
       ticket.headline,
       ticket.proposed_action,
       ticket.evidence_summary,
-      "fix_first", "", "", "", "", row.description,
+      "fix_first", row.software_matches?.map(match => match.confidence).join("; ") ?? "", "", "", "", row.description,
+      row.software_matches ? JSON.stringify(row.software_matches) : "",
     ]
       .map(csvCell)
       .join(",");
@@ -90,7 +93,7 @@ export function queueCsv(rows: Score[], runs: Run[], review: ProductWatchRow[] =
   const reviewDrafts = watchTickets(review);
   for (let index = 0; index < review.length; index++) {
     const row = review[index], ticket = reviewDrafts[index];
-    body.push([row.cve_id, null, row.vendor, row.product, row.snapshot_month, null, row.epss, null, ticket.verdict, ticket.headline, ticket.proposed_action, ticket.evidence_summary, ticket.source_list, row.match_confidence, row.prior_kev_count, row.latest_prior_kev_cve, row.latest_prior_kev_date, row.description].map(csvCell).join(","));
+    body.push([row.cve_id, null, row.vendor, row.product, row.snapshot_month, null, row.epss, null, ticket.verdict, ticket.headline, ticket.proposed_action, ticket.evidence_summary, ticket.source_list, row.match_confidence, row.prior_kev_count, row.latest_prior_kev_cve, row.latest_prior_kev_date, row.description, ""].map(csvCell).join(","));
   }
   return [headers.join(","), ...body].join("\r\n") + "\r\n";
 }

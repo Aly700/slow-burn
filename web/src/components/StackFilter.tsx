@@ -20,6 +20,7 @@ export function StackFilter({
   persisted,
   onChange,
   secondaryList,
+  inventoryInput,
   reviewIdentities = [],
 }: {
   scores: Score[];
@@ -28,6 +29,7 @@ export function StackFilter({
   onChange: (choices: StackChoice[]) => void;
   // Supply an inventory-matched secondary list only when its artifact is present.
   secondaryList?: ReactNode;
+  inventoryInput?: ReactNode;
   reviewIdentities?: { vendor: string; product: string }[];
 }) {
   const [query, setQuery] = useState("");
@@ -80,8 +82,8 @@ export function StackFilter({
       <div className="stack-heading">
         <div>
           <span className="eyebrow">YOUR ENVIRONMENT</span>
-          <h3>Your vendors and products</h3>
-          <p>Filter the queue by the vendors and products you run.</p>
+          <h3>What do you run?</h3>
+          <p>Paste an inventory, or choose vendors and products.</p>
         </div>
         <div className="stack-impact" aria-live="polite">
           <strong>
@@ -95,6 +97,7 @@ export function StackFilter({
           </span>
         </div>
       </div>
+      {inventoryInput}
       <div className="stack-input-row">
         <form
           onSubmit={(event) => {

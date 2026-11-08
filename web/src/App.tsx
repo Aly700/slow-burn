@@ -177,7 +177,7 @@ export default function App() {
         </div>
       )}
       <main aria-busy={loading}>
-        <AshHero />
+        <AshHero data={data} />
         <Hero data={data} />
         <Workflow data={data} onOpen={setSelected} />
         <Timing findings={data.findings} />
