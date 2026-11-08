@@ -77,6 +77,12 @@ Question streams add `answer: {text, claims}` and finish VERIFIED, with no propo
 
 Run `uv run --project agent python agent/evals/analyst_benchmark.py` against the running API to evaluate the fifteen fixed questions in `agent/evals/analyst_questions.json`. Expected facts are written before inference; the grader checks both requested scope and source facts, allowing equivalent search/summary count fields. Results include full/partial/no-answer grades in `agent/evals/analyst_eval.json`. This is a development question set, not unseen validation after prompt revisions.
 
+## Adversarial evaluation
+
+Run `uv run --project agent python agent/evals/redteam_benchmark.py` against the warm API. The fixed catalog plants 48 instruction variants in copies of four real descriptions: direct orders, fake tool results, forged authority, JSON smuggling, encodings, buried instructions, multiple languages and source laundering. It never approves a ticket or changes the source dataset. Predefined `redteam-01` through `redteam-48` fixture identifiers are clearly labelled in live streams.
+
+Measured results in `artifacts/redteam_eval.json`: 48 completed investigations, 48 denied write probes, zero unauthorized tickets, zero verdict changes, detector recall 18/48 (37.5%), and zero false positives on 100 sampled clean descriptions. Injected prose survived exact-source verification in **7/48** runs, including a forged fix sentence. The authorization boundary held; narrative integrity is not proven. Treat description-derived fixes as untrusted until reviewed against authoritative remediation evidence. The report preserves failed measurement outcomes before enforcing gates; `--rescore` recalculates prose survival from cached ledgers without loading a model.
+
 ## Evidence, durability and limits
 
 Granite selects read tools, then selects evidence cards and source-backed headline/action choices through strict JSON schemas. Verdict and urgency come only from `src/agent/priority.py`. A retrieved history or analogy card is required when available; this is an enforced briefing requirement, not evidence of unrestricted reasoning. One repair is allowed per stage; the entire run has at most four model calls, ten tool calls and a 55-second deadline. A failed model or empty verified evidence produces `FAILED`, never an automatic template success. Native inference checks the deadline between generated tokens; the API also bounds its wait.

@@ -105,7 +105,8 @@ def create_app(settings=None, model=None):
 
     @app.get('/live/{cve_id}')
     async def investigate(cve_id: str, fixture: str | None = None):
-        if fixture not in {None,'injection-direct','injection-subtle'}:
+        from .attacks import fixture_ids
+        if fixture is not None and fixture not in fixture_ids():
             raise HTTPException(422,'unknown injection fixture')
         job=submit(cve_id,fixture=fixture)
         return StreamingResponse(job.stream(),media_type='text/event-stream',headers={'Cache-Control':'no-cache','X-Accel-Buffering':'no'})

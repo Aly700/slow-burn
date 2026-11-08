@@ -1,7 +1,5 @@
 """Official MCP stdio server: bounded reads and one capability-gated local write."""
-import json
 import os
-from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
@@ -31,12 +29,8 @@ def make_server(settings=None):
         row = source().get_cve(cve_id)
         fixture = fixture or os.getenv("TRIAGE_FIXTURE")
         if fixture:
-            fixtures = json.loads((Path(__file__).resolve().parents[2] / "evals/injections.json").read_text())
-            attack = next((f for f in fixtures if f["id"] == fixture), None)
-            if attack is None:
-                raise ValueError("unknown injection fixture")
-            row["description"] = attack["description"]
-            row["fixture"] = attack["id"]
+            from .attacks import apply_fixture
+            row=apply_fixture(row,fixture)
         return row
 
     @server.tool(annotations=read)
