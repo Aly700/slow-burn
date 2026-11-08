@@ -1,5 +1,5 @@
 {
-  "inputHash": "b0bca3cef5223a185b375266edcab661edbddbe434369db33827117a140beac3",
+  "inputHash": "0223f0bd48539ef362b47f4a58fc6b60db8099ffe90ff12bce588caad4321a01",
   "rows": 72987,
   "benchmark": 72670,
   "picks": 500,
@@ -30,26 +30,26 @@
       "height": 1648
     },
     "phone-1x.avif": {
-      "bytes": 23981,
-      "sha256": "9b07be79c0264827ffdaee8fbff9331a8ccb24a38b76b386dd9241a0fe871756",
+      "bytes": 18886,
+      "sha256": "ec9fd8a72aeaa380a4c1962d1c14adebbd3cbdad82d802554ff64dc6aeda74ac",
       "width": 390,
       "height": 784
     },
     "phone-1x.webp": {
-      "bytes": 26442,
-      "sha256": "288d8bc097b5bf2b5d64854d89319a96711d856cbbf1612013747a9990caf825",
+      "bytes": 20612,
+      "sha256": "7d04d55e160c767f777e0fee8e13f177d2597acecea14dfad5f7e3eb161c13d3",
       "width": 390,
       "height": 784
     },
     "phone-2x.avif": {
-      "bytes": 62582,
-      "sha256": "4df7c98ab14264bb34d98934abda3bf2f858c1a743095b10264bf72963fc283c",
+      "bytes": 47257,
+      "sha256": "03e15bee0a55a0c432107271377c091d856b0bf4753db6d0abdbd88b1b4222bd",
       "width": 780,
       "height": 1568
     },
     "phone-2x.webp": {
-      "bytes": 70552,
-      "sha256": "6dfc834c6359859c30e5570f4821f32175fad0b08bc9ef2ec0dce1759412d58e",
+      "bytes": 53780,
+      "sha256": "df3e786a2fb92060a6f69eff10210790fff351b746fd27023f528ddae3022ac4",
       "width": 780,
       "height": 1568
     }
