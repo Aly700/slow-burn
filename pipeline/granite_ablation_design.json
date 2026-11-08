@@ -1,0 +1,12 @@
+{
+  "model": "tiered_lightgbm_description",
+  "remove": "description embeddings and their training-only PCA; retain every other feature",
+  "seeds": [2026, 2027, 2028, 2029, 2030],
+  "budgets": [50, 100, 250, 500],
+  "splits": ["2024_to_2025", "forward_2025_h2"],
+  "primary_seed": 2026,
+  "reference_predictions": "artifacts/cache/backtest_predictions.parquet",
+  "ranking": "public exploit tier first; probability descending within tier; CVE ID ascending for ties",
+  "selection": "none; no changes to parameters, features other than embeddings, seeds, splits or submission after results",
+  "interpretation": "post-event matched ablation on development data, not an untouched holdout; seed range is fitting variability, not a confidence interval"
+}
