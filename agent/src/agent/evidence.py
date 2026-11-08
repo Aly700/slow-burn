@@ -34,6 +34,10 @@ def verify(claims, calls):
                     equal = canonical(actual) == canonical(ref["value"])
                     if "quote" in ref:
                         equal &= isinstance(actual, str) and isinstance(ref["quote"], str) and bool(ref["quote"]) and ref["quote"] in actual
+                    if 'display_quote' in ref or 'normalization' in ref:
+                        from .text_policy import normalize_text,NORMALIZATION
+                        equal &= (ref.get('normalization')==NORMALIZATION and isinstance(ref.get('quote'),str)
+                                  and isinstance(ref.get('display_quote'),str) and ref['display_quote']==normalize_text(ref['quote']))
                     match |= equal
                 except (KeyError, IndexError, ValueError, TypeError):
                     pass

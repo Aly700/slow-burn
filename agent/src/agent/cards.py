@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from .evidence import resolve
-from .narrative import describe, description_ref, vendor_display_name
+from .narrative import describe, description_ref, vendor_display_name, product_ref
+from .safety import scan_text
 
 # These fixed templates remain the archived reasons-only comparison's prose.
 ACTIONS = {
@@ -32,7 +33,8 @@ def evidence_cards(calls):
         if name == 'get_cve':
             profile = describe(out)
             if profile['product']:
-                add(f"Affected product or component named in the supplied description: {profile['product']['text']}.", category='product', refs=[description_ref(call,profile['product'])])
+                label='Affected product listed in the supplied product metadata' if 'field' in profile['product'] else 'Affected product or component named in the supplied description'
+                add(f"{label}: {profile['product']['text']}.", category='product', refs=[product_ref(call,profile['product'])])
             if profile['service_class']:
                 s = profile['service_class']
                 article = 'an' if s['label'][0].lower() in 'aeiou' else 'a'
@@ -78,4 +80,4 @@ def evidence_cards(calls):
                 first,last = out['months'][0],out['months'][-1]
                 if first['epss'] is not None and last['epss'] is not None:
                     add(f"EPSS estimated {percent(first['epss'])} at the end of {month_label(first['month'])} and {percent(last['epss'])} at the end of {month_label(last['month'])}; the March 2025 model change limits comparisons across that date.", ['months.0.month','months.0.epss',f"months.{len(out['months'])-1}.month",f"months.{len(out['months'])-1}.epss",'warnings.1'], 'timeline')
-    return cards
+    return [card for card in cards if not scan_text(card['text'])]

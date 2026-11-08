@@ -2,6 +2,7 @@
 import re
 
 from .safety import scan_text
+from .text_policy import normalize_text, NORMALIZATION
 
 CLASSES = [
     ('VPN', r'\b(?:VPN|virtual private network)\b'),
@@ -37,12 +38,13 @@ def noun_phrase(description):
     if not description or scan_text(description):
         return None
     pattern = r'\b(?P<subject>(?:the|an?)\s+[\w-]+(?:\s+[\w-]+){0,4}?\s+(?:flow|component|endpoint|service|server|interface|module|plugin|controller|mode|workflow))\b'
-    match = re.search(pattern, description, re.I)
+    match = re.search(pattern, first_sentence(description), re.I)
     return excerpt(description, *match.span('subject')) if match else None
 
 
 def excerpt(text, start, end):
-    return {'text': text[start:end].strip(), 'start': start, 'end': end}
+    raw=text[start:end].strip()
+    return {'text': normalize_text(raw), 'raw_quote':raw, 'start': start, 'end': end}
 
 
 def sentences(text):
@@ -50,11 +52,18 @@ def sentences(text):
     return [excerpt(text, a, b) for a, b in zip(boundaries, boundaries[1:]) if text[a:b].strip()]
 
 
+def first_sentence(text):
+    boundary=re.search(r'[!?。！？]|(?<!\d)\.(?=\s|[A-Z])|(?<=\d)\.(?!\d)',text)
+    return text[:boundary.end()] if boundary else text
+
+
 def describe(row):
     text = row.get('description') or ''
     result = {'product': None, 'service_class': None, 'impact': None, 'patch': None, 'endpoint': None, 'quarantined': bool(scan_text(text))}
     if result['quarantined']:
         return result
+    parts=sentences(text)
+    first=first_sentence(text)
     patterns = [
         r'^In the (?P<product>Linux kernel),',
         r'^(?:In\s+)?(?P<product>[A-Z][A-Za-z0-9() /+_-]{1,65}?)\s+(?:is|are)\s+affected\b',
@@ -67,7 +76,7 @@ def describe(row):
         r'device models[^:]*:\s*(?P<product>[^.]+)',
     ]
     for pattern in patterns:
-        m = re.search(pattern, text)
+        m = re.search(pattern, first)
         if m and len(m.group('product').split()) <= 9:
             a0, b0 = m.span('product')
             tail = re.search(r'(?:\s+(?:v?\d[\w.]*|before|through|and|earlier|version|versions|affecting|all))+$', text[a0:b0])
@@ -81,11 +90,16 @@ def describe(row):
     if not result['product']:
         for item in row.get('products', []):
             name = item['product'].replace('_', ' ')
-            m = re.search(r'\b' + re.escape(name) + r'\b', text, re.I)
+            m = re.search(r'\b' + re.escape(name) + r'\b', first, re.I)
             if m:
                 result['product'] = excerpt(text, *m.span())
                 break
-    parts = sentences(text)
+    if not result['product']:
+        for i,item in enumerate(row.get('products', [])):
+            name=item.get('product','')
+            if re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_ .+()/-]{0,75}',name) and not scan_text(name):
+                result['product']={'text':name.replace('_',' '),'field':f'products.{i}.product','value':name}
+                break
     for label, pattern in CLASSES:
         m = re.search(pattern, text, re.I)
         if m and not re.search(r'\b(?:not|no|without)\s+(?:an?\s+)?$', text[max(0,m.start()-25):m.start()], re.I):
@@ -108,19 +122,28 @@ def describe(row):
 
 
 def description_ref(call, span):
-    return {'tool': 'get_cve', 'field': 'description', 'value': call['output']['description'], 'call_id': call['call_id'], 'quote': span['text']}
+    raw=span.get('raw_quote',span['text'])
+    ref={'tool': 'get_cve', 'field': 'description', 'value': call['output']['description'], 'call_id': call['call_id'], 'quote':raw}
+    if raw!=span['text']: ref.update(display_quote=span['text'],normalization=NORMALIZATION)
+    return ref
+
+
+def product_ref(call,span):
+    if 'field' in span:
+        return {'tool':'get_cve','call_id':call['call_id'],'field':span['field'],'value':span['value']}
+    return description_ref(call,span)
 
 
 def briefing_options(call, decision, vendor_call=None):
     row = call['output']
     profile = describe(row)
     product = profile['product']['text'] if profile['product'] else row['cve_id']
-    anchor = [description_ref(call, profile['product'])] if profile['product'] else [{'tool':'get_cve','field':'cve_id','value':row['cve_id'],'call_id':call['call_id']}]
+    anchor = [product_ref(call, profile['product'])] if profile['product'] else [{'tool':'get_cve','field':'cve_id','value':row['cve_id'],'call_id':call['call_id']}]
     target = f"the affected {product} endpoint" if profile['product'] else f"the service affected by {product}"
     if not profile['product']:
         vendor = vendor_call['output'].get('vendor') if vendor_call else None
         phrase = noun_phrase(row.get('description'))
-        if isinstance(vendor, str) and vendor.strip():
+        if isinstance(vendor, str) and vendor.strip() and len(vendor)<=100 and not scan_text(vendor):
             product = vendor_display_name(vendor, row.get('description') or '')
             anchor = [{'tool':'vendor_history','field':'vendor','value':vendor,'call_id':vendor_call['call_id']}]
             target = f'the affected {product} service'
@@ -137,28 +160,17 @@ def briefing_options(call, decision, vendor_call=None):
     if decision['verdict'] != 'fix_now':
         intent = 'Check exposure and plan remediation' if decision['verdict'] == 'watch' else 'Review exposure and routine remediation'
         headings = [{'id':'product', 'text':f'{intent} for {product}.', 'evidence':anchor}]
-        if profile['patch']:
-            actions = [{'id':'plan_fix', 'text':f'Check the installed version and exposure of {target}, then plan the applicable vendor fix: “{profile["patch"]["text"]}” {timing}',
-                        'evidence':anchor+[description_ref(call,profile['patch'])]}]
-        else:
-            endpoint = profile['endpoint']
-            refs = anchor + ([description_ref(call,endpoint)] if endpoint else [])
-            endpoint_text = f' ({endpoint["text"]})' if endpoint else ''
-            actions = [{'id':'check_exposure', 'text':f'Check inventory and exposure for {target}{endpoint_text}; confirm the vendor-supported remediation and plan it for the {decision["review_window"]}.', 'evidence':refs}]
+        endpoint = profile['endpoint']
+        refs = anchor + ([description_ref(call,endpoint)] if endpoint else [])
+        endpoint_text = f' ({endpoint["text"]})' if endpoint else ''
+        actions = [{'id':'check_exposure', 'text':f'Check inventory and exposure for {target}{endpoint_text}; confirm the vendor-supported remediation and plan it for the {decision["review_window"]}.', 'evidence':refs}]
         return {'headlines':headings, 'actions':actions, 'profile':profile}
     actions = []
-    if profile['patch']:
-        patch = profile['patch']['text']
-        refs = anchor + [description_ref(call, profile['patch'])]
-        version_target = f'{product} version' if profile['product'] else f'version of {target}'
-        actions.append({'id':'apply_fix', 'text':f'Confirm the installed {version_target} and apply the appropriate vendor fix described in the supplied record: “{patch}” {timing}', 'evidence':refs})
-        actions.append({'id':'restrict_then_fix', 'text':f'If internet-exposed, restrict access to {target} while validating the applicable fix: “{patch}” {timing}', 'evidence':refs})
-    else:
-        refs = list(anchor)
-        endpoint = profile['endpoint']
-        endpoint_text = f" ({endpoint['text']})" if endpoint else ''
-        if endpoint:
-            refs.append(description_ref(call, endpoint))
-        actions.append({'id':'isolate_service', 'text':f'Locate {target}{endpoint_text} in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. {timing}', 'evidence':refs})
-        actions.append({'id':'restrict_access', 'text':f'Restrict access to {target}{endpoint_text} to trusted operators and test the access control; confirm the vendor mitigation before restoring exposure. {timing}', 'evidence':refs})
+    refs = list(anchor)
+    endpoint = profile['endpoint']
+    endpoint_text = f" ({endpoint['text']})" if endpoint else ''
+    if endpoint:
+        refs.append(description_ref(call, endpoint))
+    actions.append({'id':'isolate_service', 'text':f'Locate {target}{endpoint_text} in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. {timing}', 'evidence':refs})
+    actions.append({'id':'restrict_access', 'text':f'Restrict access to {target}{endpoint_text} to trusted operators and test the access control; confirm the vendor mitigation before restoring exposure. {timing}', 'evidence':refs})
     return {'headlines': headings, 'actions': actions, 'profile': profile}

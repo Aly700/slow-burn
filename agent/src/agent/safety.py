@@ -1,4 +1,5 @@
 import re
+from .text_policy import matching_text,narrative_risks
 
 PATTERNS = [
     r"ignore\s+(?:all\s+|your\s+|previous\s+)*(?:instructions|rules|prompts)",
@@ -17,6 +18,12 @@ def scan_text(text: str) -> list[dict]:
     for pattern in PATTERNS:
         for m in re.finditer(pattern, text, flags=re.I):
             spans.append({"start": m.start(), "end": m.end(), "text": m.group(), "rule": pattern})
+    normalized=matching_text(text)
+    normalized_match=normalized!=text and any(re.search(p,normalized,re.I) for p in PATTERNS)
+    reasons=narrative_risks(text)
+    if normalized_match: reasons.append('instruction visible after Unicode normalization')
+    if reasons:
+        spans.append({'start':0,'end':len(text),'text':text,'rule':'; '.join(reasons)})
     return sorted(spans, key=lambda s: s["start"])
 
 
@@ -35,7 +42,10 @@ def scan_payload(value, path=""):
 
 def sanitized(value):
     if isinstance(value, str):
-        for span in reversed(scan_text(value)):
+        spans=scan_text(value)
+        if any(s['start']==0 and s['end']==len(value) for s in spans):
+            return '[untrusted narrative withheld]'
+        for span in reversed(spans):
             value = value[:span["start"]] + "[untrusted instruction removed]" + value[span["end"]:]
         return value
     if isinstance(value, dict):
