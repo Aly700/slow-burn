@@ -76,7 +76,7 @@ def run():
                   '- Everything, with replay last: `uv run python -I pipeline/run.py --all`.',
                   '- Temporal and artifact gates: `uv run python -I pipeline/checks.py --artifacts`.',
                   '- This report: `uv run python -I pipeline/capability_report.py`.', '',
-                  'The browser decoder, byte order, flags, sparse IDs and coordinate scaling are documented in `research/CONTRACTS.md`. A local preview is in `artifacts/cache/map_preview.png`. No cache or preview is committed.', '',
+                  'The browser decoder, byte order, flags, sparse IDs and coordinate scaling are implemented in `web/src/graniteMap.ts`. A local preview is in `artifacts/cache/map_preview.png`. No cache or preview is committed.', '',
                   f"Product CSV SHA-256: `{product['artifact_sha256']}`.", '', f"Map SHA-256: `{space['artifact_sha256']}`.", ''])
     path = ROOT / '.lane' / 'model-REPORT-4.md'
     path.parent.mkdir(exist_ok=True)

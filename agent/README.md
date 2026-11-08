@@ -40,7 +40,7 @@ TRIAGE_OFFLINE_AUDIT=1 PYTHONPATH="$PWD/agent/evals/offline_check" uv run --proj
 uv run --project agent python agent/evals/live_benchmark.py --approve-demo-ticket
 ```
 
-The benchmark uses the already running service, never another instruct model. Its explicit demo flag approves one local ticket and checks wrong-hash rejection and idempotent retry. Results are in `agent/evals/live_metrics.json`. The stream contract, including fixture-mode examples, is in `research/CONTRACTS.md`.
+The benchmark uses the already running service, never another instruct model. Its explicit demo flag approves one local ticket and checks wrong-hash rejection and idempotent retry. Results are in `agent/evals/live_metrics.json`.
 
 - `POST /runs` with `{"cve_id":"CVE-2026-8037"}` returns HTTP 202 and the durable run, initially `RECEIVED`.
 - `GET /runs/{run_id}` returns the run, briefing hash, verifier result, injection flags and policy state.

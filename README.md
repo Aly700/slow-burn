@@ -58,7 +58,7 @@ uv run --project agent python -m agent.api
 cd web && npm ci && npm run build && npx vite preview --port 4317 --strictPort
 ```
 
-Each part has its own README with details: [pipeline](pipeline/README.md), [agent](agent/README.md), [web](web/README.md). The artifact contracts between them are in [research/CONTRACTS.md](research/CONTRACTS.md).
+Each part has its own README with details: [pipeline](pipeline/README.md), [agent](agent/README.md), [web](web/README.md).
 
 ## Data
 

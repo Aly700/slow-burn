@@ -85,7 +85,7 @@ def run():
     lines.extend(['## IBM technology', '', *card['ibm_technology'], '',
                   f"Role in the selected model: {card['ibm_in_selected_model']}.", '',
                   '## Reproduction and handoff', '',
-                  '`uv run python -I pipeline/run.py --all` regenerates all five contract artifacts; `uv run python -I pipeline/checks.py --artifacts` validates temporal invariants, row counts, score ranges, reasons and column order. `uv run python -I pipeline/report.py` writes this report. See `pipeline/README.md` and `research/model-research.md` for provenance and method decisions.', '',
+                  '`uv run python -I pipeline/run.py --all` regenerates all five contract artifacts; `uv run python -I pipeline/checks.py --artifacts` validates temporal invariants, row counts, score ranges, reasons and column order. `uv run python -I pipeline/report.py` writes this report. See `pipeline/README.md` for provenance and method decisions.', '',
                   '## Next work', '',
                   'Obtain authenticated publication-time descriptions and CNA score versions, then re-evaluate semantic features. Acquire additional historical years with matching signals and labels to reserve a truly untouched temporal test. Model delayed catalog inclusion with explicit survival/censoring methods, validate calibration at fixed horizons, and incorporate asset exposure before operational patch decisions. Do not obtain 2026 outcomes before submission.', ''])
     path = ROOT / 'artifacts' / 'cache' / 'model-report.md'
