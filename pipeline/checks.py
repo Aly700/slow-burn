@@ -345,8 +345,10 @@ def historical_checks():
 
 if __name__ == '__main__':
     from pipeline import capability_checks
+    from pipeline.tests import test_race
     suite = unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(TemporalChecks),
-                               unittest.defaultTestLoader.loadTestsFromModule(capability_checks)])
+                               unittest.defaultTestLoader.loadTestsFromModule(capability_checks),
+                               unittest.defaultTestLoader.loadTestsFromModule(test_race)])
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     if not result.wasSuccessful():
         raise SystemExit(1)
