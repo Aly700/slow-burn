@@ -31,7 +31,7 @@ main .replay-intro h2 { font: 400 var(--type-heading)/1.15 var(--sans); letter-s
   .ash-top, .ash-bottom { left: 22px; right: 22px; }
   .ash-top { top: 24px; display: grid; gap: 4px; font-size: var(--type-label); }
   .ash-top > span:last-child { color: var(--muted); }
-  .ash-field::after { background: linear-gradient(0deg, var(--bg) 12%, var(--bg) 52%, var(--clear) 78%); }
+  .ash-field::after { background: linear-gradient(180deg, var(--bg), var(--clear) 25%), linear-gradient(0deg, var(--bg) 12%, var(--bg) 52%, var(--clear) 78%); }
   .ash-copy { left: 22px; right: 22px; top: auto; bottom: 134px; width: auto; }
   .ash-copy h1 { font-size: 42px; line-height: 1.07; letter-spacing: -.035em; }
   .ash-copy > p { font-size: var(--type-base); margin-top: 20px; line-height: 1.5; max-width: 340px; }

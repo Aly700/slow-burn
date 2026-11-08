@@ -15,7 +15,9 @@ export function AshHero() {
     if (reduced.matches) return;
     const controller = new AbortController();
     let observer: ResizeObserver | undefined;
+    let resizing = 0;
     const timer = window.setTimeout(async () => {
+      if (reduced.matches || controller.signal.aborted) return;
       try {
         const response = await fetch(`${import.meta.env.BASE_URL}data/map_2026.json`, { signal: controller.signal });
         if (!response.ok) return;
@@ -30,10 +32,14 @@ export function AshHero() {
           node.getContext('2d')?.putImageData(new ImageData(pixels, node.width, node.height), 0, 0);
           node.dataset.points = String(map.n); node.classList.add('is-ready');
         };
-        observer = new ResizeObserver(draw); observer.observe(host); draw();
+        observer = new ResizeObserver(() => {
+          clearTimeout(resizing);
+          resizing = window.setTimeout(draw, 100);
+        });
+        observer.observe(host); draw();
       } catch { /* The complete static field remains available if enhancement fails. */ }
     }, 1800);
-    return () => { clearTimeout(timer); controller.abort(); observer?.disconnect(); };
+    return () => { clearTimeout(timer); clearTimeout(resizing); controller.abort(); observer?.disconnect(); };
   }, []);
   const base = `${import.meta.env.BASE_URL}hero/`;
   return <section id="overview" className="ash-hero" aria-labelledby="ash-title" onPointerMove={event => {

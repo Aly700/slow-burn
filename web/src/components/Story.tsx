@@ -264,7 +264,6 @@ export function Methods({ data }: { data: Data }) {
       <SectionHeading
         index="08" label="Methods"
         title="Methods and limits"
-        detail="Reproducible decisions · explicit limits"
       />
       <AttackResults evaluation={data.redteam_eval} reading />
       <ReadingDetails label="Model, features and exclusions">

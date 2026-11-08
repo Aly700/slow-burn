@@ -145,6 +145,7 @@ export default function App() {
               key={id}
               className={
                 active === id ||
+                (id === "overview" && active === "backtest") ||
                 (id === "timing" && ["signals", "discovery", "granite-map"].includes(active))
                   ? "active"
                   : ""
