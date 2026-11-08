@@ -1,3 +1,4 @@
+import { graniteMapLine } from "./GraniteAblation";
 import { ReadingDetails } from "./ReadingDetails";
 import { SectionHeading } from "./SectionHeading";
 import { readCanvasTheme } from "../theme";
@@ -825,6 +826,7 @@ export function GraniteMap({
           </div>
         )}
       </div>
+      {!appendix && data.granite_ablation_2025 && <p className="granite-result">{graniteMapLine(data.granite_ablation_2025)} <a href="#granite-ablation">Compare budgets</a></p>}
       {!appendix && <p className="caption reading-caution">Map distance shows description similarity; it does not estimate risk.</p>}
       {!appendix && <ReadingDetails label="About this view">{guidance}</ReadingDetails>}
       <ReadingDetails label="Explore a region" collapsed={!appendix}>

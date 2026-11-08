@@ -33,11 +33,13 @@ const artifacts = {};
 for (const name of await files(source)) {
   if (!name.endsWith(".json")) continue;
   const value = await json(path.join(source, name));
-  if (name !== "map_2026.json") artifacts[name.slice(0, -5)] = value;
+  if (!["map_2026.json", "software_index_2026.json"].includes(name)) artifacts[name.slice(0, -5)] = value;
   await writeFile(path.join(dest, name), JSON.stringify(value));
 }
 // Large review and map files stay outside the initial page bundle.
 const lazy = {};
+if ((await files(source)).includes("software_index_2026.json"))
+  lazy.software_index = { file: "software_index_2026.json" };
 if ((await files(source)).includes("map_2026.json"))
   lazy.map = { file: "map_2026.json" };
 try {

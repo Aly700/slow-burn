@@ -7,6 +7,7 @@ import { QueueRow } from "./QueueRow";
 import { ProductWatch } from "./ProductWatch";
 import { decodeWatch, filterWatch } from "../productWatch";
 import type { ProductWatchRow } from "../productWatch";
+import { SoftwareMatcher } from "./SoftwareMatcher";
 import { StackFilter } from "./StackFilter";
 import { loadStack, matchesStack, saveStack } from "../stack";
 import type { StackChoice } from "../stack";
@@ -175,6 +176,7 @@ export function Queue({
         </div>
       </div>
       <StackFilter
+        inventoryInput={<SoftwareMatcher data={data} />}
         scores={scores}
         reviewIdentities={data.lazy?.product_watch?.identities}
         secondaryList={watchFile ? <ProductWatch rows={watchRows} choices={stack.length} loading={watchLoading || (needsWatch && !watch && !watchError)} error={watchError} retry={() => setWatchAttempt(value => value + 1)} loose={loose} onLoose={setLoose} study={data.findings?.blind_spot} /> : undefined}

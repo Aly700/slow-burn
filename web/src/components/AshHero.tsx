@@ -1,11 +1,13 @@
 import { useEffect, useRef } from 'react';
+import type { Data } from '../types';
+import { smallBudgetLine } from './GraniteAblation';
 import { decodeMap } from '../graniteMap';
 import { renderField } from '../heroField';
 import type { RGB } from '../heroField';
 import { readCanvasTheme } from '../theme';
 import '../ashHero.css';
 
-export function AshHero() {
+export function AshHero({data}: {data: Data}) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const field = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -65,6 +67,7 @@ export function AshHero() {
     <div className="ash-copy">
       <h1 id="ash-title">Ranking vulnerabilities by likelihood of exploitation</h1>
       <p>In 2025, Slow Burn's top 500 held <strong>22 of the 55</strong> later-exploited CVEs, against 5 for CVSS and 10 for EPSS.</p>
+      <p className="small-budget">{smallBudgetLine(data.granite_ablation_2025) || "2025 budget comparison loading."}</p>
       <a className="ash-explore" href="#granite-map">Explore the description map <span aria-hidden="true">↗</span></a>
     </div>
     <div className="ash-bottom">
