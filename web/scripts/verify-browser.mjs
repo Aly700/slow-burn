@@ -433,41 +433,122 @@ try {
     },
   );
   await check(
-    "attack results follow the supplied measurements and retain all family names",
+    "held-out attack results lead, with tuned comparisons and all-run boundary counts",
     async (page) => {
-      const changed = {
+      const clean = [
+        { cve_id: "clean-a", detected: false },
+        { cve_id: "clean-b", detected: false },
+      ];
+      const set = {
         cases: 13,
         groups: { direct: 7, source_laundering: 6 },
-        tickets_filed_without_approval: 2,
-        verdict_changes: 3,
-        injected_content_survived_runs: 4,
+        tickets_filed_without_approval: 0,
+        verdict_changes: 0,
+        injected_content_survived_runs: 0,
+        clean_descriptions: 2,
+        false_positives: 0,
+        clean_detector_results: clean,
+      };
+      const changed = {
+        ...set,
+        cases: 999,
+        injected_content_survived_runs: 888,
+        before: {
+          ...set,
+          injected_content_survived_runs: 3,
+          tickets_filed_without_approval: 2,
+        },
+        development: { ...set, verdict_changes: 3 },
+        held_out: {
+          ...set,
+          cases: 5,
+          injected_content_survived_runs: 2,
+          groups: { dialogue_transcript: 3, document_markup: 2 },
+        },
       };
       await load(page, { ...bundle, redteam_eval: changed });
+      const methods = page.locator("#methods .attack-results");
       assert.deepEqual(
-        await page.locator("#methods .attack-suite strong").allTextContents(),
-        ["13", "2"],
+        await methods.locator(".attack-suite strong").allTextContents(),
+        ["18"],
       );
       assert.deepEqual(
-        await page
-          .locator("#methods .attack-boundaries strong")
-          .allTextContents(),
-        ["2", "3"],
+        await methods.locator(".attack-boundaries strong").allTextContents(),
+        ["2", "3", "0"],
       );
       assert.deepEqual(
-        await page.locator("#methods .attack-families span").allTextContents(),
-        ["direct", "source laundering"],
+        await methods.locator(".attack-families span").allTextContents(),
+        [
+          "dialogue transcript",
+          "document markup",
+          "direct",
+          "source laundering",
+        ],
+      );
+      assert.match(
+        await methods.locator(".attack-survival").textContent(),
+        /2.*of 5/,
+      );
+      assert.match(
+        await methods.locator(".attack-comparison").textContent(),
+        /Before the fix.*3.*of 13.*After the fix.*0.*of 13.*tuned on these/,
       );
       await present(page, 6);
       assert.match(
         await page.locator(".presentation .attack-survival").textContent(),
-        /4.*13/,
+        /2.*of 5/,
       );
       assert.deepEqual(
         await page
           .locator(".presentation .attack-boundaries strong")
           .allTextContents(),
-        ["2", "3"],
+        ["2", "3", "0"],
       );
+      assert.match(
+        await page.locator(".presentation .attack-reason").innerText(),
+        /person approves/,
+      );
+    },
+  );
+  await check(
+    "missing attack sections remain pending and never substitute the root development result",
+    async (page) => {
+      for (const missing of ["held_out", "before", "development"]) {
+        await page.unroute("**/data/bundle.json");
+        await load(page, {
+          ...bundle,
+          redteam_eval: { ...bundle.redteam_eval, [missing]: null },
+        });
+        assert.deepEqual(
+          await page
+            .locator("#methods .attack-boundaries strong")
+            .allTextContents(),
+          ["pending", "pending", "pending"],
+        );
+        await present(page, 6);
+        if (missing === "held_out") {
+          assert.match(
+            await page.locator(".presentation .attack-survival").innerText(),
+            /pending.*of pending/s,
+          );
+          assert.match(
+            await page
+              .locator(".presentation .attack-heldout-note")
+              .innerText(),
+            /pending/,
+          );
+        } else {
+          assert.match(
+            await page.locator(".presentation .attack-comparison").innerText(),
+            /pending.*of pending/s,
+          );
+          assert.match(
+            await page.locator(".presentation .attack-survival").innerText(),
+            /4.*of 32/s,
+          );
+        }
+        await page.keyboard.press("Escape");
+      }
     },
   );
   if (process.env.LIVE_APPROVAL === "1")
