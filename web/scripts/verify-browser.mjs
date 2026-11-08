@@ -432,6 +432,44 @@ try {
       );
     },
   );
+  await check(
+    "attack results follow the supplied measurements and retain all family names",
+    async (page) => {
+      const changed = {
+        cases: 13,
+        groups: { direct: 7, source_laundering: 6 },
+        tickets_filed_without_approval: 2,
+        verdict_changes: 3,
+        injected_content_survived_runs: 4,
+      };
+      await load(page, { ...bundle, redteam_eval: changed });
+      assert.deepEqual(
+        await page.locator("#methods .attack-suite strong").allTextContents(),
+        ["13", "2"],
+      );
+      assert.deepEqual(
+        await page
+          .locator("#methods .attack-boundaries strong")
+          .allTextContents(),
+        ["2", "3"],
+      );
+      assert.deepEqual(
+        await page.locator("#methods .attack-families span").allTextContents(),
+        ["direct", "source laundering"],
+      );
+      await present(page, 6);
+      assert.match(
+        await page.locator(".presentation .attack-survival").textContent(),
+        /4.*13/,
+      );
+      assert.deepEqual(
+        await page
+          .locator(".presentation .attack-boundaries strong")
+          .allTextContents(),
+        ["2", "3"],
+      );
+    },
+  );
   if (process.env.LIVE_APPROVAL === "1")
     await check(
       "real API approval and rejection with durable local ticket",

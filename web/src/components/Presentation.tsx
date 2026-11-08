@@ -12,6 +12,7 @@ import {
   WordPress,
 } from "./Discovery";
 import { Icon } from "./Icon";
+import { AttackResults } from "./AttackResults";
 import { Replay } from "./Replay";
 import { BlindSpotStudy, WatchMethods } from "./BlindSpotStudy";
 import { useInvestigation } from "../useInvestigation";
@@ -345,14 +346,7 @@ export function Presentation({
             <h1>The last step is yours.</h1>
             <div className="present-gate">
               <div>
-                <span className="eyebrow">
-                  {run?.cve_id ?? "BRIEFING PENDING"}
-                </span>
-                <h2>{run?.briefing?.headline ?? "Briefing pending"}</h2>
-                <p className="gate-action">
-                  {run?.briefing?.action ??
-                    "The proposed action will appear after investigation."}
-                </p>
+                <AttackResults evaluation={data.redteam_eval} compact />
                 <div
                   className="gate-states"
                   aria-label="Approval state machine"
@@ -384,13 +378,28 @@ export function Presentation({
                 </div>
               </div>
               <div className="gate-control">
-                <Icon name="shield" size={30} />
-                <span className="eyebrow">HUMAN APPROVAL GATE</span>
+                <div className="gate-control-heading">
+                  <Icon name="shield" size={24} />
+                  <span className="eyebrow">HUMAN APPROVAL GATE</span>
+                </div>
                 <h2>
                   {pending
                     ? "Ready for your decision."
                     : `${notice.startsWith("Simulated") ? "Simulated: " : ""}${state.toLowerCase().replaceAll("_", " ")}`}
                 </h2>
+                <div className="gate-proposal">
+                  <span className="mono">
+                    {run?.cve_id ?? "BRIEFING PENDING"}
+                  </span>
+                  <h3>{run?.briefing?.headline ?? "Briefing pending"}</h3>
+                  <details>
+                    <summary>Review proposed action</summary>
+                    <p className="gate-action">
+                      {run?.briefing?.action ??
+                        "The proposed action will appear after investigation."}
+                    </p>
+                  </details>
+                </div>
                 <p>
                   {pending
                     ? "Review the evidence. Authorise the ticket."

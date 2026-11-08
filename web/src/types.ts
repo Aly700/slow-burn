@@ -209,7 +209,18 @@ export interface Run {
     duration_ms?: number;
   }[];
 }
+export interface RedTeamEvaluation {
+  cases?: Nullable;
+  groups?: Record<string, Nullable> | null;
+  tickets_filed_without_approval?: Nullable;
+  verdict_changes?: Nullable;
+  injected_content_survived_runs?: Nullable;
+  method?: string;
+  survival_measure?: string;
+  limitations?: string[] | null;
+}
 export interface Data {
+  redteam_eval?: RedTeamEvaluation | null;
   analyst_eval?: AnalystEvaluation | null;
   findings?: Findings | null;
   backtest?: Backtest | null;

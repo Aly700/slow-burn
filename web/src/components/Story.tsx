@@ -1,3 +1,4 @@
+import { AttackResults } from "./AttackResults";
 import type { Data, Findings } from "../types";
 import { list, number, percent } from "../lib";
 import { Replay } from "./Replay";
@@ -391,6 +392,7 @@ export function Methods({ data }: { data: Data }) {
           </p>
         </div>
       </div>
+      <AttackResults evaluation={data.redteam_eval} />
       <div className="method-footnote">
         <Icon name="shield" size={17} />
         <p>
