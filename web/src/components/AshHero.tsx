@@ -64,7 +64,7 @@ export function AshHero() {
     <p className="sr-only">The field shows description similarity, with 500 ranking picks and 317 past-exploited CVEs marked. The 2026 benchmark result is pending judging.</p>
     <div className="ash-copy">
       <h1 id="ash-title">Ranking vulnerabilities by likelihood of exploitation</h1>
-      <p>In 2025, our top 500 held <strong>22 of the 55</strong> later-exploited CVEs, against 5 for CVSS and 10 for EPSS.</p>
+      <p>In 2025, Slow Burn's top 500 held <strong>22 of the 55</strong> later-exploited CVEs, against 5 for CVSS and 10 for EPSS.</p>
       <a className="ash-explore" href="#granite-map">Explore the description map <span aria-hidden="true">↗</span></a>
     </div>
     <div className="ash-bottom">

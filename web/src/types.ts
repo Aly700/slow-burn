@@ -1,3 +1,4 @@
+import type { RaceData } from "./race";
 export type Nullable = number | null;
 export interface Reason {
   feature?: string;
@@ -194,7 +195,7 @@ export interface Run {
     claims?: {
       id: string;
       text?: string;
-      evidence?: { tool: string; field: string; value: unknown }[];
+      evidence?: { tool: string; field: string; value: unknown; quote?: string }[];
       verified?: boolean;
     }[];
     action?: string;
@@ -257,6 +258,7 @@ export interface Data {
   runs?: Run[];
   agent_eval?: AgentEval | null;
   replay_2025?: ReplayData | null;
+  race_2025?: RaceData | null;
   live_examples?: LiveRecording[];
   verifier_example?: Run | null;
   meta?: {

@@ -83,6 +83,10 @@ test("sync handles absent inputs, then replaces fixtures with recorded runs with
       path.join(root, "artifacts/replay_2025.json"),
       JSON.stringify({ start: "2025-01-01", end: "2025-12-31", methods: [] }),
     );
+    await writeFile(
+      path.join(root, "artifacts/race_2025.json"),
+      JSON.stringify({ schema_version: 1, capacities: [{ capacity: 42 }] }),
+    );
     await mkdir(path.join(root, "agent/evals"), { recursive: true });
     await writeFile(
       path.join(root, "agent/evals/analyst_eval.json"),
@@ -103,6 +107,8 @@ test("sync handles absent inputs, then replaces fixtures with recorded runs with
     assert.equal(watch.rows[0][7], null);
     assert.equal(result.analyst_eval.results[0].question, "Recorded question");
     assert.equal(result.replay_2025.start, "2025-01-01");
+    assert.equal(result.race_2025.capacities[0].capacity, 42);
+    assert.deepEqual(JSON.parse(await readFile(path.join(web, "public/data/race_2025.json"), "utf8")), result.race_2025);
     assert.equal(result.verifier_example.run_id, "verifier-example");
     assert.equal(result.meta.runs_source, "recorded");
     assert.equal(result.meta.score_mode, "probability");

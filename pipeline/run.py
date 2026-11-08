@@ -208,5 +208,7 @@ if __name__ == '__main__':
         subprocess.run([sys.executable, '-I', str(Path(__file__).with_name('space_map.py'))], check=True)
         from pipeline.replay import run as replay
         replay()
+        from pipeline.race import run as race
+        race()
         from pipeline.checks import artifact_checks
         artifact_checks()

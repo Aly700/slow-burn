@@ -45,7 +45,7 @@ export function Timing({ findings }: { findings?: Findings | null }) {
   return (
     <section id="timing" className="story-section timing">
       <SectionHeading
-        index="01" label="Timing"
+        index="02" label="Timing"
         title="When exploited vulnerabilities get listed"
         detail="2025 discovery · time to KEV inclusion"
       />
@@ -135,7 +135,7 @@ export function Timing({ findings }: { findings?: Findings | null }) {
         </div>
       </div>
       <p className="caption reading-caution">KEV inclusion is an observed proxy, not the date of the first attack.</p>
-      <ReadingDetails label="How we measured">
+      <ReadingDetails label="How it was measured">
         <div className="timing-copy">
           <h3>
             Time from publication to listing
@@ -196,7 +196,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
   return (
     <section id="signals" className="story-section signals-section">
       <SectionHeading
-        index="02" label="Signals"
+        index="04" label="Signals"
         title="Signals in the supplied data"
         detail="2025 cohort · association, not causation"
       />
@@ -262,7 +262,7 @@ export function Methods({ data }: { data: Data }) {
   return (
     <section id="methods" className="story-section methods">
       <SectionHeading
-        index="08" label="Methods"
+        index="10" label="Methods"
         title="Methods and limits"
       />
       <AttackResults evaluation={data.redteam_eval} reading />

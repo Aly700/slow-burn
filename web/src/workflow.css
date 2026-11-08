@@ -1,0 +1,53 @@
+main section.workflow-section { padding-block: 48px; }
+main .workflow-steps { display: grid; gap: 32px; }
+main .workflow-step { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 80px; align-items: center; }
+main .workflow-step:nth-child(even) { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+main .workflow-step:nth-child(even) .workflow-copy { grid-column: 2; grid-row: 1; }
+main .workflow-step:nth-child(even) .workflow-card { grid-column: 1; grid-row: 1; }
+main .workflow-copy { max-width: 440px; }
+main .workflow-copy h3 { font-size: var(--type-subhead); font-weight: 400; line-height: 1.2; letter-spacing: -0.02em; margin: 12px 0 16px; text-wrap: balance; }
+main .workflow-copy p { color: var(--muted); font-size: var(--type-base); }
+main .workflow-copy .text-link { display: inline-flex; align-items: center; gap: 12px; margin-top: 20px; padding: 0; min-height: 44px; }
+main .workflow-card { min-width: 0; border: var(--border); border-radius: var(--radius-panel); background: var(--panel); }
+main .workflow-claims, main .workflow-proposal { padding: 24px; }
+main .workflow-claims .briefing-headline { font-size: var(--type-lead); margin-block: 12px 8px; }
+main .workflow-claims .claim:last-child { border-bottom: 0; padding-bottom: 0; }
+main .workflow-claims .claim > div:last-child { min-width: 0; }
+main .workflow-claims .evidence-chip { border: 0; }
+main .workflow-claims .evidence-chip > summary { min-height: 28px; }
+main .workflow-proposal .proposed-action { margin-bottom: 0; }
+main .workflow-approval .approval-footer { padding: 20px 24px; border-radius: 0 0 var(--radius-panel) var(--radius-panel); }
+main .workflow-queue table, main .workflow-queue tbody { display: block; width: 100%; }
+main .workflow-queue thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+main .workflow-queue tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); position: relative; padding: 16px; }
+main .workflow-queue td { display: block; padding: 8px; border: 0; height: auto; }
+main .workflow-queue td:nth-child(2), main .workflow-queue td:nth-child(5) { grid-column: 1 / -1; }
+main .workflow-queue td:nth-child(2) { grid-row: 1; padding-right: 40px; }
+main .workflow-queue .rank, main .workflow-queue .snapshot { grid-row: 2; }
+main .workflow-queue .score-cell { text-align: left; }
+main .workflow-queue td[data-label]::before { content: attr(data-label); display: block; color: var(--muted); font: var(--type-label)/1.5 var(--sans); margin-bottom: 4px; }
+main .workflow-queue td:nth-child(5)::before { content: 'Why it ranks'; display: block; color: var(--muted); font: var(--type-label)/1.5 var(--sans); margin-bottom: 8px; }
+main .workflow-queue .row-action { position: absolute; top: 20px; right: 16px; }
+main .workflow-queue .assigner { max-width: none; white-space: normal; overflow: visible; }
+main .workflow-queue .reason-chips { flex-wrap: wrap; overflow: visible; }
+main .workflow-queue .reason-chips .chip { white-space: normal; max-width: none; }
+main .workflow-queue .cve-button { min-height: 28px; }
+@media (max-width: 700px) {
+  main section.workflow-section { padding-block: 40px; }
+  main .workflow-steps { gap: 40px; }
+  main .workflow-step, main .workflow-step:nth-child(even) { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  main .workflow-step:nth-child(even) .workflow-copy, main .workflow-step:nth-child(even) .workflow-card { grid-column: auto; grid-row: auto; }
+  main .workflow-copy { max-width: none; }
+  main .workflow-copy h3 { max-width: 22ch; }
+  main .workflow-copy .text-link { margin-top: 8px; }
+  main .workflow-claims, main .workflow-proposal { padding: 20px; }
+  main .workflow-claims { padding: 16px; }
+  main .workflow-claims .claim { grid-template-columns: 16px minmax(0, 1fr); gap: 8px; }
+  main .workflow-queue tr { padding: 12px; }
+  main .workflow-queue td { padding: 8px; }
+  main .workflow-queue .product-name { display: inline; }
+  main .workflow-claims .evidence-chip > summary { min-height: 44px; }
+  main .workflow-approval .approval-footer { padding: 20px; }
+  main .workflow-approval .approval-status { flex-wrap: wrap; }
+  main .workflow-approval .approval-status > span { margin-left: 26px; width: 100%; }
+}
