@@ -1,0 +1,1748 @@
+{
+  "clean_cases": 100,
+  "false_positives_before": 0,
+  "false_positives_after": 0,
+  "clean_cases_with_removed_claims": 3,
+  "clean_removed_claims": 3,
+  "top15_old_claims_no_longer_available": 0,
+  "clean_results": [
+    {
+      "cve_id": "CVE-2026-53576",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-75629",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-34354",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-47845",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-6385",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-9991",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2024-14037",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-97347",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-71314",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-11622",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [
+        "Affected product or component named in the supplied description: BIND."
+      ],
+      "added": [
+        "Affected product listed in the supplied product metadata: bind."
+      ],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-71240",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-15923",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2016-20077",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-6140",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-47673",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-67102",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-79017",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-11784",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-42985",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-61640",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-71319",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2014-125112",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-71317",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-54839",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-31556",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-72541",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-64623",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-83103",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-27672",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2022-50964",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-66256",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-85292",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-14011",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-75677",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-7708",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-84658",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-11164",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-63917",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-88899",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-1229",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-12349",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-5872",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2025-69764",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-44589",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-84659",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-22614",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2020-37179",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-41492",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-90200",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-6500",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-15037",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-41049",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-66577",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-32886",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2025-66052",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2019-25361",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-8809",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-97548",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-60730",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-13986",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-23073",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-49463",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "exposure",
+        "signal"
+      ],
+      "categories_after": [
+        "exposure",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-83977",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-54198",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-18969",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-9096",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-78573",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "exposure",
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "exposure",
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-60826",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-16293",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-77489",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-62949",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2019-25298",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-40115",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-9614",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-33001",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-40467",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-81000",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-52186",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-7848",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-59300",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-102131",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "exposure",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "exposure",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-2851",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-1332",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [
+        "Affected product listed in the supplied product metadata: meetinghub paperless meetings."
+      ],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-43796",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [
+        "Affected product or component named in the supplied description: iPadOS."
+      ],
+      "added": [
+        "Affected product listed in the supplied product metadata: ipados."
+      ],
+      "categories_before": [
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-7768",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-53282",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-78285",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-47075",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2025-3525",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-31904",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [
+        "Affected product listed in the supplied product metadata: charge portal."
+      ],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-94457",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-34311",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "impact",
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-1139",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [
+        "Affected product listed in the supplied product metadata: 520w firmware."
+      ],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-3513",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-35446",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-72117",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2025-12627",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-6780",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [
+        "Affected product or component named in the supplied description: Firefox."
+      ],
+      "added": [
+        "Affected product listed in the supplied product metadata: firefox."
+      ],
+      "categories_before": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ],
+      "categories_after": [
+        "impact",
+        "product",
+        "remediation",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-10645",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "product",
+        "signal"
+      ],
+      "categories_after": [
+        "product",
+        "signal"
+      ]
+    },
+    {
+      "cve_id": "CVE-2026-6443",
+      "detected_before": false,
+      "detected_after": false,
+      "removed": [],
+      "added": [],
+      "categories_before": [
+        "signal"
+      ],
+      "categories_after": [
+        "signal"
+      ]
+    }
+  ],
+  "top15": [
+    {
+      "cve_id": "CVE-2026-48313",
+      "headline_before": "Prioritize remediation for ColdFusion.",
+      "headline_after": "Prioritize remediation for ColdFusion.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected ColdFusion endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected ColdFusion endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-65694",
+      "headline_before": "Prioritize remediation for Microweber CMS.",
+      "headline_after": "Prioritize remediation for Microweber CMS.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected Microweber CMS endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected Microweber CMS endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-61560",
+      "headline_before": "Prioritize remediation for a Model Context Protocol server.",
+      "headline_after": "Prioritize remediation for a Model Context Protocol server.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate a Model Context Protocol server in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate a Model Context Protocol server in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-6875",
+      "headline_before": "Prioritize remediation for ServiceNow.",
+      "headline_after": "Prioritize remediation for ServiceNow.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected ServiceNow endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected ServiceNow endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-18963",
+      "headline_before": "Prioritize remediation for Red Hat.",
+      "headline_after": "Prioritize remediation for Red Hat.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected Red Hat service in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected Red Hat service in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-8037",
+      "headline_before": "Prioritize remediation for Progress ADC Products.",
+      "headline_after": "Prioritize remediation for Progress ADC Products.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected Progress ADC Products endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected Progress ADC Products endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-58231",
+      "headline_before": "Prioritize remediation for SAP Commerce Cloud.",
+      "headline_after": "Prioritize remediation for SAP Commerce Cloud.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [
+        "By the end of August 2026, public material was available as a GitHub proof of concept. This is a readiness signal, not confirmation of attacks."
+      ],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected SAP Commerce Cloud endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected SAP Commerce Cloud endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-90817",
+      "headline_before": "Prioritize remediation for Securifera.",
+      "headline_after": "Prioritize remediation for Securifera.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected Securifera service in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected Securifera service in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-20251",
+      "headline_before": "Prioritize remediation for Splunk Enterprise.",
+      "headline_after": "Prioritize remediation for Splunk Enterprise.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected Splunk Enterprise endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected Splunk Enterprise endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-71362",
+      "headline_before": "Prioritize remediation for Adobe Commerce.",
+      "headline_after": "Prioritize remediation for Adobe Commerce.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected Adobe Commerce endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected Adobe Commerce endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-39808",
+      "headline_before": "Prioritize remediation for FortiSandbox.",
+      "headline_after": "Prioritize remediation for FortiSandbox.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected FortiSandbox endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected FortiSandbox endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-42533",
+      "headline_before": "Prioritize remediation for NGINX Plus.",
+      "headline_after": "Prioritize remediation for NGINX Plus.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected NGINX Plus endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected NGINX Plus endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-21858",
+      "headline_before": "Prioritize remediation for n8n.",
+      "headline_after": "Prioritize remediation for n8n.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Confirm the installed n8n version and apply the appropriate vendor fix described in the supplied record: “This issue is fixed in version 1.121.0.” Use the emergency change process.",
+      "action_after": "Locate the affected n8n endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-76639",
+      "headline_before": "Prioritize remediation for Unitree G1 EDU firmware.",
+      "headline_after": "Prioritize remediation for Unitree G1 EDU firmware.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected Unitree G1 EDU firmware endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected Unitree G1 EDU firmware endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    },
+    {
+      "cve_id": "CVE-2026-28326",
+      "headline_before": "Prioritize remediation for SolarWinds Access Rights Manager.",
+      "headline_after": "Prioritize remediation for SolarWinds Access Rights Manager.",
+      "rerecorded": true,
+      "old_claims_no_longer_available": [],
+      "recorded_claims_removed": [],
+      "recorded_claims_added": [],
+      "action_before": "Locate the affected SolarWinds Access Rights Manager endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
+      "action_after": "Locate the affected SolarWinds Access Rights Manager endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
+    }
+  ]
+}

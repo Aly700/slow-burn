@@ -148,8 +148,11 @@ class AskRunner:
                 check_cancel(cancel_event)
                 if metrics['model_calls']>=self.settings.max_turns: raise ValueError('question turn budget exhausted')
                 t=time.monotonic();metrics['model_calls']+=1
+                safe_payload=dict(payload)
+                for key in ('question','facts'):
+                    if key in safe_payload: safe_payload[key]=sanitized(safe_payload[key])
                 result=await complete(self.model,[{'role':'system','content':SYSTEM},
-                    {'role':'user','content':json.dumps(sanitized(payload),ensure_ascii=False)}],tokens,deadline,cancel_event)
+                    {'role':'user','content':json.dumps(safe_payload,ensure_ascii=False)}],tokens,deadline,cancel_event)
                 event={'t_ms':elapsed(),'kind':'model','name':payload['phase'],'input':{'schema':schema.__name__},
                        'output_sha256':hashlib.sha256(result.text.encode()).hexdigest(),'duration_ms':round((time.monotonic()-t)*1000)}
                 trace.append(event)
@@ -164,7 +167,7 @@ class AskRunner:
                 except ValueError as exc:
                     event['output_summary']='Invalid structured response'
                     event['validation_error']=str(exc)[:1000]
-                    payload={**payload,'repair':str(exc)[:1000]}
+                    payload={**payload,'repair':sanitized(str(exc)[:1000])}
                     metrics['json_repairs']+=int(attempt==0);save()
             raise ValueError('question structured output invalid after one repair')
         async def call(name,args):

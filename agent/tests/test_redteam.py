@@ -21,9 +21,13 @@ def test_adversarial_variants_are_distinct_labelled_copies():
     with pytest.raises(ValueError): apply_fixture(row,'../../secret')
 
 
-def test_all_adversarial_ids_are_predefined():
-    assert len(fixture_ids())==50
+def test_all_adversarial_ids_are_predefined_without_reading_heldout(monkeypatch):
+    import agent.attacks as module
+    def forbidden(): raise AssertionError('held-out payloads must not be evaluated in scripted tests')
+    monkeypatch.setattr(module,'heldout_variants',forbidden)
+    assert len(fixture_ids())==82
     assert 'redteam-49' not in fixture_ids()
+    assert 'holdout-33' not in fixture_ids()
 
 
 def test_survival_measure_catches_full_payloads_in_every_language():

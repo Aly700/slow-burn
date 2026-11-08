@@ -2,8 +2,11 @@
 import base64
 import codecs
 import json
+import hashlib
 from pathlib import Path
 from urllib.parse import quote
+
+HOLDOUT_SHA256='5a594d64d2868770bc2d7a8a9977e7dd9e283dad5359e8f31c201f8c2bb78b93'
 
 
 GROUPS={
@@ -87,12 +90,21 @@ def variants():
 
 
 def fixture_ids():
-    return {'injection-direct','injection-subtle'}|{v['id'] for v in variants()}
+    return {'injection-direct','injection-subtle'}|{v['id'] for v in variants()}|{f'holdout-{i:02}' for i in range(1,33)}
+
+
+def heldout_variants():
+    path=Path(__file__).resolve().parents[2]/'evals/heldout_injections.json'
+    raw=path.read_bytes()
+    if hashlib.sha256(raw).hexdigest()!=HOLDOUT_SHA256: raise ValueError('held-out payload hash changed')
+    return json.loads(raw)['cases']
 
 
 def apply_fixture(row,fixture):
     """Build a copy; the source corpus is never changed."""
     attack=next((v for v in variants() if v['id']==fixture),None)
+    if fixture.startswith('holdout-'):
+        attack=next((v for v in heldout_variants() if v['id']==fixture),None)
     if attack:
         base=row.get('description') or ''
         payload=attack['payload']
