@@ -34,7 +34,7 @@ export function Race({ data }: { data?: RaceData | null }) {
   const bootstrap = focus.bootstrap.end;
   const limitedBootstrap = limited.bootstrap.end;
   return <section id="race" className="story-section race-section">
-    <SectionHeading index="02" label="Monthly capacity" title="Fixes made before the listing date" detail={`2025 · ${data.positives} later-listed vulnerabilities`} />
+    <SectionHeading index="03" label="Monthly capacity" title="Fixes made before the listing date" detail={`2025 · ${data.positives} later-listed vulnerabilities`} />
     <div className="race-intro">
       <p>At <strong>10 fixes a month</strong>, Slow Burn completed {limited.methods[3].end.before} of the {data.positives} before their listing date while each baseline completed {limited.methods[0].end.before}. At <strong>42 a month</strong> (the benchmark budget), it ties the exploit-code rule, {focus.methods[3].end.before} to {focus.methods[2].end.before}.</p>
       <p className="caption">Fixes complete at month end. Each CVE enters at its snapshot month end and can first be fixed the following month.</p>
@@ -45,6 +45,7 @@ export function Race({ data }: { data?: RaceData | null }) {
     </div>
     <div className="race-panels">{focus.methods.map(m => <RacePanel key={m.key} method={m} positives={data.positives} />)}</div>
     <p className="caption race-chart-note">Cumulative counts: amber follows fixes of later-listed CVEs; grey repeats the same 55 KEV dates. January starts empty: 462 of 504 annual slots are used.</p>
+    <div className="race-results">
     <table className="race-capacities">
       <caption>Completed before listing, by monthly capacity <span>out of {data.positives}</span></caption>
       <thead><tr><th scope="col">Ranking</th>{data.capacities.map(c => <th key={c.capacity} scope="col" className={c.capacity === 42 ? 'race-focus' : ''}>{c.capacity}<small>/mo</small></th>)}</tr></thead>
@@ -52,10 +53,13 @@ export function Race({ data }: { data?: RaceData | null }) {
         <th scope="row">{method.name}</th>{data.capacities.map(c => <td key={c.capacity} className={c.capacity === 42 ? 'race-focus' : ''}>{c.methods.find(m => m.key === method.key)!.end.before}</td>)}
       </tr>)}</tbody>
     </table>
+    <div className="race-summary">
     <p className="race-bootstrap">At 10/month, Slow Burn is ahead in {share(limitedBootstrap.ahead)} of month-block draws, tied in {share(limitedBootstrap.tied)}, behind in {share(limitedBootstrap.behind)}. The 95% interval is {limitedBootstrap.delta_95_percentile_interval[0]} to {limitedBootstrap.delta_95_percentile_interval[1]} additional fixes.</p>
     <p className="race-bootstrap">At 42/month, Slow Burn is ahead in {share(bootstrap.ahead)} of month-block draws, tied in {share(bootstrap.tied)}, behind in {share(bootstrap.behind)}. Only 55 positives; this is noisy.</p>
     <p className="caption race-sensitivity">If the same fixes complete at month start: Slow Burn {focus.methods[3].start.before}, exploit-first {focus.methods[2].start.before} before listing.</p>
     <p className="caption race-limits">KEV dates can lag real attacks · equal effort per fix assumed · 2025 development data.</p>
+    </div>
+    </div>
     <ReadingDetails label="Full outcomes and timing sensitivity">
       <p>All {data.pool.toLocaleString('en-US')} CVEs join once with a frozen score; unused capacity expires and unfinished work carries over. The {data.excluded_first_month} listed within their publication month are outside this pool. “After” includes fixes on the listing date. Listed CVEs stay in the queue; their outcomes never affect priority. Days ahead is the median among fixes completed in time. CVSS is a retrospective reference.</p>
       <div className="identity-tabs race-timing" aria-label="Completion timing">

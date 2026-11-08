@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Data, Score } from "../types";
-import { list, number, percent, reasonLabel, compactReasonLabel } from "../lib";
+import { list, number, percent, reasonLabel } from "../lib";
 import { Icon } from "./Icon";
 import { SectionHeading } from "./SectionHeading";
+import { QueueRow } from "./QueueRow";
 import { ProductWatch } from "./ProductWatch";
 import { decodeWatch, filterWatch } from "../productWatch";
 import type { ProductWatchRow } from "../productWatch";
@@ -162,7 +163,7 @@ export function Queue({
       aria-label="Fix-first queue"
     >
       <SectionHeading
-        index="06" label="Fix-first queue"
+        index="07" label="Fix-first queue"
         title="Fix-first queue"
         detail="2026 candidates · evidence at each snapshot"
       />
@@ -346,76 +347,17 @@ export function Queue({
           </thead>
           <tbody>
             {visible.map((row, index) => (
-              <tr
+              <QueueRow
                 key={row.cve_id}
-                className={
-                  selected === page * pageSize + index ? "selected" : ""
-                }
-                onClick={() => {
+                row={row}
+                ranking={ranking}
+                selected={selected === page * pageSize + index}
+                hasRun={runIds.has(row.cve_id)}
+                onOpen={() => {
                   setSelected(page * pageSize + index);
                   onOpen(row);
                 }}
-              >
-                <td className="rank mono" data-label="Rank">
-                  {String(row.rank).padStart(3, "0")}
-                </td>
-                <td>
-                  <button
-                    className="cve-button"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setSelected(page * pageSize + index);
-                      onOpen(row);
-                    }}
-                  >
-                    {row.cve_id}
-                  </button>
-                  <span className="assigner" title={row.assigner}>
-                    {row.vendor_identity && row.vendor_identity !== "unmapped"
-                      ? row.vendor_identity
-                      : row.assigner || "Assigner unavailable"}
-                    {row.product_identity && (
-                      <span className="product-name">
-                        {" "}
-                        · {row.product_identity}
-                      </span>
-                    )}
-                  </span>
-                </td>
-                <td className="mono snapshot" data-label="Snapshot">{row.snapshot_month || "-"}</td>
-                <td className="score-cell mono" data-label={ranking ? "Rank score" : "Model score"}>
-                  {ranking ? number(row.score, 4) : percent(row.score, 2)}
-                </td>
-                <td>
-                  <div className="reason-chips">
-                    {list(row.reasons)
-                      .slice(0, 2)
-                      .map((reason, i) => (
-                        <span
-                          className="chip"
-                          title={reasonLabel(reason)}
-                          key={i}
-                        >
-                          {compactReasonLabel(reason)}
-                        </span>
-                      ))}
-                    {!list(row.reasons).length && (
-                      <span className="muted">Reasons pending</span>
-                    )}
-                    {list(row.reasons).length > 2 && (
-                      <span className="more-reasons">
-                        +{list(row.reasons).length - 2}
-                      </span>
-                    )}
-                  </div>
-                </td>
-                <td className="row-action">
-                  {runIds.has(row.cve_id) && (
-                    <span className="run-dot" title="Briefing available" />
-                  )}
-                  <Icon name="arrow" size={17} />
-                </td>
-              </tr>
+              />
             ))}
           </tbody>
         </table>

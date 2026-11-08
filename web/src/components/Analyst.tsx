@@ -167,7 +167,7 @@ export function Analyst({
   return (
     <section id="analyst" className="story-section analyst-section">
       <SectionHeading
-        index="07" label="Ask Slow Burn"
+        index="08" label="Ask Slow Burn"
         title="Ask Slow Burn"
         detail="Local ranking · read-only analysis"
       />

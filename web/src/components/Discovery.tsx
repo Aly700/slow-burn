@@ -183,7 +183,7 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
   return (
     <section id="discovery" className="story-section deeper-discovery">
       <SectionHeading
-        index="04" label="Blind spot"
+        index="05" label="Blind spot"
         title="31 of 55 had no public exploit signal"
         detail="2025 later-exploited CVEs at their snapshot"
       />
@@ -293,7 +293,7 @@ export function AgentSection({
   return (
     <section id="agent" className="story-section agent-section">
       <SectionHeading
-        index="08" label="Briefing"
+        index="09" label="Briefing"
         title="How a briefing is made"
         detail="Tool results, claim checks and ticket approval"
       />

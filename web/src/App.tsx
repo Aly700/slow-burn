@@ -12,6 +12,7 @@ import { strongestRun } from "./storyData";
 import { Icon } from "./components/Icon";
 import { Race } from "./components/Race";
 import { AshHero } from "./components/AshHero";
+import { Workflow } from "./components/Workflow";
 
 export default function App() {
   const [data, setData] = useState<Data>({});
@@ -146,7 +147,7 @@ export default function App() {
               key={id}
               className={
                 active === id ||
-                (id === "overview" && active === "backtest") ||
+                (id === "overview" && ["backtest", "workflow"].includes(active)) ||
                 (id === "timing" && ["race", "signals", "discovery", "granite-map"].includes(active))
                   ? "active"
                   : ""
@@ -178,6 +179,7 @@ export default function App() {
       <main aria-busy={loading}>
         <AshHero />
         <Hero data={data} />
+        <Workflow data={data} onOpen={setSelected} />
         <Timing findings={data.findings} />
         <Race data={data.race_2025} />
         <Signals findings={data.findings} />

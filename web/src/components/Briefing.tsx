@@ -4,6 +4,7 @@ import { displayValue, list, number, percent, reasonLabel } from "../lib";
 import { Icon } from "./Icon";
 import { useApproval } from "../useApproval";
 import { useInvestigation } from "../useInvestigation";
+import { VerifiedClaims, ProposedAction, ApprovalFooter } from "./BriefingCards";
 import { LiveControls, LiveTrace } from "./LiveInvestigation";
 
 const stages = ["RECEIVED", "INVESTIGATING", "VERIFIED", "WAITING_APPROVAL"];
@@ -81,7 +82,6 @@ export function Briefing({
     : score;
   const briefing = currentRun?.briefing;
   const state = currentRun?.state ?? "RECEIVED";
-  const pending = state === "WAITING_APPROVAL";
   const terminal = ["TICKET_FILED", "REJECTED", "FAILED"].includes(state);
   const steps = [...stages, terminal ? state : "TICKET_FILED / REJECTED"];
 
@@ -224,47 +224,7 @@ export function Briefing({
                     id="evidence-content"
                     aria-labelledby="evidence-tab"
                   >
-                    <div className="claim-list">
-                      {list(briefing?.claims).map((claim) => (
-                        <article className="claim" key={claim.id}>
-                          <div
-                            className={`verification-mark ${claim.verified ? "verified" : ""}`}
-                          >
-                            {claim.verified ? (
-                              <Icon name="check" size={16} />
-                            ) : (
-                              "?"
-                            )}
-                          </div>
-                          <div>
-                            <p>{claim.text ?? "Claim text unavailable"}</p>
-                            <div className="evidence-chips">
-                              {list(claim.evidence).map((evidence, index) => (
-                                <details key={index} className="evidence-chip">
-                                  <summary>
-                                    {evidence.field}{" "}
-                                    <span>
-                                      {typeof evidence.value === "number"
-                                        ? String(evidence.value)
-                                        : "source"}
-                                    </span>
-                                  </summary>
-                                  <div>
-                                    <code>{evidence.tool}</code>
-                                    <p>{displayValue(evidence.value)}</p>
-                                  </div>
-                                </details>
-                              ))}
-                            </div>
-                            <span className="sr-only">
-                              {claim.verified
-                                ? "Verified against tool output"
-                                : "Not verified"}
-                            </span>
-                          </div>
-                        </article>
-                      ))}
-                    </div>
+                    <VerifiedClaims briefing={briefing} />
                     {list(currentRun.verifier?.dropped).length > 0 && (
                       <div className="dropped-claims">
                         <span className="eyebrow">REMOVED BY THE VERIFIER</span>
@@ -281,10 +241,7 @@ export function Briefing({
                         ))}
                       </div>
                     )}
-                    <div className="proposed-action">
-                      <span className="eyebrow">PROPOSED ACTION</span>
-                      <p>{briefing?.action ?? "No action proposed yet."}</p>
-                    </div>
+                    <ProposedAction briefing={briefing} />
                   </div>
                 ) : (
                   <div
@@ -396,51 +353,13 @@ export function Briefing({
               </div>
             ))}
         </div>
-        <footer className="approval-footer">
-          {currentRun ? (
-            <>
-              <div className="approval-status">
-                <Icon name="shield" size={18} />
-                <strong>
-                  {pending
-                    ? "Human approval required"
-                    : `${notice.startsWith("Simulated") ? "Simulated: " : ""}${stageLabel(state)}`}
-                </strong>
-                {pending && <span>No ticket filed</span>}
-              </div>
-              {pending && (
-                <div className="approval-buttons">
-                  <button
-                    className="button secondary"
-                    disabled={busy}
-                    onClick={() => void decide(false)}
-                  >
-                    Reject
-                  </button>
-                  <button
-                    className="button primary"
-                    disabled={busy}
-                    onClick={() => void decide(true)}
-                  >
-                    {busy ? "Submitting…" : "Approve ticket"}
-                    <Icon name="arrow" />
-                  </button>
-                </div>
-              )}
-              <p
-                className={`approval-note ${notice ? "has-notice" : ""}`}
-                role="status"
-              >
-                {notice ||
-                  (fixture
-                    ? "Demo mode. Approval is simulated locally; no ticket will be created."
-                    : "Uses the local approval service. If unreachable, a local simulation is labelled here.")}
-              </p>
-            </>
-          ) : (
-            <p>Approval becomes available after a verified briefing.</p>
-          )}
-        </footer>
+        <ApprovalFooter
+          run={currentRun}
+          notice={notice}
+          fixture={fixture}
+          busy={busy}
+          onDecide={decide}
+        />
       </aside>
     </div>
   );

@@ -195,7 +195,7 @@ export interface Run {
     claims?: {
       id: string;
       text?: string;
-      evidence?: { tool: string; field: string; value: unknown }[];
+      evidence?: { tool: string; field: string; value: unknown; quote?: string }[];
       verified?: boolean;
     }[];
     action?: string;

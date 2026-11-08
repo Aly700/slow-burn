@@ -708,7 +708,7 @@ export function GraniteMap({
   return (
     <div className={`granite-map ${appendix ? "map-appendix" : ""}`} ref={root}>
       <SectionHeading
-        index={appendix ? "04" : "05"} label="IBM Granite / Description space"
+        index={appendix ? "04" : "06"} label="IBM Granite / Description space"
         title="Granite’s map of 2026 descriptions"
         dek="Description similarity with past-exploited CVEs and the top 500 marked."
         meta={<div className="map-total">
