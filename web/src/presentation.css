@@ -680,7 +680,7 @@
 .present-dropped {
   margin-top: 12px;
   padding: 14px;
-  border: 1px dashed var(--line-strong);
+  border: var(--border);
   color: var(--muted);
 }
 .present-dropped > span {

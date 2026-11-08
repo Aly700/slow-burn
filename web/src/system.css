@@ -219,7 +219,7 @@ small { font-size: var(--type-label); }
 .signal-row, .signals-chart > .chart-head { grid-template-columns: 1.45fr 1fr 120px; }
 .histogram small { font-size: var(--type-label); white-space: nowrap; }
 .histogram > div > div, .lag-track span { background: var(--accent-dim); }
-.clock-stats > div > strong { color: var(--accent); }
+.clock-numbers .metric, .present-clocks > div > strong { color: var(--accent); }
 .eval-arms .active-arm { border-top-color: var(--accent); }
 .watch-heading h4 { font-weight: 500; }
 .map-field, .map-toolbar, .map-stories { border-color: var(--line); }
@@ -260,4 +260,27 @@ small { font-size: var(--type-label); }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0s !important; }
+}
+
+::placeholder { color: var(--subtle); opacity: 1; }
+.section-heading .section-meta { max-width: none; white-space: nowrap; }
+.queue-export > summary {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-small);
+  background: var(--panel);
+  color: var(--text);
+  font: 500 var(--type-body)/1.5 var(--sans);
+}
+.queue-export > summary:hover { background: var(--surface); border-color: var(--muted); }
+.export-options { border-radius: var(--radius-panel); }
+@media (min-width: 701px) {
+  .map-appendix .map-field { height: clamp(220px, calc(100dvh - 580px), 520px); }
+  .map-appendix .map-evidence { grid-template-columns: minmax(0, 1fr) 300px; }
+}
+@media (min-width: 701px) and (max-height: 800px) {
+  .slide-1 .missed-tray { grid-template-columns: 170px 1fr 290px; gap: 12px; }
+  .map-appendix .map-field { height: 200px; }
+}
+@media (max-width: 700px) {
+  .section-heading .section-meta { white-space: normal; }
 }
