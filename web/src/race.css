@@ -36,6 +36,7 @@
 .race-capacities .race-focus { background: var(--panel); }
 .race-table-ours th, .race-table-ours td { color: var(--accent); }
 .race-bootstrap { margin-top: 24px; }
+.race-bootstrap + .race-bootstrap { margin-top: 8px; }
 .race-sensitivity { margin-top: 8px; }
 .race-limits { margin-top: 16px; }
 .race-timing { margin-block: 24px; }

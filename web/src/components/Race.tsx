@@ -29,12 +29,14 @@ export function Race({ data }: { data?: RaceData | null }) {
   const [timing, setTiming] = useState<'end' | 'start'>('end');
   if (!data) return null;
   const focus = capacityResult(data, 42);
-  if (!focus) return null;
+  const limited = capacityResult(data, 10);
+  if (!focus || !limited) return null;
   const bootstrap = focus.bootstrap.end;
+  const limitedBootstrap = limited.bootstrap.end;
   return <section id="race" className="story-section race-section">
-    <SectionHeading index="01b" label="Monthly capacity" title="Fixes made before the listing date" detail={`2025 · ${data.positives} later-listed vulnerabilities`} />
+    <SectionHeading index="02" label="Monthly capacity" title="Fixes made before the listing date" detail={`2025 · ${data.positives} later-listed vulnerabilities`} />
     <div className="race-intro">
-      <p>At <strong>42 fixes a month</strong>, {comparisonText(focus).replace(/\.$/, '')}.</p>
+      <p>At <strong>10 fixes a month</strong>, Slow Burn completed {limited.methods[3].end.before} of the {data.positives} before their listing date while each baseline completed {limited.methods[0].end.before}. At <strong>42 a month</strong> (the benchmark budget), it ties the exploit-code rule, {focus.methods[3].end.before} to {focus.methods[2].end.before}.</p>
       <p className="caption">Fixes complete at month end. Each CVE enters at its snapshot month end and can first be fixed the following month.</p>
     </div>
     <div className="race-chart-heading">
@@ -50,6 +52,7 @@ export function Race({ data }: { data?: RaceData | null }) {
         <th scope="row">{method.name}</th>{data.capacities.map(c => <td key={c.capacity} className={c.capacity === 42 ? 'race-focus' : ''}>{c.methods.find(m => m.key === method.key)!.end.before}</td>)}
       </tr>)}</tbody>
     </table>
+    <p className="race-bootstrap">At 10/month, Slow Burn is ahead in {share(limitedBootstrap.ahead)} of month-block draws, tied in {share(limitedBootstrap.tied)}, behind in {share(limitedBootstrap.behind)}. The 95% interval is {limitedBootstrap.delta_95_percentile_interval[0]} to {limitedBootstrap.delta_95_percentile_interval[1]} additional fixes.</p>
     <p className="race-bootstrap">At 42/month, Slow Burn is ahead in {share(bootstrap.ahead)} of month-block draws, tied in {share(bootstrap.tied)}, behind in {share(bootstrap.behind)}. Only 55 positives; this is noisy.</p>
     <p className="caption race-sensitivity">If the same fixes complete at month start: Slow Burn {focus.methods[3].start.before}, exploit-first {focus.methods[2].start.before} before listing.</p>
     <p className="caption race-limits">KEV dates can lag real attacks · equal effort per fix assumed · 2025 development data.</p>

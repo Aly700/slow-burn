@@ -162,7 +162,7 @@ export function Queue({
       aria-label="Fix-first queue"
     >
       <SectionHeading
-        index="05" label="Fix-first queue"
+        index="06" label="Fix-first queue"
         title="Fix-first queue"
         detail="2026 candidates · evidence at each snapshot"
       />

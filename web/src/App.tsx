@@ -147,7 +147,7 @@ export default function App() {
               className={
                 active === id ||
                 (id === "overview" && active === "backtest") ||
-                (id === "timing" && ["signals", "discovery", "granite-map"].includes(active))
+                (id === "timing" && ["race", "signals", "discovery", "granite-map"].includes(active))
                   ? "active"
                   : ""
               }

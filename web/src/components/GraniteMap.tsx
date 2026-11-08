@@ -708,7 +708,7 @@ export function GraniteMap({
   return (
     <div className={`granite-map ${appendix ? "map-appendix" : ""}`} ref={root}>
       <SectionHeading
-        index="04" label="IBM Granite / Description space"
+        index={appendix ? "04" : "05"} label="IBM Granite / Description space"
         title="Granite’s map of 2026 descriptions"
         dek="Description similarity with past-exploited CVEs and the top 500 marked."
         meta={<div className="map-total">
@@ -860,7 +860,7 @@ export function GraniteMap({
           review list to filter for vendor-supported matches.
         </p>
       )}
-      <ReadingDetails label="How we checked similarity" collapsed={!appendix}>
+      <ReadingDetails label="How similarity was checked" collapsed={!appendix}>
         <MapEvidence data={data} />
       </ReadingDetails>
       <details className="map-methods">
