@@ -10,6 +10,7 @@ import { Discovery, AgentSection } from "./components/Discovery";
 import { Presentation } from "./components/Presentation";
 import { strongestRun } from "./storyData";
 import { Icon } from "./components/Icon";
+import { Race } from "./components/Race";
 import { AshHero } from "./components/AshHero";
 
 export default function App() {
@@ -178,6 +179,7 @@ export default function App() {
         <AshHero />
         <Hero data={data} />
         <Timing findings={data.findings} />
+        <Race data={data.race_2025} />
         <Signals findings={data.findings} />
         <Discovery findings={data.findings} />
         <section
