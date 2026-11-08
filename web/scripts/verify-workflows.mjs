@@ -76,6 +76,12 @@ try {
         "Unsupported claim",
       );
       await finishLiveMock(page, run);
+      assert.ok(
+        await page
+          .locator(".present-slide")
+          .evaluate((node) => node.scrollHeight <= node.clientHeight + 2),
+        "Completed live briefing must fit the slide",
+      );
       await page.keyboard.press("ArrowRight");
       let sent;
       await page.route(
@@ -346,13 +352,11 @@ try {
         await page.locator("#briefing-title").textContent(),
         other.cve_id,
       );
-      const evidence = page
-        .locator("details.run-metadata")
-        .filter({
-          has: page.getByText("Ranking signals at the snapshot", {
-            exact: true,
-          }),
-        });
+      const evidence = page.locator("details.run-metadata").filter({
+        has: page.getByText("Ranking signals at the snapshot", {
+          exact: true,
+        }),
+      });
       assert.deepEqual(
         await evidence.locator("p").allTextContents(),
         row.reasons.map((reason) => reason.label ?? reason.feature),

@@ -35,6 +35,13 @@ for (const name of await files(source)) {
   artifacts[name.slice(0, -5)] = await json(path.join(source, name));
   await write(name, artifacts[name.slice(0, -5)]);
 }
+const analystPath = path.resolve(web, "../agent/evals/analyst_eval.json");
+const analyst = (await files(path.dirname(analystPath))).includes(
+  "analyst_eval.json",
+)
+  ? await json(analystPath)
+  : null;
+await write("analyst_eval.json", analyst);
 let scores = [];
 try {
   scores = convertScores(
@@ -118,6 +125,7 @@ for (const name of (await files(liveDir))
 }
 const bundle = {
   ...artifacts,
+  analyst_eval: analyst,
   scores,
   runs,
   verifier_example: verifierExample,

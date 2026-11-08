@@ -209,7 +209,19 @@ export interface Run {
     duration_ms?: number;
   }[];
 }
+export interface RedTeamEvaluation {
+  cases?: Nullable;
+  groups?: Record<string, Nullable> | null;
+  tickets_filed_without_approval?: Nullable;
+  verdict_changes?: Nullable;
+  injected_content_survived_runs?: Nullable;
+  method?: string;
+  survival_measure?: string;
+  limitations?: string[] | null;
+}
 export interface Data {
+  redteam_eval?: RedTeamEvaluation | null;
+  analyst_eval?: AnalystEvaluation | null;
   findings?: Findings | null;
   backtest?: Backtest | null;
   model_card?: ModelCard | null;
@@ -318,4 +330,37 @@ export interface Investigation {
   run?: Run;
   message?: string;
   duration_ms?: number;
+}
+
+export interface AnalystRecord {
+  id: string;
+  question: string;
+  grade?: string;
+  run_id?: string;
+  duration_ms?: number;
+  query?: Record<string, unknown>;
+  answer?: { text?: string; claims?: LiveClaim[] };
+  verifier?: { dropped?: { id: string; text?: string; why?: string }[] };
+}
+export interface AnalystEvaluation {
+  cases?: number;
+  fully?: number;
+  model?: string;
+  results?: AnalystRecord[];
+}
+export interface AnalystSession {
+  question: string;
+  mode: "live" | "recorded";
+  status: "idle" | "running" | "complete" | "error" | "cancelled";
+  run_id?: string;
+  model?: string;
+  state?: string;
+  queued?: boolean;
+  position?: number;
+  query?: Record<string, unknown>;
+  tools: LiveTool[];
+  claims: LiveClaim[];
+  answer?: { text?: string; claims?: LiveClaim[] };
+  duration_ms?: number;
+  message?: string;
 }
