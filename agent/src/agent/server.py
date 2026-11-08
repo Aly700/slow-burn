@@ -1,4 +1,4 @@
-"""Official MCP stdio server: six reads and one capability-gated local write."""
+"""Official MCP stdio server: bounded reads and one capability-gated local write."""
 import json
 import os
 from pathlib import Path
@@ -15,6 +15,7 @@ def make_server(settings=None):
     settings = settings or Settings()
     server = FastMCP("fix-first-triage", instructions="Read-only investigation tools. Call get_cve first to establish the snapshot. Ticket creation requires a backend-issued approval capability.")
     data = None
+    ranked = None
 
     def source():
         nonlocal data
@@ -62,6 +63,27 @@ def make_server(settings=None):
     def queue(n: int = 15, filters: dict | None = None) -> dict:
         """Read up to 100 ranked candidates. Filters: snapshot_month, any_exploit, min_epss."""
         return source().queue(n, filters)
+
+    def ranking():
+        nonlocal ranked
+        from .analyst_data import RankedData
+        if ranked is None: ranked=RankedData(source())
+        return ranked
+
+    @server.tool(annotations=read)
+    def search_ranked(filters: dict | None = None, limit: int = 5) -> dict:
+        """Search the top 5000 by vendor, product, cwe, text, top_n, min_epss, public_signal or has_vendor_history. Limit 1-10."""
+        return ranking().search(filters,limit)
+
+    @server.tool(annotations=read)
+    def summarize_ranked(filters: dict | None = None) -> dict:
+        """Count a ranking slice, preserving missing vendor and public-signal values as unknown."""
+        return ranking().summary(filters)
+
+    @server.tool(annotations=read)
+    def compare_cves(cve_a: str, cve_b: str) -> dict:
+        """Read two CVEs' ranks, scores and unmodified reasons. Outside-ranking values remain unknown."""
+        return ranking().compare(cve_a,cve_b)
 
     @server.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False, idempotentHint=True, openWorldHint=False))
     def file_fix_ticket(cve_id: str, briefing_hash: str, approval_token: str) -> dict:

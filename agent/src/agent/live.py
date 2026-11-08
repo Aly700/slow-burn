@@ -30,6 +30,7 @@ class LiveJob:
         self.run_id=run['run_id']
         self.streamed=streamed
         self.fixture=fixture
+        self.question=run.get('question')
         self.started=time.monotonic()
         self.cancel_event=threading.Event()
         self.finished=asyncio.Event()
@@ -80,13 +81,14 @@ class LiveService:
             await self.queue.put(None)
         await asyncio.gather(self.worker,return_exceptions=True)
 
-    def submit(self,cve_id,streamed=True,fixture=None):
+    def submit(self,cve_id=None,streamed=True,fixture=None,question=None):
         if self.error: raise RuntimeError('investigation worker unavailable')
         if self.queue.full(): raise asyncio.QueueFull()
-        run=self.store.create(cve_id,getattr(self.model,'source_name',self.model.name),list_name='live' if streamed else 'top500')
+        model_name=getattr(self.model,'source_name',self.model.name)
+        run=self.store.create_question(question,model_name) if question is not None else self.store.create(cve_id,model_name,list_name='live' if streamed else 'top500')
         job=LiveJob(run,streamed,fixture)
         position=self.queue.qsize()+int(self.active is not None)
-        job.publish('start',{'run_id':run['run_id'],'cve_id':cve_id,'model':run['model'],'started_at':run['started_at'],**({'fixture':fixture} if fixture else {})})
+        job.publish('start',{'run_id':run['run_id'],**({'question':question} if question is not None else {'cve_id':cve_id}),'model':run['model'],'started_at':run['started_at'],**({'fixture':fixture} if fixture else {})})
         job.publish('state',{'state':'RECEIVED','queued':bool(position),'position':position,'message':'Queued for the local model' if position else 'Ready to investigate'})
         self.jobs[job.run_id]=job
         self.queue.put_nowait(job)
@@ -105,12 +107,17 @@ class LiveService:
                         if job is None: return
                         self.active=job
                         queue_ms=round((time.monotonic()-job.started)*1000)
-                        result=await Runner(self.settings,self.store,self.model).run(job.run_id,client,emit=job.emit,cancel_event=job.cancel_event,fixture=job.fixture)
+                        from .analyst import AskRunner
+                        runner=AskRunner if job.question is not None else Runner
+                        result=await runner(self.settings,self.store,self.model).run(job.run_id,client,emit=job.emit,cancel_event=job.cancel_event,fixture=job.fixture)
                         self.store.update(job.run_id,metrics={**result.get('metrics',{}),'queue_ms':queue_ms})
                         result=self.store.get(job.run_id)
                         if job.streamed:
-                            save_record(self.settings.cache/'live_runs'/f'{job.run_id}.json',result)
-                        if result['state']=='WAITING_APPROVAL':
+                            folder='ask_runs' if job.question is not None else 'live_runs'
+                            save_record(self.settings.cache/folder/f'{job.run_id}.json',result)
+                        if job.question is not None and result['state']=='VERIFIED':
+                            await job.emit('answer',result['answer'])
+                        elif result['state']=='WAITING_APPROVAL':
                             await job.emit('briefing',{'run':result})
                         else:
                             await job.emit('error',{'message':result.get('error',{}).get('message','Investigation failed')})

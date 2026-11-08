@@ -2,7 +2,7 @@ import asyncio
 from contextlib import asynccontextmanager
 import os
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from .live import LiveService
@@ -114,6 +114,17 @@ def create_app(settings=None, model=None):
     async def start_run(body: StartRun):
         job=submit(body.cve_id,streamed=False)
         return store.get(job.run_id)
+
+    @app.get('/ask')
+    async def ask(q: str = Query(min_length=1,max_length=1000)):
+        if not q.strip(): raise HTTPException(422,'question is empty')
+        try:
+            job=service.submit(question=q.strip())
+        except asyncio.QueueFull:
+            raise HTTPException(429,'investigation queue is full') from None
+        except RuntimeError as exc:
+            raise HTTPException(503,str(exc)) from None
+        return StreamingResponse(job.stream(),media_type='text/event-stream',headers={'Cache-Control':'no-cache','X-Accel-Buffering':'no'})
 
     @app.get("/runs/{run_id}")
     async def read_run(run_id: str):

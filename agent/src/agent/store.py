@@ -77,6 +77,25 @@ class Store:
         with self.db() as db:
             return self._get(db, run_id)
 
+    def create_question(self,question,model):
+        run=self.create(None,model,list_name='live')
+        with self.db() as db:
+            run.update(kind='question',question=question,answer=None)
+            self._put(db,run)
+        return run
+
+    def finish_answer(self,run_id,answer):
+        if not all(c.get('verified') is True for c in answer['claims']):
+            raise ValueError('answer contains unverified evidence')
+        with self.db() as db:
+            db.execute('BEGIN IMMEDIATE')
+            run=self._get(db,run_id)
+            if run.get('kind')!='question' or run.get('answer') is not None:
+                raise ValueError('answer is immutable')
+            self._transition(run,'VERIFIED')
+            run['answer']=answer
+            self._put(db,run)
+
     @staticmethod
     def _transition(run, state):
         if state not in TRANSITIONS[run["state"]]:
@@ -219,6 +238,8 @@ class Store:
             db.execute("BEGIN IMMEDIATE")
             for (body,) in db.execute("SELECT body FROM runs").fetchall():
                 run = json.loads(body)
+                if run.get('kind')=='question' and run['state']=='VERIFIED' and run.get('answer') is not None:
+                    continue
                 if run["state"] in {"RECEIVED", "INVESTIGATING", "VERIFIED"}:
                     self._transition(run, "FAILED")
                     run["error"] = {"code": "worker_restart", "message": "Investigation interrupted; start a new run."}

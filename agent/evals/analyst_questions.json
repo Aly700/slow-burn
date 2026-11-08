@@ -1,0 +1,403 @@
+[
+  {
+    "id": "q01",
+    "question": "What should a Fortinet shop fix first? List the first 3 ranked CVEs.",
+    "mode": "search",
+    "filters": {
+      "vendor": "fortinet"
+    },
+    "expected": [
+      {
+        "tool": "search_ranked",
+        "field": "matched_count",
+        "value": 23
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.0.cve_id",
+        "value": "CVE-2026-39808"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.1.cve_id",
+        "value": "CVE-2026-84388"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.2.cve_id",
+        "value": "CVE-2026-22153"
+      }
+    ]
+  },
+  {
+    "id": "q02",
+    "question": "List the first 3 ranked ServiceNow CVEs.",
+    "mode": "search",
+    "filters": {
+      "vendor": "servicenow"
+    },
+    "expected": [
+      {
+        "tool": "search_ranked",
+        "field": "matched_count",
+        "value": 4
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.0.cve_id",
+        "value": "CVE-2026-6875"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.1.cve_id",
+        "value": "CVE-2025-12420"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.2.cve_id",
+        "value": "CVE-2026-0542"
+      }
+    ]
+  },
+  {
+    "id": "q03",
+    "question": "List the first 3 ranked SolarWinds CVEs.",
+    "mode": "search",
+    "filters": {
+      "vendor": "solarwinds"
+    },
+    "expected": [
+      {
+        "tool": "search_ranked",
+        "field": "matched_count",
+        "value": 9
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.0.cve_id",
+        "value": "CVE-2026-28326"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.1.cve_id",
+        "value": "CVE-2025-40554"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.2.cve_id",
+        "value": "CVE-2026-28325"
+      }
+    ]
+  },
+  {
+    "id": "q04",
+    "question": "List the first 3 ranked SAP CVEs.",
+    "mode": "search",
+    "filters": {
+      "vendor": "sap"
+    },
+    "expected": [
+      {
+        "tool": "search_ranked",
+        "field": "matched_count",
+        "value": 20
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.0.cve_id",
+        "value": "CVE-2026-58231"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.1.cve_id",
+        "value": "CVE-2026-40128"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.2.cve_id",
+        "value": "CVE-2026-44761"
+      }
+    ]
+  },
+  {
+    "id": "q05",
+    "question": "List the first 3 ranked CVEs involving the NGINX product.",
+    "mode": "search",
+    "filters": {
+      "product": "nginx"
+    },
+    "expected": [
+      {
+        "tool": "search_ranked",
+        "field": "matched_count",
+        "value": 25
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.0.cve_id",
+        "value": "CVE-2026-42533"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.1.cve_id",
+        "value": "CVE-2026-42945"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.2.cve_id",
+        "value": "CVE-2026-42530"
+      }
+    ]
+  },
+  {
+    "id": "q06",
+    "question": "List the first 3 ranked CVEs with CWE-78.",
+    "mode": "search",
+    "filters": {
+      "cwe": "CWE-78"
+    },
+    "expected": [
+      {
+        "tool": "search_ranked",
+        "field": "matched_count",
+        "value": 159
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.0.cve_id",
+        "value": "CVE-2026-39808"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.1.cve_id",
+        "value": "CVE-2026-95675"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.2.cve_id",
+        "value": "CVE-2026-60121"
+      }
+    ]
+  },
+  {
+    "id": "q07",
+    "question": "List the first 3 ranked CVEs with CWE-79.",
+    "mode": "search",
+    "filters": {
+      "cwe": "CWE-79"
+    },
+    "expected": [
+      {
+        "tool": "search_ranked",
+        "field": "matched_count",
+        "value": 199
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.0.cve_id",
+        "value": "CVE-2026-93659"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.1.cve_id",
+        "value": "CVE-2026-29519"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.2.cve_id",
+        "value": "CVE-2026-51133"
+      }
+    ]
+  },
+  {
+    "id": "q08",
+    "question": "Which of the top 50 have no vendor history? Show the first 3 matches.",
+    "mode": "search",
+    "filters": {
+      "top_n": 50,
+      "has_vendor_history": false
+    },
+    "expected": [
+      {
+        "tool": "search_ranked",
+        "field": "matched_count",
+        "value": 19
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.0.cve_id",
+        "value": "CVE-2026-65694"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.1.cve_id",
+        "value": "CVE-2026-90817"
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.2.cve_id",
+        "value": "CVE-2026-20251"
+      }
+    ]
+  },
+  {
+    "id": "q09",
+    "question": "How many of the top 50 have no vendor history?",
+    "mode": "summary",
+    "filters": {
+      "top_n": 50,
+      "has_vendor_history": false
+    },
+    "expected": [
+      {
+        "tool": "summarize_ranked",
+        "field": "matched_count",
+        "value": 19
+      }
+    ]
+  },
+  {
+    "id": "q10",
+    "question": "How many of the top 50 have no public exploit signal?",
+    "mode": "summary",
+    "filters": {
+      "top_n": 50,
+      "public_signal": false
+    },
+    "expected": [
+      {
+        "tool": "summarize_ranked",
+        "field": "matched_count",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "q11",
+    "question": "How many Fortinet entries have public exploit material?",
+    "mode": "summary",
+    "filters": {
+      "vendor": "fortinet",
+      "public_signal": true
+    },
+    "expected": [
+      {
+        "tool": "summarize_ranked",
+        "field": "matched_count",
+        "value": 7
+      }
+    ]
+  },
+  {
+    "id": "q12",
+    "question": "How many of the top 500 have CWE-78?",
+    "mode": "summary",
+    "filters": {
+      "top_n": 500,
+      "cwe": "CWE-78"
+    },
+    "expected": [
+      {
+        "tool": "summarize_ranked",
+        "field": "matched_count",
+        "value": 46
+      }
+    ]
+  },
+  {
+    "id": "q13",
+    "question": "List the first 3 CVEs whose description contains \"reset-credentials\".",
+    "mode": "search",
+    "filters": {
+      "text": "reset-credentials"
+    },
+    "expected": [
+      {
+        "tool": "search_ranked",
+        "field": "matched_count",
+        "value": 1
+      },
+      {
+        "tool": "search_ranked",
+        "field": "items.0.cve_id",
+        "value": "CVE-2026-18963"
+      }
+    ]
+  },
+  {
+    "id": "q14",
+    "question": "Why is CVE-2026-48313 above CVE-2026-65694? Compare their ranks and strongest model reasons.",
+    "mode": "compare",
+    "filters": {},
+    "expected": [
+      {
+        "tool": "compare_cves",
+        "field": "left.cve_id",
+        "value": "CVE-2026-48313"
+      },
+      {
+        "tool": "compare_cves",
+        "field": "left.rank",
+        "value": 1
+      },
+      {
+        "tool": "compare_cves",
+        "field": "left.reasons.0.label",
+        "value": "1 public exploit or detection-tool signals at snapshot"
+      },
+      {
+        "tool": "compare_cves",
+        "field": "right.cve_id",
+        "value": "CVE-2026-65694"
+      },
+      {
+        "tool": "compare_cves",
+        "field": "right.rank",
+        "value": 2
+      },
+      {
+        "tool": "compare_cves",
+        "field": "right.reasons.0.label",
+        "value": "2 public exploit or detection-tool signals at snapshot"
+      }
+    ]
+  },
+  {
+    "id": "q15",
+    "question": "Compare CVE-2026-39808 and CVE-2026-28326 by rank and strongest model reasons.",
+    "mode": "compare",
+    "filters": {},
+    "expected": [
+      {
+        "tool": "compare_cves",
+        "field": "left.cve_id",
+        "value": "CVE-2026-39808"
+      },
+      {
+        "tool": "compare_cves",
+        "field": "left.rank",
+        "value": 11
+      },
+      {
+        "tool": "compare_cves",
+        "field": "left.reasons.0.label",
+        "value": "2 public exploit or detection-tool signals at snapshot"
+      },
+      {
+        "tool": "compare_cves",
+        "field": "right.cve_id",
+        "value": "CVE-2026-28326"
+      },
+      {
+        "tool": "compare_cves",
+        "field": "right.rank",
+        "value": 15
+      },
+      {
+        "tool": "compare_cves",
+        "field": "right.reasons.0.label",
+        "value": "1 public exploit or detection-tool signals at snapshot"
+      }
+    ]
+  }
+]

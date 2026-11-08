@@ -7,7 +7,7 @@ async def test_official_mcp_lists_tools_reads_and_refuses_write(corpus):
     from agent.client import ToolClient
     async with ToolClient(corpus) as client:
         tools = {t.name: t for t in client.tools}
-        assert set(tools) == {'get_cve', 'explain_score', 'vendor_history', 'similar_exploited', 'signal_timeline', 'queue', 'file_fix_ticket'}
+        assert set(tools) == {'get_cve', 'explain_score', 'vendor_history', 'similar_exploited', 'signal_timeline', 'queue', 'file_fix_ticket', 'search_ranked', 'compare_cves', 'summarize_ranked'}
         assert all(t.annotations.readOnlyHint for n, t in tools.items() if n != 'file_fix_ticket')
         assert not tools['file_fix_ticket'].annotations.readOnlyHint
         row = await client.call('get_cve', {'cve_id': 'CVE-2025-1000'})
