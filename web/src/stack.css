@@ -1,8 +1,6 @@
 .stack-filter {
-  border: 1px solid var(--line-strong);
   padding: 24px 28px 18px;
   margin: 8px 0 24px;
-  background: var(--panel);
 }
 .stack-heading {
   display: flex;
@@ -95,9 +93,6 @@
   align-items: center;
   gap: 16px;
   padding: 8px 10px;
-  border: 1px solid var(--line-strong);
-  background: var(--surface);
-  color: var(--text);
   font-size: var(--type-body);
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -133,8 +128,6 @@
   gap: 9px;
   padding: 6px 9px;
   font-size: var(--type-body);
-  background: var(--clear);
-  border: 1px solid var(--line);
   text-align: left;
   max-width: 100%;
   overflow-wrap: anywhere;

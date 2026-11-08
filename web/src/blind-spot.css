@@ -14,8 +14,6 @@
   min-width: 0;
 }
 .watch-experiment {
-  border: 1px solid var(--line-strong);
-  background: var(--surface);
   padding: 20px 22px 16px;
 }
 .watch-results {

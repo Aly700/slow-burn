@@ -1,6 +1,4 @@
 .live-controls {
-  border: 1px solid var(--line);
-  background: var(--panel);
   padding: 13px 16px;
   margin-bottom: 20px;
 }
@@ -56,8 +54,6 @@
   gap: 14px;
 }
 .live-stop {
-  border: 1px solid var(--line-strong);
-  background: var(--clear);
   padding: 8px 10px;
   font-size: var(--type-body);
 }
@@ -67,8 +63,6 @@
   font-size: var(--type-body);
 }
 .live-trace {
-  border: 1px solid var(--line);
-  background: var(--panel);
   margin-bottom: 22px;
 }
 .live-trace > header {

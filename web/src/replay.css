@@ -113,13 +113,10 @@
   justify-content: space-between;
   gap: 14px;
   min-width: 117px;
-  background: none;
-  border: 1px solid var(--line-strong);
   padding: 10px 12px;
   font-size: var(--type-body);
 }
 .replay-play:hover {
-  border-color: var(--accent);
 }
 .replay-play kbd {
   color: var(--muted);

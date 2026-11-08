@@ -256,8 +256,6 @@
   align-items: center;
   gap: 14px;
   white-space: nowrap;
-  background: var(--panel);
-  border: 1px solid var(--line-strong);
   padding: 8px 14px;
   font-size: var(--type-body);
 }

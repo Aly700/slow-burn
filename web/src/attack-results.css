@@ -161,7 +161,6 @@
 }
 .attack-families span {
   padding: 7px 10px;
-  border: 1px solid var(--line-strong);
   font: var(--type-label)/1.5 var(--mono);
 }
 .attack-methods {

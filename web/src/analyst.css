@@ -38,9 +38,6 @@
 .question-chips button,
 .analyst-no-answer button {
   text-align: left;
-  color: var(--text);
-  border: 1px solid var(--line-strong);
-  background: var(--panel);
   font: inherit;
   padding: 14px 15px;
   line-height: 1.45;
@@ -53,8 +50,6 @@
 .question-chips button:hover,
 .question-chips button[aria-pressed="true"],
 .analyst-no-answer button:hover {
-  background: var(--surface);
-  border-color: var(--text);
 }
 .question-chips button svg {
   flex-shrink: 0;
@@ -112,9 +107,7 @@
   background: var(--text);
 }
 .analyst-form {
-  border: 1px solid var(--line-strong);
   padding: 20px;
-  background: var(--panel);
 }
 .analyst-form label {
   display: block;
@@ -357,7 +350,6 @@
   gap: 10px;
 }
 .analyst-no-answer button {
-  background: var(--bg);
   font-size: var(--type-body);
 }
 .present-ask-link {

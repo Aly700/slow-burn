@@ -8,6 +8,7 @@ import "@fontsource/ibm-plex-mono/latin-500.css";
 import "./styles.css";
 import "./presentation.css";
 import App from "./App";
+import "./system.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />

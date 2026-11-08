@@ -6,9 +6,6 @@
   text-align: right;
 }
 .present-button {
-  border: 1px solid var(--line-strong);
-  background: var(--surface);
-  color: var(--text);
   padding: 9px 13px;
   font: inherit;
   cursor: pointer;
@@ -17,8 +14,6 @@
   align-items: center;
 }
 .present-button:hover {
-  background: var(--panel);
-  border-color: var(--muted);
 }
 .present-button kbd {
   font-size: var(--type-label);
@@ -252,7 +247,6 @@
   letter-spacing: 1px;
 }
 .wordpress-finding {
-  background: var(--surface);
   padding: 32px;
 }
 .wordpress-finding > div {
@@ -739,7 +733,6 @@
   border-top-color: var(--text);
 }
 .gate-control {
-  background: var(--surface);
   padding: 32px;
 }
 .gate-control > svg {
