@@ -49,8 +49,12 @@ def build(predictions, data_dir):
     return out
 
 
-if __name__ == '__main__':
-    pred = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / 'artifacts/cache/backtest_predictions.parquet'
-    res = build(pred, ROOT / 'data')
+def run(predictions=None):
+    res = build(predictions or ROOT / 'artifacts/cache/backtest_predictions.parquet', ROOT / 'data')
     (ROOT / 'artifacts/replay_2025.json').write_text(json.dumps(res, indent=1))
     print({m['name']: m['hits'] for m in res['methods']}, 'positives', res['positives'])
+    return res
+
+
+if __name__ == '__main__':
+    run(Path(sys.argv[1]) if len(sys.argv) > 1 else None)

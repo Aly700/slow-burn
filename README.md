@@ -18,8 +18,7 @@ Tested on 2025 the same way the track's benchmark works (train on 2024; rank eac
 | **Slow Burn** | **22** |
 
 - **Two clocks.** Of the 165 vulnerabilities published in 2025 that CISA listed as exploited, 110 were listed within their first month. Only patch speed helps there. The other 55 took a median of 45 days, and that window is where prioritisation pays off.
-- **The blind spot.** 31 of those 55 had no public exploit code at the time, so rankings built on exploit feeds can't see most of them.
-- **A separate watch queue.** Prior product history marked 15 of 31 blind-spot positives but only 15.9% of the no-signal pool, a descriptive review cue; the preregistered watch model still found none in 500 reviews, so the 2026 queue remains exploratory. [Watch list](artifacts/watch_2026_top100.csv).
+- **The blind spot.** 31 of those 55 had no public exploit code at the time, so rankings built on exploit feeds can't see most of them. We tried to close it and could not: EPSS put none of the 31 in its top 500, and neither did a model trained only on that pool, whose design was fixed and committed before it was tested on 2025. One thing did mark them: 15 of the 31 hit a product that was already on the exploited list, against 16% of the pool they came from. Vendor-wide history, which helps inside the exploit tier, made no difference here. When exploit feeds are quiet, the defence is knowing whether you run a product that has been attacked before, not a cleverer score. The [exploratory 2026 watch list](artifacts/watch_2026_top100.csv) is kept separate from the submission.
 - **Repeat vendors.** Among vulnerabilities with public exploit code, vendors with 20 or more earlier KEV entries were later listed 4.35% of the time, against 1.19% for vendors with none.
 - **WordPress plugins** were about 9% of all 2025 vulnerabilities, and none was later added to the list.
 

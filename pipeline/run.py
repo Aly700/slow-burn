@@ -203,3 +203,5 @@ if __name__ == '__main__':
     if args.all:
         from pipeline.watch import run as watch
         watch()
+        from pipeline.replay import run as replay
+        replay()
