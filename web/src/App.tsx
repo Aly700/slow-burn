@@ -10,6 +10,7 @@ import { Discovery, AgentSection } from "./components/Discovery";
 import { Presentation } from "./components/Presentation";
 import { strongestRun } from "./storyData";
 import { Icon } from "./components/Icon";
+import { AshHero } from "./components/AshHero";
 
 export default function App() {
   const [data, setData] = useState<Data>({});
@@ -173,6 +174,7 @@ export default function App() {
         </div>
       )}
       <main aria-busy={loading}>
+        <AshHero />
         <Hero data={data} />
         <Timing findings={data.findings} />
         <Signals findings={data.findings} />

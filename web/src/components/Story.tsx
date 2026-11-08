@@ -8,13 +8,13 @@ import { Icon } from "./Icon";
 
 export function Hero({ data }: { data: Data }) {
   return (
-    <section id="overview" className="hero replay-hero">
+    <section id="backtest" className="hero replay-hero">
       <div className="replay-intro">
-        <h1>Severity isn’t a forecast.</h1>
+        <h2>2025 ranking backtest</h2>
         <p>
-          Same fix budget. A year of consequences.
+          Four rankings, 500 CVEs each.
           <br />
-          <strong>Watch what each ranking catches.</strong>
+          <strong>Later KEV entries shown by listing date.</strong>
         </p>
       </div>
       <Replay data={data.replay_2025} />
