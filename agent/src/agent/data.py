@@ -146,7 +146,7 @@ class DataTools:
         return {"cve_id": cve_id, "description": row.get("description"), "published": row.get("published"),
                 "assigner": row.get("assigner"), "cvss": cvss, "cwes": cwes, "products": products,
                 "vendor_candidate": vendor, "snapshot_month": month, "snapshot_end": month_end(month),
-                "signals": signals(signal), "signals_available": bool(ss),
+                "signals": signals(signal), "signals_available": bool(ss), "in_scoreboard_2026": bool(ss) and month.startswith('2026'),
                 "provenance": {"signals": "month-end scoreboard or historical monthly file", "metadata": NVD_VINTAGE},
                 "warnings": [] if ss else ["No signal row for this month; missing is not zero."]}
 
@@ -156,7 +156,7 @@ class DataTools:
         row = rows.get(cve_id)
         if not row:
             return {"cve_id": cve_id, "rank": None, "score": None, "reasons": [], "score_is_probability": False,
-                    "score_file_sha256": self.score_hash, "warnings": ["No model ranking for this historical snapshot."]}
+                    "score_file_sha256": self.score_hash, "warnings": ["CVE is outside the supplied ranking; no rank or model probability is available."]}
         expected_month = self.active_month if self.active_cve == cve_id else self.snapshot(cve_id)
         if row["snapshot_month"] != expected_month:
             raise ValueError("ranking snapshot does not match the CVE's scoreboard or investigation snapshot")

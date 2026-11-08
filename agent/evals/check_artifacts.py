@@ -20,6 +20,12 @@ def main():
     count = 0
     for path in (ROOT / 'artifacts/agent_runs').rglob('*.json'):
         run = json.loads(path.read_text())
+        if 'live-examples' in path.parts:
+            assert run['schema_version']==1 and run['source']=='live', path
+            events=run['events']
+            assert events[0]['event']=='start' and events[-1]['event']=='done', path
+            assert [e['t_ms'] for e in events]==sorted(e['t_ms'] for e in events), path
+            run=next(e['data']['run'] for e in events if e['event']=='briefing')
         assert REQUIRED <= run.keys(), path
         assert run['state'] in STATES, path
         assert run['states_seen'][-1] == run['state'], path
@@ -31,7 +37,7 @@ def main():
         assert digest(run['briefing']) == run['briefing_hash'], path
         if 'decision' in run['briefing']:
             outputs = {call['tool']: call['output'] for call in run['tool_results']}
-            decision = decide(outputs['explain_score'], outputs['get_cve']['signals'], list_name=run.get('list','top500'))
+            decision = decide(outputs['explain_score'], outputs['get_cve']['signals'], list_name='watch' if run.get('list')=='watch' else 'top500')
             assert run['briefing']['decision'] == decision, path
             assert run['briefing']['verdict'] == decision['verdict'], path
             assert run['briefing']['urgency'] == decision['urgency'], path

@@ -1,0 +1,2807 @@
+{
+  "cases": 15,
+  "model": "ibm-granite/granite-4.0-h-small",
+  "grading": "Fixed intents and source facts written before inference. Full requires all expected facts and intended filters. These are functional questions, not exploitation-outcome tests.",
+  "fully": 12,
+  "partly": 0,
+  "not_at_all": 3,
+  "evidence_fidelity": 1.0,
+  "unauthorized_writes": 0,
+  "duration_ms_p50": 4617.98,
+  "results": [
+    {
+      "id": "q01",
+      "question": "What should a Fortinet shop fix first? List the first 3 ranked CVEs.",
+      "mode": "search",
+      "filters": {
+        "vendor": "fortinet"
+      },
+      "expected": [
+        {
+          "tool": "search_ranked",
+          "field": "matched_count",
+          "value": 23
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.0.cve_id",
+          "value": "CVE-2026-39808"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.1.cve_id",
+          "value": "CVE-2026-84388"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.2.cve_id",
+          "value": "CVE-2026-22153"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 4,
+      "expected_facts": 4,
+      "run_id": "run_cbe773631a5c4874b388700a4945add1",
+      "first_event_ms": 14.54,
+      "duration_ms": 8109.49,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "matched_count",
+                "tool": "search_ranked",
+                "value": 23
+              },
+              {
+                "call_id": "t1",
+                "field": "filters",
+                "tool": "search_ranked",
+                "value": {
+                  "top_n": 5000,
+                  "vendor": "Fortinet"
+                }
+              },
+              {
+                "call_id": "t1",
+                "field": "scope",
+                "tool": "search_ranked",
+                "value": "supplied top 5000 ranking only"
+              }
+            ],
+            "id": "a1",
+            "text": "Within the top 5000 ranked entries, 23 match candidate vendor Fortinet.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.0.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-39808"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.rank",
+                "tool": "search_ranked",
+                "value": 11
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.score",
+                "tool": "search_ranked",
+                "value": 0.2926903310724638
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-04"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor",
+                "tool": "search_ranked",
+                "value": "fortinet"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 23
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "nuclei",
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a2",
+            "text": "CVE-2026-39808 is ranked 11 with model score 0.292690 at the 2026-04 snapshot. Its candidate vendor is fortinet. Exact vendor matching found 23 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.1.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-84388"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.rank",
+                "tool": "search_ranked",
+                "value": 54
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.score",
+                "tool": "search_ranked",
+                "value": 0.18766094960834212
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-09"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor",
+                "tool": "search_ranked",
+                "value": "fortinet"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 23
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a3",
+            "text": "CVE-2026-84388 is ranked 54 with model score 0.187661 at the 2026-09 snapshot. Its candidate vendor is fortinet. Exact vendor matching found 23 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.2.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-22153"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.rank",
+                "tool": "search_ranked",
+                "value": 210
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.score",
+                "tool": "search_ranked",
+                "value": 0.08908434225414133
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-02"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor",
+                "tool": "search_ranked",
+                "value": "fortinet"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 23
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a4",
+            "text": "CVE-2026-22153 is ranked 210 with model score 0.089084 at the 2026-02 snapshot. Its candidate vendor is fortinet. Exact vendor matching found 23 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          }
+        ],
+        "text": "Within the top 5000 ranked entries, 23 match candidate vendor Fortinet. CVE-2026-39808 is ranked 11 with model score 0.292690 at the 2026-04 snapshot. Its candidate vendor is fortinet. Exact vendor matching found 23 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github. CVE-2026-84388 is ranked 54 with model score 0.187661 at the 2026-09 snapshot. Its candidate vendor is fortinet. Exact vendor matching found 23 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2026-22153 is ranked 210 with model score 0.089084 at the 2026-02 snapshot. Its candidate vendor is fortinet. Exact vendor matching found 23 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+        "t_ms": 8106
+      },
+      "verifier": {
+        "claims_total": 4,
+        "claims_verified": 4,
+        "dropped": []
+      },
+      "query": {
+        "filters": {
+          "top_n": 5000,
+          "vendor": "Fortinet"
+        },
+        "limit": 3
+      },
+      "errors": []
+    },
+    {
+      "id": "q02",
+      "question": "List the first 3 ranked ServiceNow CVEs.",
+      "mode": "search",
+      "filters": {
+        "vendor": "servicenow"
+      },
+      "expected": [
+        {
+          "tool": "search_ranked",
+          "field": "matched_count",
+          "value": 4
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.0.cve_id",
+          "value": "CVE-2026-6875"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.1.cve_id",
+          "value": "CVE-2025-12420"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.2.cve_id",
+          "value": "CVE-2026-0542"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 4,
+      "expected_facts": 4,
+      "run_id": "run_b8f695b3209e491cbee63e1f78525717",
+      "first_event_ms": 5.22,
+      "duration_ms": 5578.86,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "matched_count",
+                "tool": "search_ranked",
+                "value": 4
+              },
+              {
+                "call_id": "t1",
+                "field": "filters",
+                "tool": "search_ranked",
+                "value": {
+                  "top_n": 5000,
+                  "vendor": "ServiceNow"
+                }
+              },
+              {
+                "call_id": "t1",
+                "field": "scope",
+                "tool": "search_ranked",
+                "value": "supplied top 5000 ranking only"
+              }
+            ],
+            "id": "a1",
+            "text": "Within the top 5000 ranked entries, 4 match candidate vendor ServiceNow.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.0.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-6875"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.rank",
+                "tool": "search_ranked",
+                "value": 4
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.score",
+                "tool": "search_ranked",
+                "value": 0.3927124749629613
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-07"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor",
+                "tool": "search_ranked",
+                "value": "servicenow"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 2
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "nuclei",
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a2",
+            "text": "CVE-2026-6875 is ranked 4 with model score 0.392712 at the 2026-07 snapshot. Its candidate vendor is servicenow. Exact vendor matching found 2 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.1.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2025-12420"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.rank",
+                "tool": "search_ranked",
+                "value": 736
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.score",
+                "tool": "search_ranked",
+                "value": 0.018650859641370678
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-01"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor",
+                "tool": "search_ranked",
+                "value": "servicenow"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 2
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a3",
+            "text": "CVE-2025-12420 is ranked 736 with model score 0.018651 at the 2026-01 snapshot. Its candidate vendor is servicenow. Exact vendor matching found 2 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.2.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-0542"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.rank",
+                "tool": "search_ranked",
+                "value": 3021
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.score",
+                "tool": "search_ranked",
+                "value": 0.010761778919150684
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-02"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor",
+                "tool": "search_ranked",
+                "value": "servicenow"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 2
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.public_signal",
+                "tool": "search_ranked",
+                "value": false
+              }
+            ],
+            "id": "a4",
+            "text": "CVE-2026-0542 is ranked 3021 with model score 0.010762 at the 2026-02 snapshot. Its candidate vendor is servicenow. Exact vendor matching found 2 earlier KEV entries through 2025-12-31. No public-material signal is recorded; this does not establish safety.",
+            "verified": true
+          }
+        ],
+        "text": "Within the top 5000 ranked entries, 4 match candidate vendor ServiceNow. CVE-2026-6875 is ranked 4 with model score 0.392712 at the 2026-07 snapshot. Its candidate vendor is servicenow. Exact vendor matching found 2 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github. CVE-2025-12420 is ranked 736 with model score 0.018651 at the 2026-01 snapshot. Its candidate vendor is servicenow. Exact vendor matching found 2 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2026-0542 is ranked 3021 with model score 0.010762 at the 2026-02 snapshot. Its candidate vendor is servicenow. Exact vendor matching found 2 earlier KEV entries through 2025-12-31. No public-material signal is recorded; this does not establish safety.",
+        "t_ms": 5576
+      },
+      "verifier": {
+        "claims_total": 4,
+        "claims_verified": 4,
+        "dropped": []
+      },
+      "query": {
+        "filters": {
+          "top_n": 5000,
+          "vendor": "ServiceNow"
+        },
+        "limit": 3
+      },
+      "errors": []
+    },
+    {
+      "id": "q03",
+      "question": "List the first 3 ranked SolarWinds CVEs.",
+      "mode": "search",
+      "filters": {
+        "vendor": "solarwinds"
+      },
+      "expected": [
+        {
+          "tool": "search_ranked",
+          "field": "matched_count",
+          "value": 9
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.0.cve_id",
+          "value": "CVE-2026-28326"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.1.cve_id",
+          "value": "CVE-2025-40554"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.2.cve_id",
+          "value": "CVE-2026-28325"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 4,
+      "expected_facts": 4,
+      "run_id": "run_38809acfb1c04b86b556ec1ffc9170f4",
+      "first_event_ms": 8.17,
+      "duration_ms": 4926.75,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "matched_count",
+                "tool": "search_ranked",
+                "value": 9
+              },
+              {
+                "call_id": "t1",
+                "field": "filters",
+                "tool": "search_ranked",
+                "value": {
+                  "top_n": 5000,
+                  "vendor": "SolarWinds"
+                }
+              },
+              {
+                "call_id": "t1",
+                "field": "scope",
+                "tool": "search_ranked",
+                "value": "supplied top 5000 ranking only"
+              }
+            ],
+            "id": "a1",
+            "text": "Within the top 5000 ranked entries, 9 match candidate vendor SolarWinds.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.0.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-28326"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.rank",
+                "tool": "search_ranked",
+                "value": 15
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.score",
+                "tool": "search_ranked",
+                "value": 0.27662391390234964
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-09"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor",
+                "tool": "search_ranked",
+                "value": "solarwinds"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 7
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a2",
+            "text": "CVE-2026-28326 is ranked 15 with model score 0.276624 at the 2026-09 snapshot. Its candidate vendor is solarwinds. Exact vendor matching found 7 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.1.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2025-40554"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.rank",
+                "tool": "search_ranked",
+                "value": 436
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.score",
+                "tool": "search_ranked",
+                "value": 0.041730671484883616
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-01"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor",
+                "tool": "search_ranked",
+                "value": "solarwinds"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 7
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a3",
+            "text": "CVE-2025-40554 is ranked 436 with model score 0.041731 at the 2026-01 snapshot. Its candidate vendor is solarwinds. Exact vendor matching found 7 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.2.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-28325"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.rank",
+                "tool": "search_ranked",
+                "value": 1820
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.score",
+                "tool": "search_ranked",
+                "value": 0.023804176729982363
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-09"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor",
+                "tool": "search_ranked",
+                "value": "solarwinds"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 7
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.public_signal",
+                "tool": "search_ranked",
+                "value": false
+              }
+            ],
+            "id": "a4",
+            "text": "CVE-2026-28325 is ranked 1820 with model score 0.023804 at the 2026-09 snapshot. Its candidate vendor is solarwinds. Exact vendor matching found 7 earlier KEV entries through 2025-12-31. No public-material signal is recorded; this does not establish safety.",
+            "verified": true
+          }
+        ],
+        "text": "Within the top 5000 ranked entries, 9 match candidate vendor SolarWinds. CVE-2026-28326 is ranked 15 with model score 0.276624 at the 2026-09 snapshot. Its candidate vendor is solarwinds. Exact vendor matching found 7 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2025-40554 is ranked 436 with model score 0.041731 at the 2026-01 snapshot. Its candidate vendor is solarwinds. Exact vendor matching found 7 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2026-28325 is ranked 1820 with model score 0.023804 at the 2026-09 snapshot. Its candidate vendor is solarwinds. Exact vendor matching found 7 earlier KEV entries through 2025-12-31. No public-material signal is recorded; this does not establish safety.",
+        "t_ms": 4924
+      },
+      "verifier": {
+        "claims_total": 4,
+        "claims_verified": 4,
+        "dropped": []
+      },
+      "query": {
+        "filters": {
+          "top_n": 5000,
+          "vendor": "SolarWinds"
+        },
+        "limit": 3
+      },
+      "errors": []
+    },
+    {
+      "id": "q04",
+      "question": "List the first 3 ranked SAP CVEs.",
+      "mode": "search",
+      "filters": {
+        "vendor": "sap"
+      },
+      "expected": [
+        {
+          "tool": "search_ranked",
+          "field": "matched_count",
+          "value": 20
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.0.cve_id",
+          "value": "CVE-2026-58231"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.1.cve_id",
+          "value": "CVE-2026-40128"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.2.cve_id",
+          "value": "CVE-2026-44761"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 4,
+      "expected_facts": 4,
+      "run_id": "run_bc53d3c369af43c1b08d931e0d728819",
+      "first_event_ms": 4.9,
+      "duration_ms": 4617.98,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "matched_count",
+                "tool": "search_ranked",
+                "value": 20
+              },
+              {
+                "call_id": "t1",
+                "field": "filters",
+                "tool": "search_ranked",
+                "value": {
+                  "top_n": 5000,
+                  "vendor": "SAP"
+                }
+              },
+              {
+                "call_id": "t1",
+                "field": "scope",
+                "tool": "search_ranked",
+                "value": "supplied top 5000 ranking only"
+              }
+            ],
+            "id": "a1",
+            "text": "Within the top 5000 ranked entries, 20 match candidate vendor SAP.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.0.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-58231"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.rank",
+                "tool": "search_ranked",
+                "value": 7
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.score",
+                "tool": "search_ranked",
+                "value": 0.3574106956433909
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-08"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor",
+                "tool": "search_ranked",
+                "value": "sap"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 14
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a2",
+            "text": "CVE-2026-58231 is ranked 7 with model score 0.357411 at the 2026-08 snapshot. Its candidate vendor is sap. Exact vendor matching found 14 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.1.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-40128"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.rank",
+                "tool": "search_ranked",
+                "value": 2045
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.score",
+                "tool": "search_ranked",
+                "value": 0.017384074309356422
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-07"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor",
+                "tool": "search_ranked",
+                "value": "sap"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 14
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.public_signal",
+                "tool": "search_ranked",
+                "value": false
+              }
+            ],
+            "id": "a3",
+            "text": "CVE-2026-40128 is ranked 2045 with model score 0.017384 at the 2026-07 snapshot. Its candidate vendor is sap. Exact vendor matching found 14 earlier KEV entries through 2025-12-31. No public-material signal is recorded; this does not establish safety.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.2.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-44761"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.rank",
+                "tool": "search_ranked",
+                "value": 2074
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.score",
+                "tool": "search_ranked",
+                "value": 0.016955261423926872
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-07"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor",
+                "tool": "search_ranked",
+                "value": "sap"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 14
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.public_signal",
+                "tool": "search_ranked",
+                "value": false
+              }
+            ],
+            "id": "a4",
+            "text": "CVE-2026-44761 is ranked 2074 with model score 0.016955 at the 2026-07 snapshot. Its candidate vendor is sap. Exact vendor matching found 14 earlier KEV entries through 2025-12-31. No public-material signal is recorded; this does not establish safety.",
+            "verified": true
+          }
+        ],
+        "text": "Within the top 5000 ranked entries, 20 match candidate vendor SAP. CVE-2026-58231 is ranked 7 with model score 0.357411 at the 2026-08 snapshot. Its candidate vendor is sap. Exact vendor matching found 14 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2026-40128 is ranked 2045 with model score 0.017384 at the 2026-07 snapshot. Its candidate vendor is sap. Exact vendor matching found 14 earlier KEV entries through 2025-12-31. No public-material signal is recorded; this does not establish safety. CVE-2026-44761 is ranked 2074 with model score 0.016955 at the 2026-07 snapshot. Its candidate vendor is sap. Exact vendor matching found 14 earlier KEV entries through 2025-12-31. No public-material signal is recorded; this does not establish safety.",
+        "t_ms": 4615
+      },
+      "verifier": {
+        "claims_total": 4,
+        "claims_verified": 4,
+        "dropped": []
+      },
+      "query": {
+        "filters": {
+          "top_n": 5000,
+          "vendor": "SAP"
+        },
+        "limit": 3
+      },
+      "errors": []
+    },
+    {
+      "id": "q05",
+      "question": "List the first 3 ranked CVEs involving the NGINX product.",
+      "mode": "search",
+      "filters": {
+        "product": "nginx"
+      },
+      "expected": [
+        {
+          "tool": "search_ranked",
+          "field": "matched_count",
+          "value": 25
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.0.cve_id",
+          "value": "CVE-2026-42533"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.1.cve_id",
+          "value": "CVE-2026-42945"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.2.cve_id",
+          "value": "CVE-2026-42530"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 4,
+      "expected_facts": 4,
+      "run_id": "run_0eeced81cee746059b43d09985d84c95",
+      "first_event_ms": 5.77,
+      "duration_ms": 4813.79,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "matched_count",
+                "tool": "search_ranked",
+                "value": 25
+              },
+              {
+                "call_id": "t1",
+                "field": "filters",
+                "tool": "search_ranked",
+                "value": {
+                  "product": "NGINX",
+                  "top_n": 5000
+                }
+              },
+              {
+                "call_id": "t1",
+                "field": "scope",
+                "tool": "search_ranked",
+                "value": "supplied top 5000 ranking only"
+              }
+            ],
+            "id": "a1",
+            "text": "Within the top 5000 ranked entries, 25 match product text NGINX.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.0.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-42533"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.rank",
+                "tool": "search_ranked",
+                "value": 12
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.score",
+                "tool": "search_ranked",
+                "value": 0.2916854241101586
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-07"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor",
+                "tool": "search_ranked",
+                "value": "f5"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 6
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a2",
+            "text": "CVE-2026-42533 is ranked 12 with model score 0.291685 at the 2026-07 snapshot. Its candidate vendor is f5. Exact vendor matching found 6 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.1.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-42945"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.rank",
+                "tool": "search_ranked",
+                "value": 90
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.score",
+                "tool": "search_ranked",
+                "value": 0.14569456425133903
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-05"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor",
+                "tool": "search_ranked",
+                "value": "f5"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 6
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a3",
+            "text": "CVE-2026-42945 is ranked 90 with model score 0.145695 at the 2026-05 snapshot. Its candidate vendor is f5. Exact vendor matching found 6 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.2.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-42530"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.rank",
+                "tool": "search_ranked",
+                "value": 120
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.score",
+                "tool": "search_ranked",
+                "value": 0.128204410269525
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-07"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor",
+                "tool": "search_ranked",
+                "value": "f5"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 6
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a4",
+            "text": "CVE-2026-42530 is ranked 120 with model score 0.128204 at the 2026-07 snapshot. Its candidate vendor is f5. Exact vendor matching found 6 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          }
+        ],
+        "text": "Within the top 5000 ranked entries, 25 match product text NGINX. CVE-2026-42533 is ranked 12 with model score 0.291685 at the 2026-07 snapshot. Its candidate vendor is f5. Exact vendor matching found 6 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2026-42945 is ranked 90 with model score 0.145695 at the 2026-05 snapshot. Its candidate vendor is f5. Exact vendor matching found 6 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2026-42530 is ranked 120 with model score 0.128204 at the 2026-07 snapshot. Its candidate vendor is f5. Exact vendor matching found 6 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+        "t_ms": 4811
+      },
+      "verifier": {
+        "claims_total": 4,
+        "claims_verified": 4,
+        "dropped": []
+      },
+      "query": {
+        "filters": {
+          "product": "NGINX",
+          "top_n": 5000
+        },
+        "limit": 3
+      },
+      "errors": []
+    },
+    {
+      "id": "q06",
+      "question": "List the first 3 ranked CVEs with CWE-78.",
+      "mode": "search",
+      "filters": {
+        "cwe": "CWE-78"
+      },
+      "expected": [
+        {
+          "tool": "search_ranked",
+          "field": "matched_count",
+          "value": 159
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.0.cve_id",
+          "value": "CVE-2026-39808"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.1.cve_id",
+          "value": "CVE-2026-95675"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.2.cve_id",
+          "value": "CVE-2026-60121"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 4,
+      "expected_facts": 4,
+      "run_id": "run_d8742eb9cc7d43809ca0733dc2ff55d8",
+      "first_event_ms": 5.89,
+      "duration_ms": 3063.98,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "matched_count",
+                "tool": "search_ranked",
+                "value": 159
+              },
+              {
+                "call_id": "t1",
+                "field": "filters",
+                "tool": "search_ranked",
+                "value": {
+                  "cwe": "CWE-78",
+                  "top_n": 5000
+                }
+              },
+              {
+                "call_id": "t1",
+                "field": "scope",
+                "tool": "search_ranked",
+                "value": "supplied top 5000 ranking only"
+              }
+            ],
+            "id": "a1",
+            "text": "Within the top 5000 ranked entries, 159 match weakness CWE-78.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.0.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-39808"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.rank",
+                "tool": "search_ranked",
+                "value": 11
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.score",
+                "tool": "search_ranked",
+                "value": 0.2926903310724638
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-04"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor",
+                "tool": "search_ranked",
+                "value": "fortinet"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 23
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "nuclei",
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a2",
+            "text": "CVE-2026-39808 is ranked 11 with model score 0.292690 at the 2026-04 snapshot. Its candidate vendor is fortinet. Exact vendor matching found 23 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.1.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-95675"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.rank",
+                "tool": "search_ranked",
+                "value": 22
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.score",
+                "tool": "search_ranked",
+                "value": 0.2516918706964269
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-09"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor",
+                "tool": "search_ranked",
+                "value": "vulncheck"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 0
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a3",
+            "text": "CVE-2026-95675 is ranked 22 with model score 0.251692 at the 2026-09 snapshot. Its candidate vendor is vulncheck. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.2.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-60121"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.rank",
+                "tool": "search_ranked",
+                "value": 28
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.score",
+                "tool": "search_ranked",
+                "value": 0.24032696220259553
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-07"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor",
+                "tool": "search_ranked",
+                "value": "vitec"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 0
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a4",
+            "text": "CVE-2026-60121 is ranked 28 with model score 0.240327 at the 2026-07 snapshot. Its candidate vendor is vitec. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          }
+        ],
+        "text": "Within the top 5000 ranked entries, 159 match weakness CWE-78. CVE-2026-39808 is ranked 11 with model score 0.292690 at the 2026-04 snapshot. Its candidate vendor is fortinet. Exact vendor matching found 23 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github. CVE-2026-95675 is ranked 22 with model score 0.251692 at the 2026-09 snapshot. Its candidate vendor is vulncheck. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2026-60121 is ranked 28 with model score 0.240327 at the 2026-07 snapshot. Its candidate vendor is vitec. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+        "t_ms": 3061
+      },
+      "verifier": {
+        "claims_total": 4,
+        "claims_verified": 4,
+        "dropped": []
+      },
+      "query": {
+        "filters": {
+          "cwe": "CWE-78",
+          "top_n": 5000
+        },
+        "limit": 3
+      },
+      "errors": []
+    },
+    {
+      "id": "q07",
+      "question": "List the first 3 ranked CVEs with CWE-79.",
+      "mode": "search",
+      "filters": {
+        "cwe": "CWE-79"
+      },
+      "expected": [
+        {
+          "tool": "search_ranked",
+          "field": "matched_count",
+          "value": 199
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.0.cve_id",
+          "value": "CVE-2026-93659"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.1.cve_id",
+          "value": "CVE-2026-29519"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.2.cve_id",
+          "value": "CVE-2026-51133"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 4,
+      "expected_facts": 4,
+      "run_id": "run_c3eaa108daa84af9a2dff4f5d3f698a7",
+      "first_event_ms": 9.52,
+      "duration_ms": 3063.05,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "matched_count",
+                "tool": "search_ranked",
+                "value": 199
+              },
+              {
+                "call_id": "t1",
+                "field": "filters",
+                "tool": "search_ranked",
+                "value": {
+                  "cwe": "CWE-79",
+                  "top_n": 5000
+                }
+              },
+              {
+                "call_id": "t1",
+                "field": "scope",
+                "tool": "search_ranked",
+                "value": "supplied top 5000 ranking only"
+              }
+            ],
+            "id": "a1",
+            "text": "Within the top 5000 ranked entries, 199 match weakness CWE-79.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.0.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-93659"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.rank",
+                "tool": "search_ranked",
+                "value": 334
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.score",
+                "tool": "search_ranked",
+                "value": 0.05645508530577156
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-09"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor",
+                "tool": "search_ranked",
+                "value": "vulncheck"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 0
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a2",
+            "text": "CVE-2026-93659 is ranked 334 with model score 0.056455 at the 2026-09 snapshot. Its candidate vendor is vulncheck. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.1.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-29519"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.rank",
+                "tool": "search_ranked",
+                "value": 353
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.score",
+                "tool": "search_ranked",
+                "value": 0.05396643937187345
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-07"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor",
+                "tool": "search_ranked",
+                "value": "vulncheck"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 0
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a3",
+            "text": "CVE-2026-29519 is ranked 353 with model score 0.053966 at the 2026-07 snapshot. Its candidate vendor is vulncheck. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.2.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-51133"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.rank",
+                "tool": "search_ranked",
+                "value": 529
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.score",
+                "tool": "search_ranked",
+                "value": 0.03269928079233313
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-09"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "exploitdb"
+                ]
+              }
+            ],
+            "id": "a4",
+            "text": "CVE-2026-51133 is ranked 529 with model score 0.032699 at the 2026-09 snapshot. Public-material sources: exploitdb.",
+            "verified": true
+          }
+        ],
+        "text": "Within the top 5000 ranked entries, 199 match weakness CWE-79. CVE-2026-93659 is ranked 334 with model score 0.056455 at the 2026-09 snapshot. Its candidate vendor is vulncheck. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2026-29519 is ranked 353 with model score 0.053966 at the 2026-07 snapshot. Its candidate vendor is vulncheck. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2026-51133 is ranked 529 with model score 0.032699 at the 2026-09 snapshot. Public-material sources: exploitdb.",
+        "t_ms": 3059
+      },
+      "verifier": {
+        "claims_total": 4,
+        "claims_verified": 4,
+        "dropped": []
+      },
+      "query": {
+        "filters": {
+          "cwe": "CWE-79",
+          "top_n": 5000
+        },
+        "limit": 3
+      },
+      "errors": []
+    },
+    {
+      "id": "q08",
+      "question": "Which of the top 50 have no vendor history? Show the first 3 matches.",
+      "mode": "search",
+      "filters": {
+        "top_n": 50,
+        "has_vendor_history": false
+      },
+      "expected": [
+        {
+          "tool": "search_ranked",
+          "field": "matched_count",
+          "value": 19
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.0.cve_id",
+          "value": "CVE-2026-65694"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.1.cve_id",
+          "value": "CVE-2026-90817"
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.2.cve_id",
+          "value": "CVE-2026-20251"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 4,
+      "expected_facts": 4,
+      "run_id": "run_77ab5fa79e47455390d593d65a263af5",
+      "first_event_ms": 7.27,
+      "duration_ms": 3084.99,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "matched_count",
+                "tool": "search_ranked",
+                "value": 19
+              },
+              {
+                "call_id": "t1",
+                "field": "filters",
+                "tool": "search_ranked",
+                "value": {
+                  "has_vendor_history": false,
+                  "top_n": 50
+                }
+              },
+              {
+                "call_id": "t1",
+                "field": "scope",
+                "tool": "search_ranked",
+                "value": "supplied top 5000 ranking only"
+              }
+            ],
+            "id": "a1",
+            "text": "Within the top 50 ranked entries, 19 match a known vendor with no earlier exact KEV match.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.0.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-65694"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.rank",
+                "tool": "search_ranked",
+                "value": 2
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.score",
+                "tool": "search_ranked",
+                "value": 0.44996949533121994
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-07"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor",
+                "tool": "search_ranked",
+                "value": "vulncheck"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 0
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "nuclei",
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a2",
+            "text": "CVE-2026-65694 is ranked 2 with model score 0.449969 at the 2026-07 snapshot. Its candidate vendor is vulncheck. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.1.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-90817"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.rank",
+                "tool": "search_ranked",
+                "value": 8
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.score",
+                "tool": "search_ranked",
+                "value": 0.3326451490994886
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-09"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor",
+                "tool": "search_ranked",
+                "value": "securifera"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 0
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.1.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a3",
+            "text": "CVE-2026-90817 is ranked 8 with model score 0.332645 at the 2026-09 snapshot. Its candidate vendor is securifera. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.2.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-20251"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.rank",
+                "tool": "search_ranked",
+                "value": 9
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.score",
+                "tool": "search_ranked",
+                "value": 0.3011304148645799
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-07"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor",
+                "tool": "search_ranked",
+                "value": "splunk"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 0
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.2.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a4",
+            "text": "CVE-2026-20251 is ranked 9 with model score 0.301130 at the 2026-07 snapshot. Its candidate vendor is splunk. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+            "verified": true
+          }
+        ],
+        "text": "Within the top 50 ranked entries, 19 match a known vendor with no earlier exact KEV match. CVE-2026-65694 is ranked 2 with model score 0.449969 at the 2026-07 snapshot. Its candidate vendor is vulncheck. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github. CVE-2026-90817 is ranked 8 with model score 0.332645 at the 2026-09 snapshot. Its candidate vendor is securifera. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github. CVE-2026-20251 is ranked 9 with model score 0.301130 at the 2026-07 snapshot. Its candidate vendor is splunk. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: poc_github.",
+        "t_ms": 3081
+      },
+      "verifier": {
+        "claims_total": 4,
+        "claims_verified": 4,
+        "dropped": []
+      },
+      "query": {
+        "filters": {
+          "has_vendor_history": false,
+          "top_n": 50
+        },
+        "limit": 3
+      },
+      "errors": []
+    },
+    {
+      "id": "q09",
+      "question": "How many of the top 50 have no vendor history?",
+      "mode": "summary",
+      "filters": {
+        "top_n": 50,
+        "has_vendor_history": false
+      },
+      "expected": [
+        {
+          "tool": "summarize_ranked",
+          "field": "matched_count",
+          "value": 19
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 1,
+      "expected_facts": 1,
+      "run_id": "run_ed1028ddb98b42a9a8e43bbd62f8b39f",
+      "first_event_ms": 6.83,
+      "duration_ms": 4946.25,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "matched_count",
+                "tool": "search_ranked",
+                "value": 19
+              },
+              {
+                "call_id": "t1",
+                "field": "filters",
+                "tool": "search_ranked",
+                "value": {
+                  "has_vendor_history": false,
+                  "top_n": 50
+                }
+              },
+              {
+                "call_id": "t1",
+                "field": "scope",
+                "tool": "search_ranked",
+                "value": "supplied top 5000 ranking only"
+              }
+            ],
+            "id": "a1",
+            "text": "Within the top 50 ranked entries, 19 match a known vendor with no earlier exact KEV match.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.0.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-65694"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.rank",
+                "tool": "search_ranked",
+                "value": 2
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.score",
+                "tool": "search_ranked",
+                "value": 0.44996949533121994
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-07"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor",
+                "tool": "search_ranked",
+                "value": "vulncheck"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 0
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "nuclei",
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a2",
+            "text": "CVE-2026-65694 is ranked 2 with model score 0.449969 at the 2026-07 snapshot. Its candidate vendor is vulncheck. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github.",
+            "verified": true
+          }
+        ],
+        "text": "Within the top 50 ranked entries, 19 match a known vendor with no earlier exact KEV match. CVE-2026-65694 is ranked 2 with model score 0.449969 at the 2026-07 snapshot. Its candidate vendor is vulncheck. Exact vendor matching found 0 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github.",
+        "t_ms": 4943
+      },
+      "verifier": {
+        "claims_total": 2,
+        "claims_verified": 2,
+        "dropped": []
+      },
+      "query": {
+        "filters": {
+          "has_vendor_history": false,
+          "top_n": 50
+        },
+        "limit": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "q10",
+      "question": "How many of the top 50 have no public exploit signal?",
+      "mode": "summary",
+      "filters": {
+        "top_n": 50,
+        "public_signal": false
+      },
+      "expected": [
+        {
+          "tool": "summarize_ranked",
+          "field": "matched_count",
+          "value": 0
+        }
+      ],
+      "grade": "not_at_all",
+      "matched_facts": 0,
+      "expected_facts": 1,
+      "run_id": "run_cca523bec93e46fea02a47271938ad92",
+      "first_event_ms": 6.04,
+      "duration_ms": 3641.99,
+      "answer": {
+        "text": "",
+        "claims": []
+      },
+      "verifier": {
+        "claims_total": 0,
+        "claims_verified": 0,
+        "dropped": []
+      },
+      "query": {},
+      "errors": [
+        "question structured output invalid after one repair"
+      ]
+    },
+    {
+      "id": "q11",
+      "question": "How many Fortinet entries have public exploit material?",
+      "mode": "summary",
+      "filters": {
+        "vendor": "fortinet",
+        "public_signal": true
+      },
+      "expected": [
+        {
+          "tool": "summarize_ranked",
+          "field": "matched_count",
+          "value": 7
+        }
+      ],
+      "grade": "not_at_all",
+      "matched_facts": 0,
+      "expected_facts": 1,
+      "run_id": "run_0c6dd75711404d4199d2516a50056a86",
+      "first_event_ms": 7.36,
+      "duration_ms": 3063.12,
+      "answer": {
+        "text": "",
+        "claims": []
+      },
+      "verifier": {
+        "claims_total": 0,
+        "claims_verified": 0,
+        "dropped": []
+      },
+      "query": {},
+      "errors": [
+        "question structured output invalid after one repair"
+      ]
+    },
+    {
+      "id": "q12",
+      "question": "How many of the top 500 have CWE-78?",
+      "mode": "summary",
+      "filters": {
+        "top_n": 500,
+        "cwe": "CWE-78"
+      },
+      "expected": [
+        {
+          "tool": "summarize_ranked",
+          "field": "matched_count",
+          "value": 46
+        }
+      ],
+      "grade": "not_at_all",
+      "matched_facts": 0,
+      "expected_facts": 1,
+      "run_id": "run_7634a98f5d034340a8ac94d92ebac17c",
+      "first_event_ms": 6.09,
+      "duration_ms": 3267.77,
+      "answer": {
+        "text": "",
+        "claims": []
+      },
+      "verifier": {
+        "claims_total": 0,
+        "claims_verified": 0,
+        "dropped": []
+      },
+      "query": {},
+      "errors": [
+        "question structured output invalid after one repair"
+      ]
+    },
+    {
+      "id": "q13",
+      "question": "List the first 3 CVEs whose description contains \"reset-credentials\".",
+      "mode": "search",
+      "filters": {
+        "text": "reset-credentials"
+      },
+      "expected": [
+        {
+          "tool": "search_ranked",
+          "field": "matched_count",
+          "value": 1
+        },
+        {
+          "tool": "search_ranked",
+          "field": "items.0.cve_id",
+          "value": "CVE-2026-18963"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 2,
+      "expected_facts": 2,
+      "run_id": "run_9dfc5b29aa02436cb1e64a21e020a505",
+      "first_event_ms": 6.37,
+      "duration_ms": 2379.8,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "matched_count",
+                "tool": "search_ranked",
+                "value": 1
+              },
+              {
+                "call_id": "t1",
+                "field": "filters",
+                "tool": "search_ranked",
+                "value": {
+                  "text": "reset-credentials",
+                  "top_n": 5000
+                }
+              },
+              {
+                "call_id": "t1",
+                "field": "scope",
+                "tool": "search_ranked",
+                "value": "supplied top 5000 ranking only"
+              }
+            ],
+            "id": "a1",
+            "text": "Within the top 5000 ranked entries, 1 match description text reset-credentials.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "items.0.cve_id",
+                "tool": "search_ranked",
+                "value": "CVE-2026-18963"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.rank",
+                "tool": "search_ranked",
+                "value": 5
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.score",
+                "tool": "search_ranked",
+                "value": 0.36265051283887884
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.snapshot_month",
+                "tool": "search_ranked",
+                "value": "2026-08"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor",
+                "tool": "search_ranked",
+                "value": "redhat"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.vendor_prior_kev",
+                "tool": "search_ranked",
+                "value": 7
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.catalog_cutoff",
+                "tool": "search_ranked",
+                "value": "2025-12-31"
+              },
+              {
+                "call_id": "t1",
+                "field": "items.0.public_sources",
+                "tool": "search_ranked",
+                "value": [
+                  "nuclei",
+                  "poc_github"
+                ]
+              }
+            ],
+            "id": "a2",
+            "text": "CVE-2026-18963 is ranked 5 with model score 0.362651 at the 2026-08 snapshot. Its candidate vendor is redhat. Exact vendor matching found 7 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github.",
+            "verified": true
+          }
+        ],
+        "text": "Within the top 5000 ranked entries, 1 match description text reset-credentials. CVE-2026-18963 is ranked 5 with model score 0.362651 at the 2026-08 snapshot. Its candidate vendor is redhat. Exact vendor matching found 7 earlier KEV entries through 2025-12-31. Public-material sources: nuclei, poc_github.",
+        "t_ms": 2377
+      },
+      "verifier": {
+        "claims_total": 2,
+        "claims_verified": 2,
+        "dropped": []
+      },
+      "query": {
+        "filters": {
+          "text": "reset-credentials",
+          "top_n": 5000
+        },
+        "limit": 3
+      },
+      "errors": []
+    },
+    {
+      "id": "q14",
+      "question": "Why is CVE-2026-48313 above CVE-2026-65694? Compare their ranks and strongest model reasons.",
+      "mode": "compare",
+      "filters": {},
+      "expected": [
+        {
+          "tool": "compare_cves",
+          "field": "left.cve_id",
+          "value": "CVE-2026-48313"
+        },
+        {
+          "tool": "compare_cves",
+          "field": "left.rank",
+          "value": 1
+        },
+        {
+          "tool": "compare_cves",
+          "field": "left.reasons.0.label",
+          "value": "1 public exploit or detection-tool signals at snapshot"
+        },
+        {
+          "tool": "compare_cves",
+          "field": "right.cve_id",
+          "value": "CVE-2026-65694"
+        },
+        {
+          "tool": "compare_cves",
+          "field": "right.rank",
+          "value": 2
+        },
+        {
+          "tool": "compare_cves",
+          "field": "right.reasons.0.label",
+          "value": "2 public exploit or detection-tool signals at snapshot"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 6,
+      "expected_facts": 6,
+      "run_id": "run_e05b34c25fab49159d1c680b8b8221fe",
+      "first_event_ms": 5.83,
+      "duration_ms": 6073.65,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "left.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-48313"
+              },
+              {
+                "call_id": "t1",
+                "field": "left.rank",
+                "tool": "compare_cves",
+                "value": 1
+              },
+              {
+                "call_id": "t1",
+                "field": "left.score",
+                "tool": "compare_cves",
+                "value": 0.5997700850556824
+              }
+            ],
+            "id": "a1",
+            "text": "CVE-2026-48313 is ranked 1 with score 0.599770.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "left.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-48313"
+              },
+              {
+                "call_id": "t1",
+                "field": "left.reasons.0.label",
+                "tool": "compare_cves",
+                "value": "1 public exploit or detection-tool signals at snapshot"
+              },
+              {
+                "call_id": "t1",
+                "field": "left.reasons.0.contribution",
+                "tool": "compare_cves",
+                "value": 2.906964
+              }
+            ],
+            "id": "a2",
+            "text": "For CVE-2026-48313, a supplied model reason is: “1 public exploit or detection-tool signals at snapshot” (log-odds contribution +2.9070).",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "left.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-48313"
+              },
+              {
+                "call_id": "t1",
+                "field": "left.reasons.1.label",
+                "tool": "compare_cves",
+                "value": "IBM Granite representation of the sanitized technical description"
+              },
+              {
+                "call_id": "t1",
+                "field": "left.reasons.1.contribution",
+                "tool": "compare_cves",
+                "value": 1.662212
+              }
+            ],
+            "id": "a3",
+            "text": "For CVE-2026-48313, a supplied model reason is: “IBM Granite representation of the sanitized technical description” (log-odds contribution +1.6622).",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "right.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-65694"
+              },
+              {
+                "call_id": "t1",
+                "field": "right.rank",
+                "tool": "compare_cves",
+                "value": 2
+              },
+              {
+                "call_id": "t1",
+                "field": "right.score",
+                "tool": "compare_cves",
+                "value": 0.44996949533121994
+              }
+            ],
+            "id": "a4",
+            "text": "CVE-2026-65694 is ranked 2 with score 0.449969.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "right.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-65694"
+              },
+              {
+                "call_id": "t1",
+                "field": "right.reasons.0.label",
+                "tool": "compare_cves",
+                "value": "2 public exploit or detection-tool signals at snapshot"
+              },
+              {
+                "call_id": "t1",
+                "field": "right.reasons.0.contribution",
+                "tool": "compare_cves",
+                "value": 2.132376
+              }
+            ],
+            "id": "a5",
+            "text": "For CVE-2026-65694, a supplied model reason is: “2 public exploit or detection-tool signals at snapshot” (log-odds contribution +2.1324).",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "right.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-65694"
+              },
+              {
+                "call_id": "t1",
+                "field": "right.reasons.1.label",
+                "tool": "compare_cves",
+                "value": "IBM Granite representation of the sanitized technical description"
+              },
+              {
+                "call_id": "t1",
+                "field": "right.reasons.1.contribution",
+                "tool": "compare_cves",
+                "value": 1.724999
+              }
+            ],
+            "id": "a6",
+            "text": "For CVE-2026-65694, a supplied model reason is: “IBM Granite representation of the sanitized technical description” (log-odds contribution +1.7250).",
+            "verified": true
+          }
+        ],
+        "text": "CVE-2026-48313 is ranked 1 with score 0.599770. For CVE-2026-48313, a supplied model reason is: “1 public exploit or detection-tool signals at snapshot” (log-odds contribution +2.9070). For CVE-2026-48313, a supplied model reason is: “IBM Granite representation of the sanitized technical description” (log-odds contribution +1.6622). CVE-2026-65694 is ranked 2 with score 0.449969. For CVE-2026-65694, a supplied model reason is: “2 public exploit or detection-tool signals at snapshot” (log-odds contribution +2.1324). For CVE-2026-65694, a supplied model reason is: “IBM Granite representation of the sanitized technical description” (log-odds contribution +1.7250).",
+        "t_ms": 6070
+      },
+      "verifier": {
+        "claims_total": 6,
+        "claims_verified": 6,
+        "dropped": []
+      },
+      "query": {
+        "cve_a": "CVE-2026-48313",
+        "cve_b": "CVE-2026-65694"
+      },
+      "errors": []
+    },
+    {
+      "id": "q15",
+      "question": "Compare CVE-2026-39808 and CVE-2026-28326 by rank and strongest model reasons.",
+      "mode": "compare",
+      "filters": {},
+      "expected": [
+        {
+          "tool": "compare_cves",
+          "field": "left.cve_id",
+          "value": "CVE-2026-39808"
+        },
+        {
+          "tool": "compare_cves",
+          "field": "left.rank",
+          "value": 11
+        },
+        {
+          "tool": "compare_cves",
+          "field": "left.reasons.0.label",
+          "value": "2 public exploit or detection-tool signals at snapshot"
+        },
+        {
+          "tool": "compare_cves",
+          "field": "right.cve_id",
+          "value": "CVE-2026-28326"
+        },
+        {
+          "tool": "compare_cves",
+          "field": "right.rank",
+          "value": 15
+        },
+        {
+          "tool": "compare_cves",
+          "field": "right.reasons.0.label",
+          "value": "1 public exploit or detection-tool signals at snapshot"
+        }
+      ],
+      "grade": "fully",
+      "matched_facts": 6,
+      "expected_facts": 6,
+      "run_id": "run_831a35fb0b6e4d8dbbfec2e6ffab04bf",
+      "first_event_ms": 9.65,
+      "duration_ms": 6773.9,
+      "answer": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "left.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-39808"
+              },
+              {
+                "call_id": "t1",
+                "field": "left.rank",
+                "tool": "compare_cves",
+                "value": 11
+              },
+              {
+                "call_id": "t1",
+                "field": "left.score",
+                "tool": "compare_cves",
+                "value": 0.2926903310724638
+              }
+            ],
+            "id": "a1",
+            "text": "CVE-2026-39808 is ranked 11 with score 0.292690.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "left.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-39808"
+              },
+              {
+                "call_id": "t1",
+                "field": "left.reasons.0.label",
+                "tool": "compare_cves",
+                "value": "2 public exploit or detection-tool signals at snapshot"
+              },
+              {
+                "call_id": "t1",
+                "field": "left.reasons.0.contribution",
+                "tool": "compare_cves",
+                "value": 2.913827
+              }
+            ],
+            "id": "a2",
+            "text": "For CVE-2026-39808, a supplied model reason is: “2 public exploit or detection-tool signals at snapshot” (log-odds contribution +2.9138).",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "left.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-39808"
+              },
+              {
+                "call_id": "t1",
+                "field": "left.reasons.1.label",
+                "tool": "compare_cves",
+                "value": "IBM Granite representation of the sanitized technical description"
+              },
+              {
+                "call_id": "t1",
+                "field": "left.reasons.1.contribution",
+                "tool": "compare_cves",
+                "value": 1.322997
+              }
+            ],
+            "id": "a3",
+            "text": "For CVE-2026-39808, a supplied model reason is: “IBM Granite representation of the sanitized technical description” (log-odds contribution +1.3230).",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "right.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-28326"
+              },
+              {
+                "call_id": "t1",
+                "field": "right.rank",
+                "tool": "compare_cves",
+                "value": 15
+              },
+              {
+                "call_id": "t1",
+                "field": "right.score",
+                "tool": "compare_cves",
+                "value": 0.27662391390234964
+              }
+            ],
+            "id": "a4",
+            "text": "CVE-2026-28326 is ranked 15 with score 0.276624.",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "right.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-28326"
+              },
+              {
+                "call_id": "t1",
+                "field": "right.reasons.0.label",
+                "tool": "compare_cves",
+                "value": "1 public exploit or detection-tool signals at snapshot"
+              },
+              {
+                "call_id": "t1",
+                "field": "right.reasons.0.contribution",
+                "tool": "compare_cves",
+                "value": 2.246721
+              }
+            ],
+            "id": "a5",
+            "text": "For CVE-2026-28326, a supplied model reason is: “1 public exploit or detection-tool signals at snapshot” (log-odds contribution +2.2467).",
+            "verified": true
+          },
+          {
+            "evidence": [
+              {
+                "call_id": "t1",
+                "field": "right.cve_id",
+                "tool": "compare_cves",
+                "value": "CVE-2026-28326"
+              },
+              {
+                "call_id": "t1",
+                "field": "right.reasons.1.label",
+                "tool": "compare_cves",
+                "value": "IBM Granite representation of the sanitized technical description"
+              },
+              {
+                "call_id": "t1",
+                "field": "right.reasons.1.contribution",
+                "tool": "compare_cves",
+                "value": 1.518297
+              }
+            ],
+            "id": "a6",
+            "text": "For CVE-2026-28326, a supplied model reason is: “IBM Granite representation of the sanitized technical description” (log-odds contribution +1.5183).",
+            "verified": true
+          }
+        ],
+        "text": "CVE-2026-39808 is ranked 11 with score 0.292690. For CVE-2026-39808, a supplied model reason is: “2 public exploit or detection-tool signals at snapshot” (log-odds contribution +2.9138). For CVE-2026-39808, a supplied model reason is: “IBM Granite representation of the sanitized technical description” (log-odds contribution +1.3230). CVE-2026-28326 is ranked 15 with score 0.276624. For CVE-2026-28326, a supplied model reason is: “1 public exploit or detection-tool signals at snapshot” (log-odds contribution +2.2467). For CVE-2026-28326, a supplied model reason is: “IBM Granite representation of the sanitized technical description” (log-odds contribution +1.5183).",
+        "t_ms": 6768
+      },
+      "verifier": {
+        "claims_total": 6,
+        "claims_verified": 6,
+        "dropped": []
+      },
+      "query": {
+        "cve_a": "CVE-2026-39808",
+        "cve_b": "CVE-2026-28326"
+      },
+      "errors": []
+    }
+  ]
+}

@@ -11,15 +11,20 @@ from .config import Settings
 
 
 class ToolClient:
-    def __init__(self, settings=None, fixture=None):
+    def __init__(self, settings=None, fixture=None, prepare_live=False):
         self.settings = settings or Settings()
         self.fixture = fixture
+        self.prepare_live = prepare_live
         self.stack = AsyncExitStack()
 
     async def __aenter__(self):
         env = dict(os.environ)
         env.update({"TRIAGE_ROOT": str(self.settings.root), "TRIAGE_STATE_DB": str(self.settings.state), "TRIAGE_TICKETS": str(self.settings.tickets), "TOKENIZERS_PARALLELISM": "false"})
         env["TRIAGE_SCORES"] = str(self.settings.scores)
+        if self.prepare_live:
+            env['TRIAGE_PREPARE_LIVE']='1'
+        else:
+            env.pop('TRIAGE_PREPARE_LIVE',None)
         if self.settings.snapshot_month:
             env["TRIAGE_SNAPSHOT_MONTH"] = self.settings.snapshot_month
         else:

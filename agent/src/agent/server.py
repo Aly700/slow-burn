@@ -1,7 +1,5 @@
-"""Official MCP stdio server: six reads and one capability-gated local write."""
-import json
+"""Official MCP stdio server: bounded reads and one capability-gated local write."""
 import os
-from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
@@ -15,6 +13,7 @@ def make_server(settings=None):
     settings = settings or Settings()
     server = FastMCP("fix-first-triage", instructions="Read-only investigation tools. Call get_cve first to establish the snapshot. Ticket creation requires a backend-issued approval capability.")
     data = None
+    ranked = None
 
     def source():
         nonlocal data
@@ -25,17 +24,13 @@ def make_server(settings=None):
     read = ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False)
 
     @server.tool(annotations=read)
-    def get_cve(cve_id: str) -> dict:
+    def get_cve(cve_id: str, fixture: str | None = None) -> dict:
         """Read description, CVSS parts, CWE names and month-end signals. Establish this session's snapshot for vendor_history."""
         row = source().get_cve(cve_id)
-        fixture = os.getenv("TRIAGE_FIXTURE")
+        fixture = fixture or os.getenv("TRIAGE_FIXTURE")
         if fixture:
-            fixtures = json.loads((Path(__file__).resolve().parents[2] / "evals/injections.json").read_text())
-            attack = next((f for f in fixtures if f["id"] == fixture), None)
-            if attack is None:
-                raise ValueError("unknown injection fixture")
-            row["description"] = attack["description"]
-            row["fixture"] = attack["id"]
+            from .attacks import apply_fixture
+            row=apply_fixture(row,fixture)
         return row
 
     @server.tool(annotations=read)
@@ -63,6 +58,27 @@ def make_server(settings=None):
         """Read up to 100 ranked candidates. Filters: snapshot_month, any_exploit, min_epss."""
         return source().queue(n, filters)
 
+    def ranking():
+        nonlocal ranked
+        from .analyst_data import RankedData
+        if ranked is None: ranked=RankedData(source())
+        return ranked
+
+    @server.tool(annotations=read)
+    def search_ranked(filters: dict | None = None, limit: int = 5) -> dict:
+        """Search the top 5000 by vendor, product, cwe, text, top_n, min_epss, public_signal or has_vendor_history. Limit 1-10."""
+        return ranking().search(filters,limit)
+
+    @server.tool(annotations=read)
+    def summarize_ranked(filters: dict | None = None) -> dict:
+        """Count a ranking slice, preserving missing vendor and public-signal values as unknown."""
+        return ranking().summary(filters)
+
+    @server.tool(annotations=read)
+    def compare_cves(cve_a: str, cve_b: str) -> dict:
+        """Read two CVEs' ranks, scores and unmodified reasons. Outside-ranking values remain unknown."""
+        return ranking().compare(cve_a,cve_b)
+
     @server.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False, idempotentHint=True, openWorldHint=False))
     def file_fix_ticket(cve_id: str, briefing_hash: str, approval_token: str) -> dict:
         """Append a local ticket only with an unexpired backend-issued capability for this exact CVE and immutable briefing hash."""
@@ -74,6 +90,11 @@ def make_server(settings=None):
         except PermissionError as exc:
             return {"allowed": False, "reason": str(exc)}
 
+    if os.getenv('TRIAGE_PREPARE_LIVE') == '1':
+        from .embeddings import EmbeddingIndex
+        EmbeddingIndex.build(settings, source())
+        source().index = EmbeddingIndex(settings, source())
+        source().index._model = EmbeddingIndex.encoder()
     return server
 
 

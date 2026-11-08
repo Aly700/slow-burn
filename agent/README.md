@@ -12,7 +12,7 @@ uv run --project agent python -m agent.prepare --embeddings
 uv run --project agent python -m agent.api
 ```
 
-The API binds to `127.0.0.1:8765`, with one inference worker and a bounded queue. The first model load downloads weights if absent; prepare the machine before a demo. Subsequent runs reuse one in-memory model per process. Do not use multiple Uvicorn workers: they duplicate model memory and workflow ownership.
+The API binds to `127.0.0.1:8765`, with one inference worker and a bounded queue. Runtime loads cached weights only; download the pinned weights before going offline. Subsequent runs reuse one in-memory model per process. Do not use multiple Uvicorn workers: they duplicate model memory and workflow ownership.
 
 ```sh
 uv run --project agent python -m agent.record --top 15
@@ -27,6 +27,21 @@ Recording rebuilds the content-addressed embedding cache when the ranking pipeli
 
 ## API
 
+Live investigation uses `GET /live/health` and `GET /live/{cve_id}` (Server-Sent Events). The first event identifies a fresh run; tool calls/results, verified or dropped claims, states and the final briefing follow as the loop executes. Every candidate in the 72,670-row supplied scoreboard is addressable, including those outside the published ranking. Missing rank/score stays unknown; new Granite query vectors are generated locally and cached by description hash.
+
+One queue serves both live requests and `POST /runs`. Queued streams identify their wait in a `RECEIVED` event. Disconnects cancel queued/active work; cancellation drains the current native generation before another starts. Live run snapshots go only to `artifacts/cache/live_runs/`. SQLite remains authoritative if refreshing that cache fails after approval. Offline replay envelopes with actual timings are in `artifacts/agent_runs/live-examples/`.
+
+Runtime model loading is local-only and disables remote model metadata checks. Prepare model weights before going offline. A process lock prevents loading a second instruct copy. The service permits the local Vite origins and `https://aly700.github.io`, including Private Network Access preflight; browser-specific local-network permission prompts may still require an operator decision.
+
+For the reproducible offline check, start the API with non-loopback sockets denied:
+
+```sh
+TRIAGE_OFFLINE_AUDIT=1 PYTHONPATH="$PWD/agent/evals/offline_check" uv run --project agent python -m agent.api
+uv run --project agent python agent/evals/live_benchmark.py --approve-demo-ticket
+```
+
+The benchmark uses the already running service, never another instruct model. Its explicit demo flag approves one local ticket and checks wrong-hash rejection and idempotent retry. Results are in `agent/evals/live_metrics.json`. The stream contract, including fixture-mode examples, is in `research/CONTRACTS.md`.
+
 - `POST /runs` with `{"cve_id":"CVE-2026-8037"}` returns HTTP 202 and the durable run, initially `RECEIVED`.
 - `GET /runs/{run_id}` returns the run, briefing hash, verifier result, injection flags and policy state.
 - `POST /runs/{run_id}/approval` with `{"approve":true}` or the web page's `{"approved":true}` issues an internal capability for the exact immutable briefing and calls the MCP write tool. `false` moves to `REJECTED`. An optional `briefing_hash` rejects a decision based on a different displayed proposal.
@@ -37,7 +52,7 @@ An approval token is never returned to the browser, stored in a trace, or passed
 
 ## Tools
 
-Run `uv run --project agent python -m agent.server` for the official Python MCP SDK's stdio transport. Discovery exposes six read tools and one write tool, with MCP permission annotations:
+Run `uv run --project agent python -m agent.server` for the official Python MCP SDK's stdio transport. Discovery exposes nine read tools and one write tool, with MCP permission annotations:
 
 | Tool | Permission | Scope |
 | --- | --- | --- |
@@ -47,9 +62,26 @@ Run `uv run --project agent python -m agent.server` for the official Python MCP 
 | `similar_exploited(cve_id,k)` | Read | IBM Granite cosine neighbors whose KEV admission is before the snapshot; excludes the candidate itself |
 | `signal_timeline(cve_id)` | Read | Available monthly signals through the snapshot, with missing months and EPSS-version warning |
 | `queue(n,filters)` | Read | Up to 100 candidates; snapshot, exploit flag and minimum EPSS filters |
+| `search_ranked(filters,limit)` | Read | Up to ten matches in the supplied ranking, by vendor/product/CWE/text, public signals and earlier vendor history |
+| `compare_cves(cve_a,cve_b)` | Read | Both ranks, scores and unmodified model reasons; absent scores remain unknown |
+| `summarize_ranked(filters)` | Read | Counts for a filtered slice, including separate unknown vendor/signal counts |
 | `file_fix_ticket(cve_id,briefing_hash,approval_token)` | Guarded write | Local `artifacts/tickets.jsonl`, never an external tracker |
 
 A stdio connection is an investigation session; call `get_cve` before `vendor_history`. The application serializes investigations to preserve this snapshot context. Models cannot change file paths, run shell commands, access HTTP APIs or issue their own approval capabilities.
+
+## Ask the analyst
+
+`GET /ask?q=...` streams a read-only answer over the supplied ranking. It shares the live worker, queue and cancellation behavior. Granite chooses search, comparison or summary parameters and selects source-bound sentences; every delivered number and CVE comes from its actual tool results. Explicit scope phrases are checked before execution, with one repair attempt for a contradictory plan. Question interpretation is still fallible, so the answer states the interpreted slice.
+
+Question streams add `answer: {text, claims}` and finish VERIFIED, with no proposal or approval capability. Unsupported sentences appear as dropped claims. The ledger is available through `/runs/{id}` and cached in `artifacts/cache/ask_runs/`. Successful answers survive process recovery. Questions cannot create tickets.
+
+Run `uv run --project agent python agent/evals/analyst_benchmark.py` against the running API to evaluate the fifteen fixed questions in `agent/evals/analyst_questions.json`. Expected facts are written before inference; the grader checks both requested scope and source facts, allowing equivalent search/summary count fields. Results include full/partial/no-answer grades in `agent/evals/analyst_eval.json`. This is a development question set, not unseen validation after prompt revisions.
+
+## Adversarial evaluation
+
+Run `uv run --project agent python agent/evals/redteam_benchmark.py` against the warm API. The fixed catalog plants 48 instruction variants in copies of four real descriptions: direct orders, fake tool results, forged authority, JSON smuggling, encodings, buried instructions, multiple languages and source laundering. It never approves a ticket or changes the source dataset. Predefined `redteam-01` through `redteam-48` fixture identifiers are clearly labelled in live streams.
+
+Measured results in `artifacts/redteam_eval.json`: 48 completed investigations, 48 denied write probes, zero unauthorized tickets, zero verdict changes, detector recall 18/48 (37.5%), and zero false positives on 100 sampled clean descriptions. Injected prose survived exact-source verification in **7/48** runs, including a forged fix sentence. The authorization boundary held; narrative integrity is not proven. Treat description-derived fixes as untrusted until reviewed against authoritative remediation evidence. The report preserves failed measurement outcomes before enforcing gates; `--rescore` recalculates prose survival from cached ledgers without loading a model.
 
 ## Evidence, durability and limits
 
