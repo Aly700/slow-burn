@@ -21,3 +21,15 @@ def test_policy_preserves_template_thresholds_for_historical_reasons():
         score = {'rank': None, 'score': None, 'reasons': [{'feature': 'epss', 'value': epss}, {'feature': 'any_exploit', 'value': flag}]}
         assert decide(score)['verdict'] == expected
     assert decide({'reasons': [{'feature': 'future_feature', 'value': {'a': 10}}]})['verdict'] == 'defer'
+
+
+def test_watch_list_rank_is_not_global_urgency_and_public_signals_are_checked():
+    from agent.priority import decide
+    quiet = dict.fromkeys(['exploitdb','metasploit','nuclei','poc_github'],0) | {'epss':.001}
+    assert decide({'rank':1},quiet,list_name='watch')['verdict'] == 'defer'
+    assert decide({'rank':1,'score':.9,'score_is_probability':True},quiet,list_name='watch')['verdict'] == 'watch'
+    assert decide({'rank':1},dict(quiet,epss=.9),list_name='watch')['urgency'] == 'scheduled'
+    with pytest.raises(ValueError,match='public'):
+        decide({'rank':1},dict(quiet,nuclei=1),list_name='watch')
+    with pytest.raises(ValueError,match='public'):
+        decide({'rank':1},dict(quiet,nuclei=None),list_name='watch')

@@ -31,7 +31,7 @@ def main():
         assert digest(run['briefing']) == run['briefing_hash'], path
         if 'decision' in run['briefing']:
             outputs = {call['tool']: call['output'] for call in run['tool_results']}
-            decision = decide(outputs['explain_score'], outputs['get_cve']['signals'])
+            decision = decide(outputs['explain_score'], outputs['get_cve']['signals'], list_name=run.get('list','top500'))
             assert run['briefing']['decision'] == decision, path
             assert run['briefing']['verdict'] == decision['verdict'], path
             assert run['briefing']['urgency'] == decision['urgency'], path

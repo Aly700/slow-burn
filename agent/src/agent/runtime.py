@@ -25,7 +25,7 @@ class Selection(BaseModel):
     claim_ids: list[str] = Field(min_length=1, max_length=6)
     context_id: str | None
     headline_id: Literal["product", "exposure", "impact"]
-    action_id: Literal["apply_fix", "restrict_then_fix", "isolate_service", "restrict_access"]
+    action_id: Literal["apply_fix", "restrict_then_fix", "isolate_service", "restrict_access", "plan_fix", "check_exposure"]
     confidence: float = Field(ge=0, le=1)
 
 
@@ -120,7 +120,7 @@ class Runner:
         try:
             row = await call("get_cve", {"cve_id": cve})
             score = await call("explain_score", {"cve_id": cve})
-            decision = decide(score, row["signals"])
+            decision = decide(score, row["signals"], list_name=run.get('list','top500'))
             metrics["decision_source"] = "deterministic_policy"
             trace.append({"t_ms": elapsed(), "kind": "policy", "name": "triage_priority",
                           "input": decision["inputs"], "output_summary": canonical(decision), "duration_ms": 0})
@@ -152,7 +152,8 @@ class Runner:
                     if blocked.get("allowed"):
                         raise RuntimeError("write policy violation")
             cards = evidence_cards(calls)
-            options = briefing_options(calls[0], decision)
+            vendor_call = next((c for c in calls if c['tool']=='vendor_history'), None)
+            options = briefing_options(calls[0], decision, vendor_call)
             context = [c for c in cards if c['category'] in {'history', 'analogy'}]
             response_schema = Selection.model_json_schema()
             response_schema['properties']['claim_ids']['items'] = {'type':'string', 'enum':[c['id'] for c in cards]}

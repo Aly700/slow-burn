@@ -8,6 +8,7 @@ from .config import IBM_MODEL, Settings
 from .data import DataTools
 from .embeddings import EmbeddingIndex
 from .model import Granite
+from .priority import PUBLIC_SOURCES
 from .runtime import Runner
 from .store import Store
 
@@ -19,12 +20,27 @@ def save_record(path, run):
     tmp.replace(path)
 
 
-async def record(top=15, fixtures=True):
+def classify_list(rows, source, artifacts):
+    if not rows:
+        raise ValueError('ranking file is empty')
+    if source.resolve() == (artifacts/'scores_2026_top5000.csv').resolve():
+        return 'top500'
+    flags = ('any_exploit', *PUBLIC_SOURCES)
+    quiet = all(str(row.get(key, '')).strip() in {'0','0.0'} for row in rows for key in flags)
+    return 'watch' if quiet else 'top500'
+
+
+async def record(top=15, fixtures=True, source=None):
     settings = Settings()
+    if source is not None:
+        settings.score_path = Path(source).expanduser().resolve()
     data = DataTools(settings)
-    EmbeddingIndex.build(settings, data)
-    ids = [r['cve_id'] for r in data.queue(top)['items']]
-    data.close()
+    try:
+        list_name = classify_list(list(data.load_scores().values()), settings.scores, settings.artifacts)
+        ids = [r['cve_id'] for r in data.queue(top)['items']]
+        EmbeddingIndex.build(settings, data)
+    finally:
+        data.close()
     store = Store(settings.state, settings.tickets)
     model = Granite(settings.model)
     await asyncio.to_thread(model.warmup)
@@ -32,7 +48,7 @@ async def record(top=15, fixtures=True):
     results = []
     async with ToolClient(settings) as client:
         for cve in ids:
-            run = store.create(cve, IBM_MODEL)
+            run = store.create(cve, IBM_MODEL, list_name=list_name)
             result = await runner.run(run['run_id'], client)
             save_record(settings.artifacts / 'agent_runs' / f'{cve}.json', result)
             results.append(result)
@@ -41,7 +57,7 @@ async def record(top=15, fixtures=True):
         specs = json.loads((Path(__file__).resolve().parents[2] / 'evals/injections.json').read_text())
         for fixture in specs:
             async with ToolClient(settings, fixture=fixture['id']) as client:
-                run = store.create(ids[0], IBM_MODEL)
+                run = store.create(ids[0], IBM_MODEL, list_name=list_name)
                 result = await runner.run(run['run_id'], client)
                 save_record(settings.artifacts / 'agent_runs' / f"{fixture['id']}.json", result)
                 results.append(result)
@@ -54,10 +70,11 @@ def main():
     parser = argparse.ArgumentParser(description='Re-record offline briefings using the current ranking')
     parser.add_argument('--top', type=int, default=15)
     parser.add_argument('--skip-fixtures', action='store_true')
+    parser.add_argument('--from', dest='source', type=Path, help='Ranking CSV with the standard score-file columns')
     args = parser.parse_args()
     if not 1 <= args.top <= 100:
         parser.error('--top must be 1 to 100')
-    asyncio.run(record(args.top, not args.skip_fixtures))
+    asyncio.run(record(args.top, not args.skip_fixtures, args.source))
 
 
 if __name__ == '__main__':

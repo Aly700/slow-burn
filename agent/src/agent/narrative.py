@@ -16,6 +16,29 @@ IMPACT = re.compile(r'unauthenticated|un-authenticated|without authentication|pr
 PATCH = re.compile(r'\b(?:fixed|patched|resolved)\s+(?:in|by)\b|\bversion\s+[\w.]+.*\b(?:containing|contains|includes)\s+a\s+fix\b', re.I)
 CONDITION = re.compile(r'\b(?:requires?|must|only|if|when|depends|dependent|prerequisite|access|privileges|authentication|authenticated|unauthenticated|interaction|enabled|configured|configuration)\b', re.I)
 UNCONFIRMED_FIX = re.compile(r'\b(?:not|never|no|unfixed|unpatched|will|planned|expected|scheduled|related|different|another)\b|n[\x27’]t\b|\b(?:to be|being|may be|might be|could be|should be|would be)\s+(?:fixed|patched|resolved)\b', re.I)
+VENDOR_NAMES = {
+    'servicenow': 'ServiceNow', 'solarwinds': 'SolarWinds', 'fortinet': 'Fortinet',
+    'redhat': 'Red Hat', 'vmware': 'VMware', 'f5': 'F5', 'ibm': 'IBM', 'sap': 'SAP',
+    'qnap': 'QNAP', 'dlink': 'D-Link', 'paloaltonetworks': 'Palo Alto Networks',
+}
+
+
+def vendor_display_name(vendor, description=''):
+    raw = str(vendor).strip()
+    if description and not scan_text(description):
+        match = re.search(r'(?<!\w)' + re.escape(raw).replace('_', '[ _]') + r'(?!\w)', description, re.I)
+        if match:
+            return match.group()
+    key = re.sub(r'[^a-z0-9]', '', raw.lower())
+    return VENDOR_NAMES.get(key, raw.replace('_', ' ').title())
+
+
+def noun_phrase(description):
+    if not description or scan_text(description):
+        return None
+    pattern = r'\b(?P<subject>(?:the|an?)\s+[\w-]+(?:\s+[\w-]+){0,4}?\s+(?:flow|component|endpoint|service|server|interface|module|plugin|controller|mode|workflow))\b'
+    match = re.search(pattern, description, re.I)
+    return excerpt(description, *match.span('subject')) if match else None
 
 
 def excerpt(text, start, end):
@@ -88,11 +111,22 @@ def description_ref(call, span):
     return {'tool': 'get_cve', 'field': 'description', 'value': call['output']['description'], 'call_id': call['call_id'], 'quote': span['text']}
 
 
-def briefing_options(call, decision):
+def briefing_options(call, decision, vendor_call=None):
     row = call['output']
     profile = describe(row)
     product = profile['product']['text'] if profile['product'] else row['cve_id']
     anchor = [description_ref(call, profile['product'])] if profile['product'] else [{'tool':'get_cve','field':'cve_id','value':row['cve_id'],'call_id':call['call_id']}]
+    target = f"the affected {product} endpoint" if profile['product'] else f"the service affected by {product}"
+    if not profile['product']:
+        vendor = vendor_call['output'].get('vendor') if vendor_call else None
+        phrase = noun_phrase(row.get('description'))
+        if isinstance(vendor, str) and vendor.strip():
+            product = vendor_display_name(vendor, row.get('description') or '')
+            anchor = [{'tool':'vendor_history','field':'vendor','value':vendor,'call_id':vendor_call['call_id']}]
+            target = f'the affected {product} service'
+        elif phrase:
+            product = target = phrase['text']
+            anchor = [description_ref(call, phrase)]
     prefix = decision['headline_prefix']
     headings = [{'id':'product', 'text':f'{prefix} remediation for {product}.', 'evidence': anchor}]
     if profile['service_class']:
@@ -100,12 +134,24 @@ def briefing_options(call, decision):
     if profile['impact']:
         headings.append({'id':'impact', 'text':f'{prefix} the reported impact in {product}.', 'evidence':anchor+[description_ref(call,profile['impact'])]})
     timing = f"Use the {decision['review_window']}."
-    target = f"the affected {product} endpoint" if profile['product'] else f"the service affected by {product}"
+    if decision['verdict'] != 'fix_now':
+        intent = 'Check exposure and plan remediation' if decision['verdict'] == 'watch' else 'Review exposure and routine remediation'
+        headings = [{'id':'product', 'text':f'{intent} for {product}.', 'evidence':anchor}]
+        if profile['patch']:
+            actions = [{'id':'plan_fix', 'text':f'Check the installed version and exposure of {target}, then plan the applicable vendor fix: “{profile["patch"]["text"]}” {timing}',
+                        'evidence':anchor+[description_ref(call,profile['patch'])]}]
+        else:
+            endpoint = profile['endpoint']
+            refs = anchor + ([description_ref(call,endpoint)] if endpoint else [])
+            endpoint_text = f' ({endpoint["text"]})' if endpoint else ''
+            actions = [{'id':'check_exposure', 'text':f'Check inventory and exposure for {target}{endpoint_text}; confirm the vendor-supported remediation and plan it for the {decision["review_window"]}.', 'evidence':refs}]
+        return {'headlines':headings, 'actions':actions, 'profile':profile}
     actions = []
     if profile['patch']:
         patch = profile['patch']['text']
         refs = anchor + [description_ref(call, profile['patch'])]
-        actions.append({'id':'apply_fix', 'text':f'Confirm the installed {product} version and apply the appropriate vendor fix described in the supplied record: “{patch}” {timing}', 'evidence':refs})
+        version_target = f'{product} version' if profile['product'] else f'version of {target}'
+        actions.append({'id':'apply_fix', 'text':f'Confirm the installed {version_target} and apply the appropriate vendor fix described in the supplied record: “{patch}” {timing}', 'evidence':refs})
         actions.append({'id':'restrict_then_fix', 'text':f'If internet-exposed, restrict access to {target} while validating the applicable fix: “{patch}” {timing}', 'evidence':refs})
     else:
         refs = list(anchor)

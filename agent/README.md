@@ -16,11 +16,14 @@ The API binds to `127.0.0.1:8765`, with one inference worker and a bounded queue
 
 ```sh
 uv run --project agent python -m agent.record --top 15
+uv run --project agent python -m agent.record --from artifacts/watch_2026_top100.csv --top 100
 uv run --project agent python -m agent.evaluate
 uv run --project agent pytest -q
 ```
 
 Recording rebuilds the content-addressed embedding cache when the ranking pipeline changes the candidate set or source descriptions. It writes the exact artifact contract to `artifacts/agent_runs/`. Evaluation writes `artifacts/agent_eval.json` plus auditable per-case runs under `artifacts/agent_runs/eval2025/`. Historical labels are read only by the scorer, after inference finishes.
+
+`--from` accepts any ranking CSV with the standard score-file columns. The default `scores_2026_top5000.csv` is always tagged `"list":"top500"`. An alternate file is tagged `"list":"watch"` only when every row explicitly has zero for `any_exploit`, Exploit-DB, Metasploit, Nuclei and GitHub PoC; other files remain `top500`. Missing signals are not zero. The label is immutable and persisted with each run. Files remain named by CVE, so recording the same CVE again replaces its offline briefing.
 
 ## API
 
@@ -69,6 +72,10 @@ Thresholds and urgency labels live in one place, `src/agent/priority.py`; each b
 | `defer` | Neither tier qualifies | Routine / normal patch cycle |
 
 The first matching tier wins. Scores outside [0,1] and unavailable historical ranks are ignored. Nuclei is a scanner-template signal, not proof of exploitation. Live priority reads actual snapshot signals, so new feature names in the reasons column do not break recording or alter the policy unexpectedly.
+
+Watch-list policy uses only the `watch`/`defer` tiers and ignores the list's local rank. A valid score or EPSS of at least 0.01 gives `watch`; otherwise it gives `defer`. Runtime tool signals must independently confirm all four public flags are zero, or the investigation fails. Watch actions check inventory/exposure and plan remediation for the next maintenance window; defer uses the normal patch cycle. Main-ranking decisions and archived evaluation metrics are unchanged.
+
+Vendor display names prefer the spelling found in the CVE description, then a small explicit casing map, then title case. Their evidence retains the raw vendor tool value. When a product cannot be extracted, headlines use a returned vendor name, a short exact description phrase, or finally the CVE ID, in that order. These fallbacks also carry resolvable source references.
 
 The evaluation has three arms. Existing `baseline` and `agent` keys remain; `agent` preserves the old Granite-decides result. Added `granite_decides`, `policy_granite`, `active_arm` and `arms` expose the comparison. Original Granite-decides recordings are preserved under `eval2025/granite/`; new runs use `eval2025/policy_granite/`. Reusing the same frozen cases after the first results were known makes this a revision comparison, not a fresh unseen validation set.
 

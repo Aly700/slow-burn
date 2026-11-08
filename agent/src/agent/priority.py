@@ -20,10 +20,16 @@ def numeric(value):
     return value
 
 
-def decide(score, signals=None):
+def decide(score, signals=None, list_name='top500'):
+    if list_name not in {'top500','watch'}:
+        raise ValueError('unsupported ranking list')
+    if list_name == 'watch' and (signals is None or not all(signals.get(key) == 0 for key in PUBLIC_SOURCES)):
+        raise ValueError('watch list requires explicitly absent public exploit signals')
     reasons = {r.get('feature'): r.get('value') for r in score.get('reasons', []) if isinstance(r, dict)}
     rank = numeric(score.get('rank'))
     if rank is not None and (rank < 1 or int(rank) != rank):
+        rank = None
+    if list_name == 'watch':
         rank = None
     probability = numeric(score.get('score')) if score.get('score_is_probability') else None
     if probability is not None and not 0 <= probability <= 1:
@@ -35,6 +41,8 @@ def decide(score, signals=None):
     triggers = []
     verdict = 'defer'
     for tier, limits in THRESHOLDS.items():
+        if list_name == 'watch' and tier == 'fix_now':
+            continue
         tier_triggers = []
         if rank is not None and rank <= limits['rank_at_most']:
             tier_triggers.append('rank_tier')
@@ -47,7 +55,8 @@ def decide(score, signals=None):
         if tier_triggers:
             verdict, triggers = tier, tier_triggers
             break
-    return {'version': VERSION, 'verdict': verdict, **URGENCY[verdict], 'triggers': triggers,
+    return {'version': VERSION if list_name == 'top500' else VERSION+'-watch-v1', 'verdict': verdict, **URGENCY[verdict], 'triggers': triggers,
             'inputs': {'rank': rank, 'score': probability, 'epss': epss, 'any_public_signal': public},
             'thresholds': THRESHOLDS,
+            **({'list':'watch', 'rank_scope':'watch-list ordering is not a global urgency rank', 'eligible_tiers':['watch','defer']} if list_name == 'watch' else {}),
             'public_signal_note': 'Nuclei denotes a scanner template, not proof of exploitation.'}

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from .evidence import resolve
-from .narrative import describe, description_ref
+from .narrative import describe, description_ref, vendor_display_name
 
 # These fixed templates remain the archived reasons-only comparison's prose.
 ACTIONS = {
@@ -23,6 +23,7 @@ def percent(value):
 
 def evidence_cards(calls):
     cards = []
+    description = next((c['output'].get('description') or '' for c in calls if c['tool']=='get_cve'), '')
     for call in calls:
         name, out = call['tool'], call['output']
         def add(text, fields=(), category='signal', refs=()):
@@ -53,13 +54,13 @@ def evidence_cards(calls):
             if not out['signals_available']:
                 add(f'The supplied files have no signal observation for {month}; missing evidence is unknown.', ['snapshot_month','signals_available'], 'limitation')
         elif name == 'vendor_history':
+            vname = vendor_display_name(out['vendor'], description)
             if out['prior_kev']:
                 latest = f"{out['latest_cve']} on {out['last_added']}" if out.get('latest_cve') else out['last_added']
                 fields = ['vendor','prior_kev','catalog_cutoff','last_added','match_method'] + (['latest_cve'] if out.get('latest_cve') else [])
-                vname = out['vendor'] if any(ch.isupper() for ch in str(out['vendor'])) else str(out['vendor']).replace('_', ' ').title()
                 add(f"{vname} has {out['prior_kev']} earlier entries on CISA's exploited list through {out['catalog_cutoff']}; the latest was {latest}.", fields, 'history')
             else:
-                add(f"No earlier KEV entry matched the vendor name {out['vendor']} through {out['catalog_cutoff']}; aliases and acquisitions are not resolved, so this does not establish a clean history.", ['vendor','prior_kev','catalog_cutoff','match_method'], 'history')
+                add(f"No earlier KEV entry matched the vendor name {vname} through {out['catalog_cutoff']}; aliases and acquisitions are not resolved, so this does not establish a clean history.", ['vendor','prior_kev','catalog_cutoff','match_method'], 'history')
             if out['ransomware_known']:
                 add(f"Of those vendor entries, {out['ransomware_known']} were marked as used in ransomware in the {out['ransomware_known_as_of']} catalog.", ['ransomware_known','ransomware_known_as_of'], 'history')
         elif name == 'similar_exploited' and out['matches']:
