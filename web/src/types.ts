@@ -45,6 +45,7 @@ export interface WatchContrast {
   leak_risk?: string;
 }
 export interface BlindSpotStudyData {
+  product_watch?: { historical_2025?: { positives?: Nullable; no_signal_positives?: Nullable; lift?: Nullable } } | null;
   selected_recipe?: string;
   selection?: {
     selection_year?: Nullable;
@@ -220,6 +221,7 @@ export interface RedTeamEvaluation {
   limitations?: string[] | null;
 }
 export interface Data {
+  lazy?: { map?: { file: string }; product_watch?: { file: string; rows: number; identities: { vendor: string; product: string }[] } };
   redteam_eval?: RedTeamEvaluation | null;
   analyst_eval?: AnalystEvaluation | null;
   findings?: Findings | null;

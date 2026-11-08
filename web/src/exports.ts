@@ -1,7 +1,9 @@
+import { watchTickets } from "./productWatch.ts";
+import type { ProductWatchRow } from "./productWatch";
 import type { Run, Score } from "./types";
-export function ticketDrafts(rows: Score[], runs: Run[]) {
+export function ticketDrafts(rows: Score[], runs: Run[], review: ProductWatchRow[] = []) {
   const byCve = new Map(runs.map((run) => [run.cve_id, run]));
-  return rows.map((row) => {
+  const ranked = rows.map((row) => {
     const run = byCve.get(row.cve_id);
     const verified =
       run?.briefing?.claims?.filter((claim) => claim.verified) ?? [];
@@ -16,6 +18,7 @@ export function ticketDrafts(rows: Score[], runs: Run[]) {
       .filter(Boolean)
       .join("; ");
     return {
+      source_list: "fix_first",
       cve_id: row.cve_id,
       rank: row.rank,
       verdict: run?.briefing?.verdict ?? "pending",
@@ -30,6 +33,7 @@ export function ticketDrafts(rows: Score[], runs: Run[]) {
           : "Evidence pending.",
     };
   });
+  return [...ranked, ...watchTickets(review)];
 }
 export function csvCell(value: unknown) {
   let text = value == null ? "" : String(value);
@@ -41,7 +45,7 @@ export function csvCell(value: unknown) {
     text = `'${text}`;
   return `"${text.replaceAll('"', '""')}"`;
 }
-export function queueCsv(rows: Score[], runs: Run[]) {
+export function queueCsv(rows: Score[], runs: Run[], review: ProductWatchRow[] = []) {
   const drafts = ticketDrafts(rows, runs);
   const headers = [
     "cve_id",
@@ -56,6 +60,12 @@ export function queueCsv(rows: Score[], runs: Run[]) {
     "headline",
     "proposed_action",
     "evidence_summary",
+    "source_list",
+    "match_confidence",
+    "prior_kev_count",
+    "latest_prior_kev_cve",
+    "latest_prior_kev_date",
+    "description",
   ];
   const body = rows.map((row, index) => {
     const ticket = drafts[index];
@@ -72,10 +82,16 @@ export function queueCsv(rows: Score[], runs: Run[]) {
       ticket.headline,
       ticket.proposed_action,
       ticket.evidence_summary,
+      "fix_first", "", "", "", "", row.description,
     ]
       .map(csvCell)
       .join(",");
   });
+  const reviewDrafts = watchTickets(review);
+  for (let index = 0; index < review.length; index++) {
+    const row = review[index], ticket = reviewDrafts[index];
+    body.push([row.cve_id, null, row.vendor, row.product, row.snapshot_month, null, row.epss, null, ticket.verdict, ticket.headline, ticket.proposed_action, ticket.evidence_summary, ticket.source_list, row.match_confidence, row.prior_kev_count, row.latest_prior_kev_cve, row.latest_prior_kev_date, row.description].map(csvCell).join(","));
+  }
   return [headers.join(","), ...body].join("\r\n") + "\r\n";
 }
 export function downloadFile(name: string, text: string, type: string) {

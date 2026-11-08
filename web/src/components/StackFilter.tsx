@@ -19,6 +19,7 @@ export function StackFilter({
   persisted,
   onChange,
   secondaryList,
+  reviewIdentities = [],
 }: {
   scores: Score[];
   choices: StackChoice[];
@@ -26,9 +27,14 @@ export function StackFilter({
   onChange: (choices: StackChoice[]) => void;
   // Supply an inventory-matched secondary list only when its artifact is present.
   secondaryList?: ReactNode;
+  reviewIdentities?: { vendor: string; product: string }[];
 }) {
   const [query, setQuery] = useState("");
-  const suggestions = useMemo(() => stackSuggestions(scores), [scores]);
+  const suggestions = useMemo(() => {
+    const ranked = stackSuggestions(scores), keys = new Set(ranked.map(choiceKey));
+    const review = stackSuggestions(reviewIdentities.map((item, index) => ({ rank: 501 + index, cve_id: "", vendor_identity: item.vendor, product_identity: item.product })));
+    return [...ranked, ...review.filter(item => !keys.has(choiceKey(item)))];
+  }, [scores, reviewIdentities]);
   const keys = new Set(choices.map(choiceKey));
   const matching = suggestions
     .filter(
@@ -139,7 +145,7 @@ export function StackFilter({
         </div>
       )}
       <div className="stack-suggestions" aria-label="Stack suggestions">
-        <span>{query ? "Matches" : "From this queue"}</span>
+        <span>{query ? "Matches" : "From the data"}</span>
         {matching.map((choice) => (
           <button key={choiceKey(choice)} onClick={() => add(choice)}>
             <span>{choiceLabel(choice)}</span>

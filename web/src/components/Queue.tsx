@@ -3,6 +3,9 @@ import type { Data, Score } from "../types";
 import { list, number, percent, reasonLabel, compactReasonLabel } from "../lib";
 import { Icon } from "./Icon";
 import { SectionHeading } from "./Story";
+import { ProductWatch } from "./ProductWatch";
+import { decodeWatch, filterWatch } from "../productWatch";
+import type { ProductWatchRow } from "../productWatch";
 import { StackFilter } from "./StackFilter";
 import { loadStack, matchesStack, saveStack } from "../stack";
 import type { StackChoice } from "../stack";
@@ -17,6 +20,25 @@ export function Queue({
 }) {
   const [query, setQuery] = useState("");
   const [stack, setStack] = useState<StackChoice[]>(loadStack);
+  const [watch, setWatch] = useState<ProductWatchRow[] | null>(null);
+  const [watchError, setWatchError] = useState(false);
+  const [watchLoading, setWatchLoading] = useState(false);
+  const [watchAttempt, setWatchAttempt] = useState(0);
+  const [loose, setLoose] = useState(false);
+  const watchFile = data.lazy?.product_watch?.file;
+  const needsWatch = !!stack.length;
+  useEffect(() => {
+    if (!watchFile || !needsWatch || watch) return;
+    const controller = new AbortController();
+    setWatchLoading(true); setWatchError(false);
+    fetch(`${import.meta.env.BASE_URL}data/${watchFile}`, { signal: controller.signal })
+      .then(response => { if (!response.ok) throw new Error("Missing review list"); return response.json(); })
+      .then(value => setWatch(decodeWatch(value)))
+      .catch(() => { if (!controller.signal.aborted) setWatchError(true); })
+      .finally(() => { if (!controller.signal.aborted) setWatchLoading(false); });
+    return () => controller.abort();
+  }, [watchFile, needsWatch, watch, watchAttempt]);
+  const watchRows = useMemo(() => filterWatch(watch ?? [], stack, loose), [watch, stack, loose]);
   const [persisted, setPersisted] = useState(true);
   const [exportNotice, setExportNotice] = useState("");
   const exportMenu = useRef<HTMLDetailsElement>(null);
@@ -115,8 +137,8 @@ export function Queue({
     const runs = list(data.runs);
     const contents =
       format === "csv"
-        ? queueCsv(rows, runs)
-        : JSON.stringify(ticketDrafts(rows, runs), null, 2) + "\n";
+        ? queueCsv(rows, runs, watchRows)
+        : JSON.stringify(ticketDrafts(rows, runs, watchRows), null, 2) + "\n";
     downloadFile(
       `slow-burn-queue.${format}`,
       contents,
@@ -126,7 +148,7 @@ export function Queue({
     );
     if (exportMenu.current) exportMenu.current.open = false;
     setExportNotice(
-      `Prepared ${number(rows.length)} ${format === "csv" ? "queue rows" : "ticket drafts"} for download. Pending briefings are labelled in the export.`,
+      `Prepared ${number(rows.length)} ranked rows and ${number(watchRows.length)} product review rows. Review rows have no rank or predicted verdict; exporting does not approve a ticket.`,
     );
   }
   const ranking = data.meta?.score_mode === "ranking";
@@ -151,6 +173,8 @@ export function Queue({
       </div>
       <StackFilter
         scores={scores}
+        reviewIdentities={data.lazy?.product_watch?.identities}
+        secondaryList={watchFile ? <ProductWatch rows={watchRows} choices={stack.length} loading={watchLoading || (needsWatch && !watch && !watchError)} error={watchError} retry={() => setWatchAttempt(value => value + 1)} loose={loose} onLoose={setLoose} study={data.findings?.blind_spot} /> : undefined}
         choices={stack}
         persisted={persisted}
         onChange={(choices) => {
@@ -244,8 +268,8 @@ export function Queue({
       </div>
       <div className="queue-export-row">
         <span>
-          <strong>{number(rows.length)}</strong> matching CVEs · exports include
-          every matching page
+          <strong>{number(rows.length)}</strong> ranked matches · exports include
+          every matching page{watchFile && stack.length > 0 ? ` + ${number(watchRows.length)} product review rows from your stack` : ""}
         </span>
         <details
           className={`queue-export ${exportUp ? "opens-up" : ""}`}
@@ -269,14 +293,14 @@ export function Queue({
             Export <Icon name="down" size={14} />
           </summary>
           <div className="export-options">
-            <button disabled={!rows.length} onClick={() => exportRows("csv")}>
-              Download CSV <span>{number(rows.length)} rows</span>
+            <button disabled={(!rows.length && !watchRows.length) || (needsWatch && !!watchFile && (!watch || watchLoading))} onClick={() => exportRows("csv")}>
+              Download CSV <span>{number(rows.length + watchRows.length)} rows</span>
             </button>
-            <button disabled={!rows.length} onClick={() => exportRows("json")}>
-              Download JSON tickets <span>{number(rows.length)} drafts</span>
+            <button disabled={(!rows.length && !watchRows.length) || (needsWatch && !!watchFile && (!watch || watchLoading))} onClick={() => exportRows("json")}>
+              Download JSON tickets <span>{number(rows.length + watchRows.length)} drafts</span>
             </button>
             <p>
-              Ticket drafts carry available evidence. Exporting does not file or
+              Product review rows follow the stack and match toggle above; ranked rows follow queue filters. Exporting does not file or
               approve a ticket.
             </p>
           </div>
