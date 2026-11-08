@@ -1,6 +1,4 @@
 .live-controls {
-  border: 1px solid var(--line);
-  background: var(--panel);
   padding: 13px 16px;
   margin-bottom: 20px;
 }
@@ -8,7 +6,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  font-size: 11px;
+  font-size: var(--type-body);
   color: var(--muted);
   margin-bottom: 10px;
 }
@@ -16,16 +14,16 @@
   width: 5px;
   height: 5px;
   background: var(--subtle);
-  border-radius: 50%;
+  border-radius: var(--radius-round);
 }
 .live-availability.ready i {
-  background: #aec5b6;
+  background: var(--accent);
 }
 .live-availability button {
   margin-left: auto;
   background: none;
   border: 0;
-  font-size: 10px;
+  font-size: var(--type-body);
   color: var(--muted);
   padding: 0;
   text-decoration: underline;
@@ -46,29 +44,25 @@
   padding: 0 12px;
   color: var(--text);
   background: var(--bg);
-  border: 1px solid var(--line-bright);
-  font: 13px var(--mono);
+  border: 1px solid var(--line-strong);
+  font: var(--type-label) var(--mono);
 }
 .live-controls .button {
   min-height: 40px;
   padding: 10px 14px;
-  font-size: 12px;
+  font-size: var(--type-body);
   gap: 14px;
 }
 .live-stop {
-  border: 1px solid var(--line-bright);
-  background: transparent;
   padding: 8px 10px;
-  font-size: 12px;
+  font-size: var(--type-body);
 }
 .live-message {
   margin-top: 10px;
   color: var(--accent);
-  font-size: 12px;
+  font-size: var(--type-body);
 }
 .live-trace {
-  border: 1px solid var(--line);
-  background: #141819;
   margin-bottom: 22px;
 }
 .live-trace > header {
@@ -84,11 +78,11 @@
 }
 .live-trace header strong {
   display: block;
-  font: 16px var(--mono);
+  font: var(--type-base) var(--mono);
   margin-top: 7px;
 }
 .live-trace .eyebrow {
-  font-size: 10px;
+  font-size: var(--type-label);
   color: var(--muted);
 }
 .live-stage {
@@ -96,11 +90,11 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  font: 10px var(--mono);
-  color: #aec5b6;
+  font: var(--type-label) var(--mono);
+  color: var(--accent);
 }
 .live-stage small {
-  font-size: 11px;
+  font-size: var(--type-body);
   color: var(--muted);
 }
 .working-ring {
@@ -108,10 +102,10 @@
   display: inline-block;
   width: 12px;
   height: 12px;
-  border: 1px solid var(--line-bright);
-  border-top-color: #aec5b6;
-  border-right-color: #aec5b6;
-  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  border-top-color: var(--accent);
+  border-right-color: var(--accent);
+  border-radius: var(--radius-round);
   animation: working-spin 1s linear infinite;
 }
 @keyframes working-spin {
@@ -137,22 +131,22 @@
   gap: 9px;
 }
 .live-tool strong {
-  font-size: 13px;
+  font-size: var(--type-body);
   font-weight: 500;
 }
 .live-tool > div > span {
   color: var(--subtle);
-  font-size: 10px;
+  font-size: var(--type-body);
 }
 .live-tool small {
   margin-left: auto;
   color: var(--muted);
-  font: 10px var(--mono);
+  font: var(--type-label) var(--mono);
 }
 .live-tool p {
   margin: 8px 0 0 23px;
   color: var(--muted);
-  font: 11px/1.5 var(--mono);
+  font: var(--type-label)/1.5 var(--mono);
   overflow-wrap: anywhere;
   white-space: pre-wrap;
   max-height: 72px;
@@ -160,7 +154,7 @@
 }
 .live-tool details {
   margin: 6px 0 0 23px;
-  font-size: 10px;
+  font-size: var(--type-body);
   color: var(--muted);
 }
 .live-tool pre {
@@ -168,7 +162,7 @@
   white-space: pre-wrap;
 }
 .live-tool svg {
-  color: #aec5b6;
+  color: var(--accent);
 }
 .live-claims {
   padding-block: 18px;
@@ -181,12 +175,12 @@
 }
 .live-claims p,
 .live-claims s {
-  font-size: 13px;
+  font-size: var(--type-body);
   line-height: 1.5;
 }
 .live-claims svg {
   margin-top: 3px;
-  color: #aec5b6;
+  color: var(--accent);
 }
 .live-claims .dropped svg,
 .live-claims .dropped small {
@@ -194,19 +188,19 @@
 }
 .live-claims small {
   display: block;
-  font-size: 11px;
+  font-size: var(--type-body);
   margin-top: 5px;
 }
 .live-trace-note {
   border-top: 1px solid var(--line);
   padding: 10px 18px;
-  font-size: 10px;
+  font-size: var(--type-body);
   color: var(--muted);
 }
 .live-waiting {
   color: var(--muted);
   padding: 28px 0;
-  font-size: 14px;
+  font-size: var(--type-body);
 }
 .live-complete {
   display: flex;
@@ -214,7 +208,7 @@
   justify-content: space-between;
   gap: 10px;
   margin: 12px 0;
-  font-size: 11px;
+  font-size: var(--type-body);
   color: var(--muted);
 }
 .live-complete button {
@@ -234,17 +228,17 @@
   gap: 36px;
 }
 .slide-5 > h1 {
-  font-size: clamp(40px, 4vw, 64px);
+  font-size: clamp(var(--type-heading), 4vw, var(--type-display));
   margin: 20px 0;
 }
 .slide-5 .present-claims article {
   padding: 8px 0;
 }
 .slide-5 .present-claims p {
-  font-size: 13px;
+  font-size: var(--type-body);
 }
 .slide-5 .present-briefing h2 {
-  font-size: 21px;
+  font-size: var(--type-lead);
   margin: 12px 0;
 }
 .slide-5 .present-dropped {
@@ -259,7 +253,7 @@
 }
 @media (min-width: 1700px) {
   .slide-5 .present-claims p {
-    font-size: 16px;
+    font-size: var(--type-base);
   }
   .slide-5 .present-claims article {
     padding: 12px 0;
@@ -268,10 +262,10 @@
     max-height: 460px;
   }
   .slide-5 .live-tool strong {
-    font-size: 16px;
+    font-size: var(--type-base);
   }
   .slide-5 .live-tool p {
-    font-size: 13px;
+    font-size: var(--type-body);
   }
 }
 @media (max-width: 700px) {

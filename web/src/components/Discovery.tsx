@@ -1,8 +1,9 @@
+import { ReadingDetails } from "./ReadingDetails";
 import { useState } from "react";
 import type { Data, Findings, Run } from "../types";
 import { list, number, percent } from "../lib";
 import { evaluationArms } from "../storyData";
-import { SectionHeading } from "./Story";
+import { SectionHeading } from "./SectionHeading";
 import { Icon } from "./Icon";
 import { blindSpotSummary } from "../blindSpot";
 import { BlindSpotStudy, WatchMethods } from "./BlindSpotStudy";
@@ -181,15 +182,18 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
   return (
     <section id="discovery" className="story-section deeper-discovery">
       <SectionHeading
-        index="02 / DEEPER"
+        index="03" label="Blind spot"
         title="The blind spot. And the repeat offenders."
         detail="What an exploit feed alone misses"
       />
       <div className="discovery-blind-grid">
         <BlindSpot findings={findings} />
-        <BlindSpotStudy findings={findings} />
+        <BlindSpotStudy findings={findings} reading />
       </div>
-      <WatchMethods findings={findings} />
+      <ReadingDetails label="How we measured the blind spot">
+        <WatchMethods findings={findings} />
+      </ReadingDetails>
+      <ReadingDetails label="Vendor history inside the exploit tier">
       <div className="discovery-vendor-block">
         <div>
           <span className="eyebrow">AFTER PUBLIC EXPLOIT CODE APPEARS</span>
@@ -197,12 +201,14 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
           <VendorHistory findings={findings} />
         </div>
       </div>
+      </ReadingDetails>
       {list(findings?.story).length > 0 && (
+        <ReadingDetails label="Five findings and supporting counts">
         <div className="finding-stories">
           {list(findings?.story).map((story, i) => (
             <article key={i}>
               <h3>{story.title}</h3>
-              <p>{story.sentence}</p>
+              <p>{story.sentence?.replaceAll("—", ", ")}</p>
               {story.numbers && (
                 <details className="story-counts">
                   <summary>Inspect supporting counts</summary>
@@ -225,11 +231,12 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
             </article>
           ))}
         </div>
+        </ReadingDetails>
       )}
     </section>
   );
 }
-export function EvalComparison({ data }: { data: Data }) {
+export function EvalComparison({ data, reading = false }: { data: Data; reading?: boolean }) {
   const evaluation = data.agent_eval;
   return (
     <div className="eval-comparison">
@@ -262,11 +269,14 @@ export function EvalComparison({ data }: { data: Data }) {
           </div>
         ))}
       </div>
+      {reading && <p className="caption reading-caution">Small, balanced historical evaluation.</p>}
+      <ReadingDetails label="Evaluation limits" collapsed={reading}>
       <p className="caption">
-        Small, balanced historical evaluation. The revision reuses the same
+        {!reading && <>Small, balanced historical evaluation. </>}The revision reuses the same
         cases after earlier results were known; this is not an unseen validation
         or the ranking backtest.
       </p>
+      </ReadingDetails>
     </div>
   );
 }
@@ -282,7 +292,7 @@ export function AgentSection({
   return (
     <section id="agent" className="story-section agent-section">
       <SectionHeading
-        index="04"
+        index="07" label="Briefing"
         title="Let policy decide. Let Granite explain."
         detail="Evidence checked before a human acts"
       />
@@ -302,7 +312,7 @@ export function AgentSection({
             Inspect the briefing <Icon name="arrow" />
           </button>
         </div>
-        <EvalComparison data={data} />
+        <EvalComparison data={data} reading />
       </div>
       {!!list(data.agent_eval?.limitations).length && (
         <details className="validation-details">

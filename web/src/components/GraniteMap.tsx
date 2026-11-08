@@ -1,3 +1,6 @@
+import { ReadingDetails } from "./ReadingDetails";
+import { SectionHeading } from "./SectionHeading";
+import { readCanvasTheme } from "../theme";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Data } from "../types";
 import {
@@ -22,12 +25,12 @@ const layerNames: Record<Layer, string> = {
   top: "Top 500",
   anchors: "Past exploited",
 };
-const colors: Record<Layer, string> = {
-  dust: "#55859a",
-  wordpress: "#7b8298",
-  watch: "#92b7a7",
-  top: "#ed9569",
-  anchors: "#ffe3b1",
+const layerTokens: Record<Layer, string> = {
+  dust: "var(--known-dim)",
+  wordpress: "var(--known)",
+  watch: "var(--text)",
+  top: "var(--accent)",
+  anchors: "var(--accent-strong)",
 };
 const mapCache = new Map<string, Promise<DecodedMap>>();
 function loadMap(file: string) {
@@ -160,6 +163,8 @@ export function GraniteMap({
     if (!map || !element) return;
     const ctx = element.getContext("2d", { alpha: false });
     if (!ctx) return;
+    const theme = readCanvasTheme();
+    const colors: Record<Layer, string> = { dust: theme.knownDim, wordpress: theme.known, watch: theme.text, top: theme.accent, anchors: theme.strong };
     let width = 0,
       height = 0,
       unit = 1,
@@ -207,9 +212,9 @@ export function GraniteMap({
       sprite.width = sprite.height = 64;
       const c = sprite.getContext("2d")!;
       const glow = c.createRadialGradient(32, 32, 0, 32, 32, 32);
-      glow.addColorStop(0, key === "anchors" ? "#ffe3b16a" : "#e2824540");
-      glow.addColorStop(0.23, key === "anchors" ? "#e7a97130" : "#dc704118");
-      glow.addColorStop(1, "#dc704100");
+      glow.addColorStop(0, theme.glow);
+      glow.addColorStop(0.23, theme.halo);
+      glow.addColorStop(1, theme.clear);
       c.fillStyle = glow;
       c.fillRect(0, 0, 64, 64);
       sprites.set(key, sprite);
@@ -240,7 +245,7 @@ export function GraniteMap({
       const opacity = entranceOpacity(elapsed, motion.matches);
       if (elapsed >= 2000) entranceDone.current = true;
       const worldScale = unit * view.zoom;
-      ctx.fillStyle = "#090f12";
+      ctx.fillStyle = theme.bg;
       ctx.fillRect(0, 0, width, height);
       const visible = drawOptions.current.layers;
       // Shared scale preserves geometry; every source row remains in its layer.
@@ -296,7 +301,7 @@ export function GraniteMap({
       ctx.globalAlpha = 1;
       if (drawOptions.current.labels) {
         const occupied: LabelBox[] = [];
-        ctx.font = '11px "IBM Plex Sans", sans-serif';
+        ctx.font = `${theme.labelSize} "IBM Plex Sans", sans-serif`;
         ctx.textBaseline = "middle";
         const limit = width < 500 ? 4 : view.zoom < 2 ? 8 : 12;
         const usedLabels = new Set<string>();
@@ -355,15 +360,15 @@ export function GraniteMap({
           occupied.push(box);
           placements.push({ ...box, id: region.id });
           usedLabels.add(text);
-          ctx.strokeStyle = "#5f727860";
+          ctx.strokeStyle = theme.line;
           ctx.lineWidth = 0.6;
           ctx.beginPath();
           ctx.moveTo(x, y);
           ctx.lineTo(box.x + box.width / 2, box.y + box.height / 2);
           ctx.stroke();
-          ctx.fillStyle = "#0c1419e8";
+          ctx.fillStyle = theme.panel;
           ctx.fillRect(box.x, box.y, box.width, box.height);
-          ctx.fillStyle = "#b1c3c9";
+          ctx.fillStyle = theme.muted;
           ctx.fillText(text, box.x + 8, box.y + box.height / 2);
         }
         element!.dataset.labels = JSON.stringify(placements);
@@ -373,7 +378,7 @@ export function GraniteMap({
           map!.coordinates[selected * 2],
           map!.coordinates[selected * 2 + 1],
         );
-        ctx.strokeStyle = "#f8e3c1";
+        ctx.strokeStyle = theme.strong;
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.arc(x, y, 7, 0, Math.PI * 2);
@@ -690,28 +695,34 @@ export function GraniteMap({
         .sort((a, b) => b.rows - a.rows)
         .slice(0, 20)
     : [];
+  const guidance = (
+        <div className="map-guidance" ref={caption} aria-live="polite">
+          <span className="eyebrow">{story?.title ?? "Explore the field"}</span>
+          <p>
+            {story?.caption ??
+              "Drag to follow similar descriptions. Choose a guided view to return to its evidence."}
+          </p>
+          <small>Similarity, not a risk score.</small>
+        </div>
+  );
   return (
     <div className={`granite-map ${appendix ? "map-appendix" : ""}`} ref={root}>
-      <div className="map-heading">
-        <div>
-          <span className="eyebrow">IBM GRANITE / DESCRIPTION SPACE</span>
-          <h2>What Granite reads</h2>
-          <p>
-            Similar descriptions gather. Earlier attacks leave reference points.
-          </p>
-        </div>
-        <div className="map-total">
+      <SectionHeading
+        index="04" label="IBM Granite / Description space"
+        title="What Granite reads"
+        dek="Similar descriptions gather. Earlier attacks leave reference points."
+        meta={<div className="map-total">
           <strong>{number(map?.n ?? data.findings?.map?.rows)}</strong>
           <span>vulnerabilities · one field of language</span>
-        </div>
-      </div>
+        </div>}
+      />
       <div className="map-toolbar" aria-label="Map overlays">
         {(["dust", "top", "anchors", "wordpress", "watch"] as Layer[]).map(
           (layer) => (
             <label
               key={layer}
               className={`map-layer layer-${layer}`}
-              style={{ "--layer-color": colors[layer] } as React.CSSProperties}
+              style={{ "--layer-color": layerTokens[layer] } as React.CSSProperties}
             >
               <input
                 type="checkbox"
@@ -775,14 +786,7 @@ export function GraniteMap({
             )}
           </div>
         )}
-        <div className="map-guidance" ref={caption} aria-live="polite">
-          <span className="eyebrow">{story?.title ?? "Explore the field"}</span>
-          <p>
-            {story?.caption ??
-              "Drag to follow similar descriptions. Choose a guided view to return to its evidence."}
-          </p>
-          <small>Similarity, not a risk score.</small>
-        </div>
+        {appendix && guidance}
         <div className="map-controls">
           <button
             disabled={!map}
@@ -821,6 +825,9 @@ export function GraniteMap({
           </div>
         )}
       </div>
+      {!appendix && <p className="caption reading-caution">Similarity, not a risk score.</p>}
+      {!appendix && <ReadingDetails label="About this view">{guidance}</ReadingDetails>}
+      <ReadingDetails label="Explore a region" collapsed={!appendix}>
       <div className="map-under">
         <label>
           Explore a region{" "}
@@ -846,13 +853,16 @@ export function GraniteMap({
           Drag to pan · scroll or + / − to zoom · hover or tap a point
         </span>
       </div>
+      </ReadingDetails>
       {layers.watch && (
         <p className="map-overlay-note">
           Product review overlay includes looser name matches. Use the stack
           review list to filter for vendor-supported matches.
         </p>
       )}
-      <MapEvidence data={data} />
+      <ReadingDetails label="How we checked similarity" collapsed={!appendix}>
+        <MapEvidence data={data} />
+      </ReadingDetails>
       <details className="map-methods">
         <summary>How to read this map</summary>
         <p>

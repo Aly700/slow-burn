@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Data, Score } from "../types";
 import { list, number, percent, reasonLabel, compactReasonLabel } from "../lib";
 import { Icon } from "./Icon";
-import { SectionHeading } from "./Story";
+import { SectionHeading } from "./SectionHeading";
 import { ProductWatch } from "./ProductWatch";
 import { decodeWatch, filterWatch } from "../productWatch";
 import type { ProductWatchRow } from "../productWatch";
@@ -42,6 +42,7 @@ export function Queue({
   const [persisted, setPersisted] = useState(true);
   const [exportNotice, setExportNotice] = useState("");
   const exportMenu = useRef<HTMLDetailsElement>(null);
+  const ledger = useRef<HTMLDetailsElement>(null);
   const [exportUp, setExportUp] = useState(false);
   useEffect(() => {
     setPersisted(saveStack(stack));
@@ -124,6 +125,7 @@ export function Queue({
   }, [rows, selected, onOpen]);
   useEffect(() => {
     if (keyboardMove.current) {
+      if (ledger.current) ledger.current.open = true;
       root.current
         ?.querySelector("tr.selected")
         ?.scrollIntoView({ block: "nearest", behavior: "instant" });
@@ -160,7 +162,7 @@ export function Queue({
       aria-label="Fix-first queue"
     >
       <SectionHeading
-        index="03"
+        index="05" label="Fix-first queue"
         title="The fix-first queue."
         detail="2026 candidates · evidence at each snapshot"
       />
@@ -311,6 +313,21 @@ export function Queue({
           {exportNotice}
         </p>
       )}
+      <div className="queue-preview" aria-label="Leading ranked matches">
+        {visible.slice(0, 3).map((row, index) => (
+          <button key={row.cve_id} onClick={() => {
+            setSelected(page * pageSize + index);
+            onOpen(row);
+          }}>
+            <span className="preview-rank mono">{String(row.rank).padStart(3, "0")}</span>
+            <span className="preview-identity"><strong>{row.cve_id}</strong><span>{row.vendor_identity && row.vendor_identity !== "unmapped" ? row.vendor_identity : row.assigner || "Assigner unavailable"}{row.product_identity ? ` · ${row.product_identity}` : ""}</span></span>
+            <span className="preview-score mono">{ranking ? number(row.score, 4) : percent(row.score, 2)}<small>{ranking ? "Rank score" : "Model score"}</small></span>
+            <Icon name="arrow" size={17} />
+          </button>
+        ))}
+      </div>
+      <details className="reading-details queue-ledger" ref={ledger} open={!rows.length}>
+        <summary>All {number(rows.length)} ranked matches</summary>
       <div className="table-scroll">
         <table>
           <thead>
@@ -339,7 +356,7 @@ export function Queue({
                   onOpen(row);
                 }}
               >
-                <td className="rank mono">
+                <td className="rank mono" data-label="Rank">
                   {String(row.rank).padStart(3, "0")}
                 </td>
                 <td>
@@ -365,8 +382,8 @@ export function Queue({
                     )}
                   </span>
                 </td>
-                <td className="mono snapshot">{row.snapshot_month || "—"}</td>
-                <td className="score-cell mono">
+                <td className="mono snapshot" data-label="Snapshot">{row.snapshot_month || "–"}</td>
+                <td className="score-cell mono" data-label={ranking ? "Rank score" : "Model score"}>
                   {ranking ? number(row.score, 4) : percent(row.score, 2)}
                 </td>
                 <td>
@@ -465,6 +482,7 @@ export function Queue({
           </button>
         </div>
       </div>
+      </details>
     </section>
   );
 }

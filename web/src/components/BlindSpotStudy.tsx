@@ -1,3 +1,4 @@
+import { ReadingDetails } from "./ReadingDetails";
 import type { Findings } from "../types";
 import { blindSpotSummary } from "../blindSpot";
 import { number, percent, list } from "../lib";
@@ -12,7 +13,7 @@ const lift = (value: unknown) =>
     ? `${value.toFixed(1)}×`
     : "pending";
 
-export function BlindSpotStudy({ findings }: { findings?: Findings | null }) {
+export function BlindSpotStudy({ findings, reading = false }: { findings?: Findings | null; reading?: boolean }) {
   const s = blindSpotSummary(findings?.blind_spot);
   const noGain = s.result?.hits === 0 && s.epss?.hits === 0;
   if (!s.result && !s.epss && !s.product)
@@ -26,8 +27,7 @@ export function BlindSpotStudy({ findings }: { findings?: Findings | null }) {
         </p>
       </div>
     );
-  return (
-    <div className="blind-study">
+  const experiment = (
       <div className="watch-experiment">
         <span className="eyebrow">
           {s.registered
@@ -72,6 +72,10 @@ export function BlindSpotStudy({ findings }: { findings?: Findings | null }) {
             : "Compare observed hits with chance."}
         </p>
       </div>
+  );
+  return (
+    <div className="blind-study">
+      {!reading && experiment}
       <div className="product-contrast">
         <div className="contrast-heading">
           <h3>
@@ -124,6 +128,7 @@ export function BlindSpotStudy({ findings }: { findings?: Findings | null }) {
           <b>{lift(s.vendor?.lift)} lift</b> in this pool.
         </p>
       </div>
+      {reading && <ReadingDetails label="Watch model test: no demonstrated gain">{experiment}</ReadingDetails>}
       <p className="watch-takeaway">
         When exploit feeds are quiet, check whether you run a product that has
         been attacked before.

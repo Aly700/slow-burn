@@ -1,28 +1,10 @@
+import { ReadingDetails } from "./ReadingDetails";
+import { SectionHeading } from "./SectionHeading";
 import { AttackResults } from "./AttackResults";
 import type { Data, Findings } from "../types";
 import { list, number, percent } from "../lib";
 import { Replay } from "./Replay";
 import { Icon } from "./Icon";
-
-export function SectionHeading({
-  index,
-  title,
-  detail,
-}: {
-  index: string;
-  title: string;
-  detail?: string;
-}) {
-  return (
-    <div className="section-heading">
-      <div className="section-title">
-        <span className="section-index">{index}</span>
-        <h2>{title}</h2>
-      </div>
-      {detail && <p>{detail}</p>}
-    </div>
-  );
-}
 
 export function Hero({ data }: { data: Data }) {
   return (
@@ -63,26 +45,11 @@ export function Timing({ findings }: { findings?: Findings | null }) {
   return (
     <section id="timing" className="story-section timing">
       <SectionHeading
-        index="01"
+        index="01" label="Timing"
         title="Two clocks. Two defences."
         detail="2025 discovery · time to KEV inclusion"
       />
       <div className="timing-layout">
-        <div className="timing-copy">
-          <h3>
-            The first month is a race.
-            <br />
-            The next is a window.
-          </h3>
-          <p>
-            Most confirmed cases arrive in the publication month. For the rest,
-            prioritisation can buy a security team time to act.
-          </p>
-          <p className="caption">
-            KEV inclusion is an observed proxy, not the date of the first
-            attack. A calendar-month boundary can be just a few days away.
-          </p>
-        </div>
         <div className="timing-chart">
           <div className="clock-numbers">
             <div>
@@ -118,11 +85,12 @@ export function Timing({ findings }: { findings?: Findings | null }) {
           {fraction != null ? (
             <svg
               className="clock-bar"
+              preserveAspectRatio="none"
               viewBox="0 0 600 52"
               role="img"
               aria-label={`${Math.round(fraction * 100)} percent first month, ${number(later)} later entries`}
             >
-              <rect width="600" height="52" fill="var(--line-bright)" />
+              <rect width="600" height="52" fill="var(--accent-dim)" />
               <rect width={600 * fraction} height="52" fill="var(--accent)" />
               {Array.from({ length: 29 }, (_, i) => (
                 <line
@@ -166,6 +134,23 @@ export function Timing({ findings }: { findings?: Findings | null }) {
           )}
         </div>
       </div>
+      <p className="caption reading-caution">KEV inclusion is an observed proxy, not the date of the first attack.</p>
+      <ReadingDetails label="How we measured">
+        <div className="timing-copy">
+          <h3>
+            The first month is a race.
+            <br />
+            The next is a window.
+          </h3>
+          <p>
+            Most confirmed cases arrive in the publication month. For the rest,
+            prioritisation can buy a security team time to act.
+          </p>
+          <p className="caption">
+            A calendar-month boundary can be just a few days away.
+          </p>
+        </div>
+      </ReadingDetails>
       <div className="section-takeaway">
         <Icon name="arrow" />
         <p>
@@ -183,22 +168,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
     1,
     ...signals.filter((s) => s.leak_risk === "low").map((s) => s.lift ?? 0),
   );
-  return (
-    <section id="signals" className="story-section signals-section">
-      <SectionHeading
-        index="02"
-        title="Find the signal. Question the shortcut."
-        detail="2025 cohort · association, not causation"
-      />
-      <div className="signals-layout">
-        <div className="signals-chart">
-          <div className="chart-head">
-            <span>Signal in the supplied record</span>
-            <span>Lift over base rate</span>
-            <span>Later KEV / CVEs</span>
-          </div>
-          {signals.length ? (
-            signals.map((signal, index) => {
+  const signalRow = (signal: (typeof signals)[number], index: number) => {
               const risky = signal.leak_risk !== "low";
               return (
                 <div
@@ -231,10 +201,30 @@ export function Signals({ findings }: { findings?: Findings | null }) {
                   </span>
                 </div>
               );
-            })
+            };
+  const featuredSignals = signals.filter(signal => /^(any[_ ]exploit|exploitdb|metasploit|nuclei|poc_github)|^Vendor has earlier|^Current description mentions|^WordPress wording/i.test(signal.name ?? ""));
+  return (
+    <section id="signals" className="story-section signals-section">
+      <SectionHeading
+        index="02" label="Signals"
+        title="Find the signal. Question the shortcut."
+        detail="2025 cohort · association, not causation"
+      />
+      <div className="signals-layout">
+        <div className="signals-chart">
+          <div className="chart-head">
+            <span>Signal in the supplied record</span>
+            <span>Lift over base rate</span>
+            <span>Later KEV / CVEs</span>
+          </div>
+          {signals.length ? (
+            featuredSignals.map(signalRow)
           ) : (
             <p className="empty-inline">Signal analysis pending.</p>
           )}
+          <ReadingDetails label={`All ${signals.length} signals`}>
+            {signals.map(signalRow)}
+          </ReadingDetails>
           <p className="caption">
             Base rate: {percent(findings?.base_rate_2025, 3)}. Bars scaled to
             low-risk signals; hatching marks revision risk. Description wording
@@ -251,31 +241,27 @@ export function Signals({ findings }: { findings?: Findings | null }) {
                   {number(item.hits)}
                   <span>later KEV entries</span>
                 </div>
+                <ReadingDetails label="WordPress context and limits">
                 <p>
                   Across <strong>{number(item.n)}</strong> vulnerabilities in
                   the eligible 2025 cohort
                   {item.share_of_pool != null
-                    ? ` — ${percent(item.share_of_pool)} of the queue`
+                    ? `, ${percent(item.share_of_pool)} of the queue`
                     : ""}
                   .
                 </p>
+                  <p>Reduce queue noise; retain an exposure check.</p>
+                  <div className="aside-bottom"><Icon name="shield" /><span>Fewer distractions.<br /><strong>More attention where it counts.</strong></span></div>
+                </ReadingDetails>
               </div>
             ))
           ) : (
             <p>Deprioritisation analysis pending.</p>
           )}
           <p className="caption">
-            No observed KEV entry does not mean no attacks. Reduce queue noise;
-            retain an exposure check.
+            No observed KEV entry does not mean no attacks.
           </p>
-          <div className="aside-bottom">
-            <Icon name="shield" />
-            <span>
-              Fewer distractions.
-              <br />
-              <strong>More attention where it counts.</strong>
-            </span>
-          </div>
+
         </aside>
       </div>
     </section>
@@ -287,10 +273,12 @@ export function Methods({ data }: { data: Data }) {
   return (
     <section id="methods" className="story-section methods">
       <SectionHeading
-        index="05"
+        index="08" label="Methods"
         title="The boundary is part of the model."
         detail="Reproducible decisions · explicit limits"
       />
+      <AttackResults evaluation={data.redteam_eval} reading />
+      <ReadingDetails label="Model, features and exclusions">
       <div className="methods-grid">
         <div>
           <span className="eyebrow">USED BY THE CURRENT MODEL</span>
@@ -392,7 +380,7 @@ export function Methods({ data }: { data: Data }) {
           </p>
         </div>
       </div>
-      <AttackResults evaluation={data.redteam_eval} />
+      </ReadingDetails>
       <div className="method-footnote">
         <Icon name="shield" size={17} />
         <p>

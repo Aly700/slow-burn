@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import { ReadingDetails } from "./ReadingDetails";
+import { useRef } from "react";
 import type { AnalystSession, Data, LiveClaim } from "../types";
 import { displayValue, number } from "../lib";
 import { suggestions } from "../analyst";
 import { useAnalyst } from "../useAnalyst";
-import { SectionHeading } from "./Story";
+import { SectionHeading } from "./SectionHeading";
 import { Icon } from "./Icon";
 import "../analyst.css";
 
@@ -150,7 +151,6 @@ export function Analyst({
   const live = useAnalyst(data.analyst_eval);
   const { session } = live;
   const suggested = suggestions(data.analyst_eval);
-  const [more, setMore] = useState(false);
   const field = useRef<HTMLTextAreaElement>(null);
   const running = session.status === "running";
   const verified = session.claims.filter((c) => c.verified);
@@ -167,7 +167,7 @@ export function Analyst({
   return (
     <section id="analyst" className="story-section analyst-section">
       <SectionHeading
-        index="03 / ASK"
+        index="06" label="Ask Slow Burn"
         title="Ask Slow Burn"
         detail="Local ranking · read-only analysis"
       />
@@ -183,7 +183,7 @@ export function Analyst({
           </div>
           <p>Choose one to ask it now.</p>
           <div className="question-chips">
-            {suggested.slice(0, more ? suggested.length : 6).map((r) => (
+            {suggested.slice(0, 4).map((r) => (
               <button
                 key={r.id}
                 onClick={() => ask(r.question)}
@@ -195,21 +195,44 @@ export function Analyst({
               </button>
             ))}
           </div>
-          {suggested.length > 6 && (
-            <button
-              className="more-questions"
-              onClick={() => setMore((p) => !p)}
-            >
-              {more
-                ? "Fewer questions"
-                : `More tested questions (${suggested.length - 6})`}
-            </button>
+          {suggested.length > 4 && (
+            <ReadingDetails label={`More tested questions (${suggested.length - 4})`}>
+              <div className="question-chips">
+              {suggested.slice(4, 6).map((r) => (
+              <button
+                key={r.id}
+                onClick={() => ask(r.question)}
+                disabled={running || live.health === "checking"}
+                aria-pressed={session.question === r.question}
+              >
+                <span>{r.question}</span>
+                <Icon name="arrow" size={16} />
+              </button>
+              ))}
+              <div className="question-chips">
+                <h4 className="more-question-label">More tested questions ({suggested.length - 6})</h4>
+              {suggested.slice(6).map((r) => (
+              <button
+                key={r.id}
+                onClick={() => ask(r.question)}
+                disabled={running || live.health === "checking"}
+                aria-pressed={session.question === r.question}
+              >
+                <span>{r.question}</span>
+                <Icon name="arrow" size={16} />
+              </button>
+              ))}
+              </div>
+              </div>
+            </ReadingDetails>
           )}
           {!suggested.length && <p>Recorded suggestions pending.</p>}
+          <ReadingDetails label="Scope and limits">
           <p className="analyst-scope">
             Vendor matching is exact. Questions are limited to the supplied
             ranking and local metadata. This view cannot create tickets.
           </p>
+          </ReadingDetails>
         </aside>
         <div className="analyst-main">
           <div className={`analyst-health ${live.health}`}>

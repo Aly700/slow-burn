@@ -1,8 +1,6 @@
 .stack-filter {
-  border: 1px solid var(--line-bright);
   padding: 24px 28px 18px;
   margin: 8px 0 24px;
-  background: #171c1e;
 }
 .stack-heading {
   display: flex;
@@ -12,35 +10,35 @@
   margin-bottom: 22px;
 }
 .stack-heading h3 {
-  font-size: 27px;
+  font-size: var(--type-subhead);
   font-weight: 500;
   margin: 6px 0;
   letter-spacing: -0.6px;
 }
 .stack-heading p {
-  font-size: 13px;
+  font-size: var(--type-body);
   color: var(--muted);
 }
 .stack-heading .eyebrow {
   color: var(--muted);
-  font-size: 9px;
+  font-size: var(--type-label);
 }
 .stack-impact {
   text-align: right;
 }
 .stack-impact > strong {
-  font: 40px/1 var(--mono);
-  letter-spacing: -2px;
+  font: var(--type-heading)/1 var(--mono);
+  letter-spacing: -0.035em;
 }
 .stack-impact strong span {
-  font-size: 20px;
+  font-size: var(--type-lead);
   color: var(--subtle);
   letter-spacing: -1px;
 }
 .stack-impact > span {
   display: block;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--type-body);
   margin-top: 10px;
 }
 .stack-input-row {
@@ -53,7 +51,7 @@
   align-items: center;
   flex: 1;
   max-width: 730px;
-  border: 1px solid var(--line-bright);
+  border: 1px solid var(--line-strong);
   background: var(--bg);
 }
 .stack-input-row svg {
@@ -64,10 +62,10 @@
   min-width: 0;
   width: 100%;
   border: 0;
-  background: transparent;
+  background: var(--clear);
   color: var(--text);
   padding: 13px 12px;
-  font-size: 13px;
+  font-size: var(--type-body);
 }
 .stack-input-row form button {
   border: 0;
@@ -75,13 +73,13 @@
   background: var(--surface);
   padding: 13px 16px;
   white-space: nowrap;
-  font-size: 12px;
+  font-size: var(--type-body);
 }
 .stack-input-row form button span {
   margin-left: 22px;
 }
 .stack-save {
-  font-size: 11px;
+  font-size: var(--type-body);
   color: var(--subtle);
 }
 .stack-selected {
@@ -95,10 +93,7 @@
   align-items: center;
   gap: 16px;
   padding: 8px 10px;
-  border: 1px solid #718078;
-  background: #25302b;
-  color: var(--text);
-  font-size: 12px;
+  font-size: var(--type-body);
   max-width: 100%;
   overflow-wrap: anywhere;
   text-align: left;
@@ -106,7 +101,7 @@
 .stack-selected small {
   margin-left: 8px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: var(--type-body);
 }
 .stack-selected .clear-stack {
   border: 0;
@@ -123,7 +118,7 @@
   margin: 14px 0;
 }
 .stack-suggestions > span {
-  font-size: 10px;
+  font-size: var(--type-body);
   color: var(--muted);
   margin-right: 5px;
 }
@@ -132,9 +127,7 @@
   align-items: center;
   gap: 9px;
   padding: 6px 9px;
-  font-size: 11px;
-  background: transparent;
-  border: 1px solid var(--line);
+  font-size: var(--type-body);
   text-align: left;
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -144,7 +137,7 @@
   background: var(--surface);
 }
 .stack-suggestions small {
-  font-size: 9px;
+  font-size: var(--type-body);
   color: var(--subtle);
 }
 .stack-suggestions b {
@@ -152,7 +145,7 @@
   font-weight: 400;
 }
 .stack-help {
-  font-size: 10px;
+  font-size: var(--type-body);
   color: var(--muted);
   margin-top: 10px;
 }
@@ -163,7 +156,7 @@
   gap: 20px;
   margin: 18px 0 12px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--type-body);
 }
 .queue-export-row strong {
   color: var(--text);
@@ -178,8 +171,8 @@
   list-style: none;
   cursor: pointer;
   padding: 10px 15px;
-  border: 1px solid var(--line-bright);
-  font-size: 12px;
+  border: 1px solid var(--line-strong);
+  font-size: var(--type-body);
   display: flex;
   align-items: center;
   gap: 18px;
@@ -195,9 +188,9 @@
   z-index: 20;
   width: 290px;
   padding: 8px;
-  border: 1px solid var(--line-bright);
-  background: #202629;
-  box-shadow: 0 12px 24px #0007;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  box-shadow: 0 12px 24px var(--shadow);
 }
 .export-options button {
   display: flex;
@@ -208,24 +201,24 @@
   border: 0;
   padding: 13px 10px;
   text-align: left;
-  font-size: 13px;
+  font-size: var(--type-body);
 }
 .export-options button:hover {
   background: var(--line);
 }
 .export-options button span {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--type-body);
 }
 .export-options p {
-  border-top: 1px solid var(--line-bright);
+  border-top: 1px solid var(--line-strong);
   padding: 12px 10px 6px;
-  font-size: 10px;
+  font-size: var(--type-body);
   color: var(--muted);
 }
 .export-notice {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--type-body);
   margin-bottom: 10px;
 }
 .assigner .product-name {
@@ -243,7 +236,7 @@
     text-align: left;
   }
   .stack-impact > strong {
-    font-size: 34px;
+    font-size: var(--type-subhead);
   }
   .stack-input-row {
     flex-direction: column;
@@ -252,21 +245,21 @@
   }
   .stack-input-row form button {
     padding-inline: 10px;
-    font-size: 10px;
+    font-size: var(--type-body);
   }
   .stack-input-row form button span {
     margin-left: 4px;
   }
   .stack-input-row input {
     padding-inline: 8px;
-    font-size: 12px;
+    font-size: var(--type-body);
   }
   .stack-input-row svg {
     margin-left: 10px;
     width: 14px;
   }
   .stack-help {
-    font-size: 10px;
+    font-size: var(--type-body);
   }
   .stack-suggestions {
     gap: 6px;
@@ -280,7 +273,7 @@
   }
   .queue-export-row > span {
     max-width: 200px;
-    font-size: 11px;
+    font-size: var(--type-body);
   }
   .export-options {
     width: 270px;
@@ -296,11 +289,11 @@
   margin-bottom: 18px;
 }
 .queue-intro > p {
-  font-size: 14px;
+  font-size: var(--type-body);
   color: var(--muted);
 }
 .queue-count strong {
-  font-size: 20px;
+  font-size: var(--type-lead);
 }
 .queue-count span {
   max-width: none;
@@ -313,7 +306,7 @@
   margin-bottom: 16px;
 }
 .stack-heading h3 {
-  font-size: 24px;
+  font-size: var(--type-lead);
 }
 .stack-suggestions {
   margin-block: 10px;
@@ -324,7 +317,7 @@
 }
 @media (max-width: 700px) {
   .queue-intro > p {
-    font-size: 13px;
+    font-size: var(--type-body);
   }
   .stack-filter {
     padding: 16px;
@@ -364,18 +357,18 @@
   }
   .queue-section th {
     white-space: normal;
-    font-size: 10px;
+    font-size: var(--type-body);
     line-height: 1.5;
   }
   .queue-section td {
-    font-size: 12px;
+    font-size: var(--type-body);
   }
   .queue-section .cve-button {
-    font-size: 12px;
+    font-size: var(--type-body);
     overflow-wrap: anywhere;
   }
   .queue-section .assigner {
-    font-size: 10px;
+    font-size: var(--type-body);
     overflow-wrap: anywhere;
     white-space: normal;
   }
