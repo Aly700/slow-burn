@@ -213,8 +213,7 @@ export default function App() {
         <a href="#overview">
           Slow Burn <Icon name="arrow" size={16} />
         </a>
-        <span>Know what to fix. Know why.</span>
-        <span>Sheridan Datathon · 07–08 Nov 2026</span>
+        <span>Sheridan Datathon · 07-08 Nov 2026</span>
       </footer>
       {presenting && (
         <Presentation

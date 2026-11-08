@@ -73,7 +73,7 @@ export function AttackResults({
   ];
   return (
     <div className={`attack-results ${compact ? "compact" : ""}`}>
-      {!compact && <h3>The approval gate has a reason.</h3>}
+      {!compact && <h3>Prompt-injection tests</h3>}
       <p className="attack-kicker">HELD OUT · FRESH ATTACKS</p>
       <div className="attack-evidence">
         <div>
@@ -96,7 +96,7 @@ export function AttackResults({
           </div>
           <p className="attack-heldout-note">
             {heldOut
-              ? "Written and frozen before the fix. Tested once."
+              ? "These attacks were frozen before the fix and tested once."
               : "Held-out evaluation pending."}
           </p>
         </div>
@@ -119,10 +119,7 @@ export function AttackResults({
         </div>
       </div>
       <p className="attack-reason">
-        {heldOut?.injected_content_survived_runs == null
-          ? "A person approves,"
-          : "That is why a person approves,"}
-        <br className="desktop-break" /> and the server enforces the gate.
+        A person approves every ticket, and the server enforces it.
       </p>
       <p className="attack-suite">
         Across <strong>{number(summary.distinctAttacks)}</strong> distinct

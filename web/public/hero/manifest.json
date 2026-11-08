@@ -1,55 +1,55 @@
 {
-  "inputHash": "3e63f977bc1f7426c596fc4b801803339267df64d5378deb72b7462eba3ccacd",
+  "inputHash": "b0bca3cef5223a185b375266edcab661edbddbe434369db33827117a140beac3",
   "rows": 72987,
   "benchmark": 72670,
   "picks": 500,
   "anchors": 317,
   "files": {
     "desktop-1x.avif": {
-      "bytes": 45421,
-      "sha256": "40c99dde1f35b1e199d00649aea5f45d3cd982bc2157a80c47cbf66aacb9fddc",
+      "bytes": 36866,
+      "sha256": "3850119f67e3dc55eebd15c9c0af10ddb7b064eb3310cb0563a75849f29e4347",
       "width": 1440,
       "height": 824
     },
     "desktop-1x.webp": {
-      "bytes": 48140,
-      "sha256": "4111dd601c837803aa93dd0cf559b406c0fc7bcde635b22919d06528a4260893",
+      "bytes": 41852,
+      "sha256": "7362faa133a5196170cbc8a93f85321d5843158afb467f32a045b9bbc2d02631",
       "width": 1440,
       "height": 824
     },
     "desktop-2x.avif": {
-      "bytes": 114592,
-      "sha256": "36f8e20d2feda582d6fa467b882ad301ec538324e830709ae6b047b6a5e18f1c",
+      "bytes": 93288,
+      "sha256": "f5ea132da29fe4e6d0ace1f31e8483f299fd7138afa65a6a40be39be74f55ad0",
       "width": 2880,
       "height": 1648
     },
     "desktop-2x.webp": {
-      "bytes": 134830,
-      "sha256": "5c0c2d83056993d7cfdec227915ff511fe3a7b08edf73e76bd7b5db4cf9dadd2",
+      "bytes": 112954,
+      "sha256": "2225893240f1fbd0b75e66b49bf4021846de944052daa7eb0a96031c71db25f9",
       "width": 2880,
       "height": 1648
     },
     "phone-1x.avif": {
-      "bytes": 27282,
-      "sha256": "2ab75d6112062c0583efc69847a971443f1cc48b92049c9b0ecd9e5c7e1816bd",
+      "bytes": 23981,
+      "sha256": "9b07be79c0264827ffdaee8fbff9331a8ccb24a38b76b386dd9241a0fe871756",
       "width": 390,
       "height": 784
     },
     "phone-1x.webp": {
-      "bytes": 29378,
-      "sha256": "1666ad0ed22540e3028dabe0eca025512effb430198aca8e9ae7449242dd7b74",
+      "bytes": 26442,
+      "sha256": "288d8bc097b5bf2b5d64854d89319a96711d856cbbf1612013747a9990caf825",
       "width": 390,
       "height": 784
     },
     "phone-2x.avif": {
-      "bytes": 75349,
-      "sha256": "39fe19b60cafedd080face9cd887e06dcaa9e42a4110a9dd47b90daa29daf7b1",
+      "bytes": 62582,
+      "sha256": "4df7c98ab14264bb34d98934abda3bf2f858c1a743095b10264bf72963fc283c",
       "width": 780,
       "height": 1568
     },
     "phone-2x.webp": {
-      "bytes": 81396,
-      "sha256": "b8462769f3c4dd9debe8b855267b44ebf9a1d2f07ab92075669d77f47b2127e0",
+      "bytes": 70552,
+      "sha256": "6dfc834c6359859c30e5570f4821f32175fad0b08bc9ef2ec0dce1759412d58e",
       "width": 780,
       "height": 1568
     }

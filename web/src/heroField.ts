@@ -8,7 +8,7 @@ export function fieldPoint(x: number, y: number, width: number, height: number) 
   const angle = phone ? -0.30 : -0.45;
   const scale = phone ? width / 21500 : height / 34000;
   const cx = width * (phone ? 0.58 : 0.76);
-  const cy = height * (phone ? 0.37 : 0.47);
+  const cy = height * (phone ? 0.31 : 0.47);
   const dx = x - 35000, dy = y - 35000;
   return [cx + (dx * Math.cos(angle) - dy * Math.sin(angle)) * scale,
     cy + (dx * Math.sin(angle) + dy * Math.cos(angle)) * scale];
@@ -37,7 +37,7 @@ export function renderField(data: FieldData, width: number, height: number, pale
     if (hot) {
       circle(x, y, 7 * density, palette.ember, 0.22, true);
       circle(x, y, (data.flags[i] & 4 ? 1.4 : 1.05) * density, palette.ember, data.flags[i] & 4 ? 1 : 0.85);
-    } else circle(x, y, 0.62 * density, palette.ash, 0.45);
+    } else circle(x, y, 0.58 * density, palette.ash, 0.28);
   }
   return pixels;
 }

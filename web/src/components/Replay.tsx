@@ -426,7 +426,6 @@ export function Replay({
         </div>
         <DotField items={missed} clock={clock} tray onInspect={inspect} />
         <p className="missed-note">
-          The blind spot persists.
           <br />
           <strong>
             {number(noSignal)} of {number(data.positives)}
