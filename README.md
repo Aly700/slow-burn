@@ -50,8 +50,11 @@ I preserved the judged version at the tag `sheridan-datathon-2026` and left its 
 - I added browser-only matching for CycloneDX, SPDX, npm lockfiles and Python requirements, with version evidence and CSV or ticket exports.
 - I measured the same selected model with Granite embeddings on and off, using the original splits and five seeds.
 - I added results at 50, 100, 250 and 500 picks so the page shows what smaller review budgets catch.
+- I added an IBM watsonx.ai backend so the agent can run Granite 4 H Small in IBM's cloud instead of on the laptop, with the same tools, checks and priority policy. On the same tests it answered 15 of 15 analyst questions (12 of 15 locally) with a median of 1.6 s, completed 20 of 20 live investigations, and on the 32 held-out injection attacks filed no ticket without approval, changed no verdict, and let planted wording into briefing text 3 times (4 locally). A public read-only mode with rate limits and a daily token cap is built and tested in a container; hosting it needs a paid IBM Cloud account, so the live page still replays recorded answers (`agent/evals/watsonx_comparison.json`).
 
 Reproduce the additions with `uv run python -I pipeline/granite_ablation.py` and `uv run python -I pipeline/software_index.py`, then rebuild the page. Both scripts use the supplied data and the original local prediction caches; neither writes a judged artifact.
+
+
 
 ## Run it
 
