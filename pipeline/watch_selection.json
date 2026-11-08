@@ -1,0 +1,222 @@
+{
+  "policy": {
+    "version": "watch-1",
+    "pool": "All four snapshot flags and any_exploit equal zero; missing monthly observations follow the existing zero-flag tier rule.",
+    "inner_train": "2024 publication cohorts with at least 90 days follow-up at 2024-06-30 (January\u2013March).",
+    "inner_validation": "July\u2013September 2024 publication cohorts; labels through 2024-12-31.",
+    "selection": "Largest sum of validation hits at 100, 250 and 500; then validation average precision; then no embedding, logistic, name.",
+    "fixed_parameters": "Existing logistic C=0.2 or sparse LightGBM: 160 trees, 7 leaves, depth 3, min leaf 40, Hessian 0.05; no tuning.",
+    "features": "Exact-month EPSS and percentile, publication timing, prior vendor/product/assigner KEV counts, sanitized keywords; optional pinned Granite description embeddings with train-only PCA.",
+    "excluded": "Constant tool flags/counts; all current CWE/CVSS fields, enrichment/status/counts/references, undated ransomware annotations and raw incident claims.",
+    "encoder_timing": "The frozen encoder was released by 2024 year-end, before 2025 evaluation; 2024 validation is retrospective recipe development, not a simulated live 2024 deployment.",
+    "test_primary": "Fit mature no-signal 2024 rows with labels through 2024-12-31; score all 2025 publication cohorts once, outcomes through 2025-12-31.",
+    "test_secondary": "Same chosen recipe, refit mature no-signal 2024+early-2025 rows with labels through 2025-06-30; score July\u2013September 2025.",
+    "test_use": "2025 cannot change recipes, hyperparameters, selection, or production seed; all selected-model seeds are diagnostics only.",
+    "censoring": "Training requires 90 days observation; primary includes immature late-2025 cohorts and reports their counts. Secondary has at least 90 days. Non-membership is unobserved exploitation, not safety.",
+    "bootstrap": "1000 paired month resamples, fixed fitted scores, literal budgets 100/250/500, seed 2026; also show workload-fraction sensitivity.",
+    "mixed_allocation": "Report pure frozen top500, 450 exploit-tier plus 50 watch, and 400 plus 100; do not change submission.",
+    "final_fit": "Mature no-signal 2024+2025 rows; labels through 2025-12-31; seed 2026 regardless of test results.",
+    "unavailable_2023": "No 2023 monthly signals were supplied; no backfill from 2024.",
+    "negative_result": "Publish the same watch artifact and an explicit negative result if the chosen recipe catches no held-out positives."
+  },
+  "registry_sha256": "6939dd8a0ad5897d88afaae69d806ccb63276d404d53bed0c7ee2d84722d8afd",
+  "train": {
+    "rows": 8433,
+    "snapshot_min": "2024-01",
+    "snapshot_max": "2024-03",
+    "missing_snapshot_observations": 246,
+    "positives": 3,
+    "base_rate": 0.0003557452863749555,
+    "missing_snapshot_positive_rows": 1,
+    "fewer_than_90_days": 0
+  },
+  "validation": {
+    "rows": 8305,
+    "snapshot_min": "2024-07",
+    "snapshot_max": "2024-09",
+    "missing_snapshot_observations": 353,
+    "positives": 8,
+    "base_rate": 0.0009632751354605659,
+    "missing_snapshot_positive_rows": 0,
+    "fewer_than_90_days": 0
+  },
+  "candidates": [
+    {
+      "name": "watch_logistic_text",
+      "pool": 8305,
+      "positives": 8,
+      "budgets": [
+        {
+          "budget": 100,
+          "reviewed": 100,
+          "hits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "random_expected_hits": 0.09632751354605659,
+          "lift_over_random": 0.0
+        },
+        {
+          "budget": 250,
+          "reviewed": 250,
+          "hits": 1,
+          "precision": 0.004,
+          "recall": 0.125,
+          "random_expected_hits": 0.2408187838651415,
+          "lift_over_random": 4.1525
+        },
+        {
+          "budget": 500,
+          "reviewed": 500,
+          "hits": 1,
+          "precision": 0.002,
+          "recall": 0.125,
+          "random_expected_hits": 0.481637567730283,
+          "lift_over_random": 2.07625
+        }
+      ],
+      "average_precision": 0.0025728480353126677
+    },
+    {
+      "name": "watch_logistic_granite",
+      "pool": 8305,
+      "positives": 8,
+      "budgets": [
+        {
+          "budget": 100,
+          "reviewed": 100,
+          "hits": 1,
+          "precision": 0.01,
+          "recall": 0.125,
+          "random_expected_hits": 0.09632751354605659,
+          "lift_over_random": 10.38125
+        },
+        {
+          "budget": 250,
+          "reviewed": 250,
+          "hits": 1,
+          "precision": 0.004,
+          "recall": 0.125,
+          "random_expected_hits": 0.2408187838651415,
+          "lift_over_random": 4.1525
+        },
+        {
+          "budget": 500,
+          "reviewed": 500,
+          "hits": 1,
+          "precision": 0.002,
+          "recall": 0.125,
+          "random_expected_hits": 0.481637567730283,
+          "lift_over_random": 2.07625
+        }
+      ],
+      "average_precision": 0.003084842731230846
+    },
+    {
+      "name": "watch_lightgbm_text",
+      "pool": 8305,
+      "positives": 8,
+      "budgets": [
+        {
+          "budget": 100,
+          "reviewed": 100,
+          "hits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "random_expected_hits": 0.09632751354605659,
+          "lift_over_random": 0.0
+        },
+        {
+          "budget": 250,
+          "reviewed": 250,
+          "hits": 1,
+          "precision": 0.004,
+          "recall": 0.125,
+          "random_expected_hits": 0.2408187838651415,
+          "lift_over_random": 4.1525
+        },
+        {
+          "budget": 500,
+          "reviewed": 500,
+          "hits": 1,
+          "precision": 0.002,
+          "recall": 0.125,
+          "random_expected_hits": 0.481637567730283,
+          "lift_over_random": 2.07625
+        }
+      ],
+      "average_precision": 0.0021628265342735777
+    },
+    {
+      "name": "watch_lightgbm_granite",
+      "pool": 8305,
+      "positives": 8,
+      "budgets": [
+        {
+          "budget": 100,
+          "reviewed": 100,
+          "hits": 1,
+          "precision": 0.01,
+          "recall": 0.125,
+          "random_expected_hits": 0.09632751354605659,
+          "lift_over_random": 10.38125
+        },
+        {
+          "budget": 250,
+          "reviewed": 250,
+          "hits": 1,
+          "precision": 0.004,
+          "recall": 0.125,
+          "random_expected_hits": 0.2408187838651415,
+          "lift_over_random": 4.1525
+        },
+        {
+          "budget": 500,
+          "reviewed": 500,
+          "hits": 2,
+          "precision": 0.004,
+          "recall": 0.25,
+          "random_expected_hits": 0.481637567730283,
+          "lift_over_random": 4.1525
+        }
+      ],
+      "average_precision": 0.003382690802734307
+    }
+  ],
+  "selected_recipe": "watch_lightgbm_granite",
+  "selection_year": 2024,
+  "test_used_for_selection": false,
+  "input_manifest": {
+    "affected_products.csv": {
+      "sha256": "9f8ea794331634b8d310569fc546b0c903efc923d99a96cd06f2a30f178af058",
+      "bytes": 199371677
+    },
+    "exploit_signals_2024.csv": {
+      "sha256": "c01ef2a7d08fc2f9e883df48273ececc83ab04f4f73ae233c2384e5f19c8d2a8",
+      "bytes": 122020228
+    },
+    "exploit_signals_2025.csv": {
+      "sha256": "1bfecaf12e22c85eb14372c48cc2ce9a1f14a5b016d573584b258558dccd6fdd",
+      "bytes": 138928290
+    },
+    "known_exploited.csv": {
+      "sha256": "53c8a610af93e98399b698666379690c7d1e653d056332b943688ad6b2eeba1f",
+      "bytes": 612723
+    },
+    "references.csv": {
+      "sha256": "94f002746872643c63901dde28a13d427630c1e8d7e5eeeb57c8e6ec01d923e8",
+      "bytes": 144935205
+    },
+    "scoreboard_2026.csv": {
+      "sha256": "cb07b228098ba93927f4e9d3962dfc164b026d8819defc03260cefa74ca3bcd8",
+      "bytes": 3604845
+    },
+    "vulnerabilities.csv": {
+      "sha256": "5fe4fcbd897fbbdafca2685e656b58b1b05ad431cd07b833735c685720d685b6",
+      "bytes": 238187059
+    },
+    "weakness_types.csv": {
+      "sha256": "cf0cd63889ff8e02419450743f01ae17cc2d7d99c495d14137374ea5398b01f6",
+      "bytes": 340034
+    }
+  }
+}

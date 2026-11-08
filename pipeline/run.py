@@ -86,7 +86,7 @@ def reasons_for(rows, h, x, terms, names):
     return output
 
 
-def run():
+def run(include_watch_checks=True):
     backtest = json.loads((ARTIFACTS / 'backtest.json').read_text())
     audit = json.loads((CACHE / 'leak_audit.json').read_text())
     recipe = Recipe(**json.loads((CACHE / 'selected_recipe.json').read_text()))
@@ -180,7 +180,7 @@ def run():
     from pipeline.findings import run as findings
     findings()
     from pipeline.checks import artifact_checks
-    artifact_checks()
+    artifact_checks(include_watch=include_watch_checks)
     print('Production:', recipe.name, len(train), 'training rows;', int(train.label.sum()), 'positives', flush=True)
 
 
@@ -199,4 +199,7 @@ if __name__ == '__main__':
         leak_audit()
         from pipeline.analog import run as analog
         analog()
-    run()
+    run(include_watch_checks=not args.all)
+    if args.all:
+        from pipeline.watch import run as watch
+        watch()

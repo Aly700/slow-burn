@@ -819,6 +819,22 @@
   },
   "story": [
     {
+      "title": "A separate watch list for the blind spot",
+      "sentence": "Prior product history marked 15 of 31 blind-spot positives but only 15.9% of the no-signal pool, a descriptive review cue; the preregistered watch model still found none in 500 reviews, so the 2026 queue remains exploratory.",
+      "numbers": {
+        "no_signal_pool": 46955,
+        "no_signal_positives": 31,
+        "watch_hits_at_500": 0,
+        "epss_hits_at_500": 0,
+        "random_expected_at_500": 0.3301032903844106,
+        "review_budget": 500,
+        "prior_product_positives": 15,
+        "prior_product_pool": 7483,
+        "prior_product_pool_share": 0.15936534980300288
+      },
+      "source_script": "pipeline/watch.py"
+    },
+    {
       "title": "Two catalog clocks",
       "sentence": "Of 165 KEV-listed vulnerabilities published in 2025, 110 were already listed by publication-month end, while the other 55 took a median 45 days from publication to listing\u2014a catalog delay, not a first-attack timestamp.",
       "numbers": {
@@ -961,5 +977,2508 @@
       "tenable": 3,
       "adobe": 2
     }
+  },
+  "blind_spot": {
+    "selected_recipe": "watch_lightgbm_granite",
+    "policy": {
+      "version": "watch-1",
+      "pool": "All four snapshot flags and any_exploit equal zero; missing monthly observations follow the existing zero-flag tier rule.",
+      "inner_train": "2024 publication cohorts with at least 90 days follow-up at 2024-06-30 (January\u2013March).",
+      "inner_validation": "July\u2013September 2024 publication cohorts; labels through 2024-12-31.",
+      "selection": "Largest sum of validation hits at 100, 250 and 500; then validation average precision; then no embedding, logistic, name.",
+      "fixed_parameters": "Existing logistic C=0.2 or sparse LightGBM: 160 trees, 7 leaves, depth 3, min leaf 40, Hessian 0.05; no tuning.",
+      "features": "Exact-month EPSS and percentile, publication timing, prior vendor/product/assigner KEV counts, sanitized keywords; optional pinned Granite description embeddings with train-only PCA.",
+      "excluded": "Constant tool flags/counts; all current CWE/CVSS fields, enrichment/status/counts/references, undated ransomware annotations and raw incident claims.",
+      "encoder_timing": "The frozen encoder was released by 2024 year-end, before 2025 evaluation; 2024 validation is retrospective recipe development, not a simulated live 2024 deployment.",
+      "test_primary": "Fit mature no-signal 2024 rows with labels through 2024-12-31; score all 2025 publication cohorts once, outcomes through 2025-12-31.",
+      "test_secondary": "Same chosen recipe, refit mature no-signal 2024+early-2025 rows with labels through 2025-06-30; score July\u2013September 2025.",
+      "test_use": "2025 cannot change recipes, hyperparameters, selection, or production seed; all selected-model seeds are diagnostics only.",
+      "censoring": "Training requires 90 days observation; primary includes immature late-2025 cohorts and reports their counts. Secondary has at least 90 days. Non-membership is unobserved exploitation, not safety.",
+      "bootstrap": "1000 paired month resamples, fixed fitted scores, literal budgets 100/250/500, seed 2026; also show workload-fraction sensitivity.",
+      "mixed_allocation": "Report pure frozen top500, 450 exploit-tier plus 50 watch, and 400 plus 100; do not change submission.",
+      "final_fit": "Mature no-signal 2024+2025 rows; labels through 2025-12-31; seed 2026 regardless of test results.",
+      "unavailable_2023": "No 2023 monthly signals were supplied; no backfill from 2024.",
+      "negative_result": "Publish the same watch artifact and an explicit negative result if the chosen recipe catches no held-out positives."
+    },
+    "selection": {
+      "policy": {
+        "version": "watch-1",
+        "pool": "All four snapshot flags and any_exploit equal zero; missing monthly observations follow the existing zero-flag tier rule.",
+        "inner_train": "2024 publication cohorts with at least 90 days follow-up at 2024-06-30 (January\u2013March).",
+        "inner_validation": "July\u2013September 2024 publication cohorts; labels through 2024-12-31.",
+        "selection": "Largest sum of validation hits at 100, 250 and 500; then validation average precision; then no embedding, logistic, name.",
+        "fixed_parameters": "Existing logistic C=0.2 or sparse LightGBM: 160 trees, 7 leaves, depth 3, min leaf 40, Hessian 0.05; no tuning.",
+        "features": "Exact-month EPSS and percentile, publication timing, prior vendor/product/assigner KEV counts, sanitized keywords; optional pinned Granite description embeddings with train-only PCA.",
+        "excluded": "Constant tool flags/counts; all current CWE/CVSS fields, enrichment/status/counts/references, undated ransomware annotations and raw incident claims.",
+        "encoder_timing": "The frozen encoder was released by 2024 year-end, before 2025 evaluation; 2024 validation is retrospective recipe development, not a simulated live 2024 deployment.",
+        "test_primary": "Fit mature no-signal 2024 rows with labels through 2024-12-31; score all 2025 publication cohorts once, outcomes through 2025-12-31.",
+        "test_secondary": "Same chosen recipe, refit mature no-signal 2024+early-2025 rows with labels through 2025-06-30; score July\u2013September 2025.",
+        "test_use": "2025 cannot change recipes, hyperparameters, selection, or production seed; all selected-model seeds are diagnostics only.",
+        "censoring": "Training requires 90 days observation; primary includes immature late-2025 cohorts and reports their counts. Secondary has at least 90 days. Non-membership is unobserved exploitation, not safety.",
+        "bootstrap": "1000 paired month resamples, fixed fitted scores, literal budgets 100/250/500, seed 2026; also show workload-fraction sensitivity.",
+        "mixed_allocation": "Report pure frozen top500, 450 exploit-tier plus 50 watch, and 400 plus 100; do not change submission.",
+        "final_fit": "Mature no-signal 2024+2025 rows; labels through 2025-12-31; seed 2026 regardless of test results.",
+        "unavailable_2023": "No 2023 monthly signals were supplied; no backfill from 2024.",
+        "negative_result": "Publish the same watch artifact and an explicit negative result if the chosen recipe catches no held-out positives."
+      },
+      "registry_sha256": "6939dd8a0ad5897d88afaae69d806ccb63276d404d53bed0c7ee2d84722d8afd",
+      "train": {
+        "rows": 8433,
+        "snapshot_min": "2024-01",
+        "snapshot_max": "2024-03",
+        "missing_snapshot_observations": 246,
+        "positives": 3,
+        "base_rate": 0.0003557452863749555,
+        "missing_snapshot_positive_rows": 1,
+        "fewer_than_90_days": 0
+      },
+      "validation": {
+        "rows": 8305,
+        "snapshot_min": "2024-07",
+        "snapshot_max": "2024-09",
+        "missing_snapshot_observations": 353,
+        "positives": 8,
+        "base_rate": 0.0009632751354605659,
+        "missing_snapshot_positive_rows": 0,
+        "fewer_than_90_days": 0
+      },
+      "candidates": [
+        {
+          "name": "watch_logistic_text",
+          "pool": 8305,
+          "positives": 8,
+          "budgets": [
+            {
+              "budget": 100,
+              "reviewed": 100,
+              "hits": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "random_expected_hits": 0.09632751354605659,
+              "lift_over_random": 0.0
+            },
+            {
+              "budget": 250,
+              "reviewed": 250,
+              "hits": 1,
+              "precision": 0.004,
+              "recall": 0.125,
+              "random_expected_hits": 0.2408187838651415,
+              "lift_over_random": 4.1525
+            },
+            {
+              "budget": 500,
+              "reviewed": 500,
+              "hits": 1,
+              "precision": 0.002,
+              "recall": 0.125,
+              "random_expected_hits": 0.481637567730283,
+              "lift_over_random": 2.07625
+            }
+          ],
+          "average_precision": 0.0025728480353126677
+        },
+        {
+          "name": "watch_logistic_granite",
+          "pool": 8305,
+          "positives": 8,
+          "budgets": [
+            {
+              "budget": 100,
+              "reviewed": 100,
+              "hits": 1,
+              "precision": 0.01,
+              "recall": 0.125,
+              "random_expected_hits": 0.09632751354605659,
+              "lift_over_random": 10.38125
+            },
+            {
+              "budget": 250,
+              "reviewed": 250,
+              "hits": 1,
+              "precision": 0.004,
+              "recall": 0.125,
+              "random_expected_hits": 0.2408187838651415,
+              "lift_over_random": 4.1525
+            },
+            {
+              "budget": 500,
+              "reviewed": 500,
+              "hits": 1,
+              "precision": 0.002,
+              "recall": 0.125,
+              "random_expected_hits": 0.481637567730283,
+              "lift_over_random": 2.07625
+            }
+          ],
+          "average_precision": 0.003084842731230846
+        },
+        {
+          "name": "watch_lightgbm_text",
+          "pool": 8305,
+          "positives": 8,
+          "budgets": [
+            {
+              "budget": 100,
+              "reviewed": 100,
+              "hits": 0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "random_expected_hits": 0.09632751354605659,
+              "lift_over_random": 0.0
+            },
+            {
+              "budget": 250,
+              "reviewed": 250,
+              "hits": 1,
+              "precision": 0.004,
+              "recall": 0.125,
+              "random_expected_hits": 0.2408187838651415,
+              "lift_over_random": 4.1525
+            },
+            {
+              "budget": 500,
+              "reviewed": 500,
+              "hits": 1,
+              "precision": 0.002,
+              "recall": 0.125,
+              "random_expected_hits": 0.481637567730283,
+              "lift_over_random": 2.07625
+            }
+          ],
+          "average_precision": 0.0021628265342735777
+        },
+        {
+          "name": "watch_lightgbm_granite",
+          "pool": 8305,
+          "positives": 8,
+          "budgets": [
+            {
+              "budget": 100,
+              "reviewed": 100,
+              "hits": 1,
+              "precision": 0.01,
+              "recall": 0.125,
+              "random_expected_hits": 0.09632751354605659,
+              "lift_over_random": 10.38125
+            },
+            {
+              "budget": 250,
+              "reviewed": 250,
+              "hits": 1,
+              "precision": 0.004,
+              "recall": 0.125,
+              "random_expected_hits": 0.2408187838651415,
+              "lift_over_random": 4.1525
+            },
+            {
+              "budget": 500,
+              "reviewed": 500,
+              "hits": 2,
+              "precision": 0.004,
+              "recall": 0.25,
+              "random_expected_hits": 0.481637567730283,
+              "lift_over_random": 4.1525
+            }
+          ],
+          "average_precision": 0.003382690802734307
+        }
+      ],
+      "selected_recipe": "watch_lightgbm_granite",
+      "selection_year": 2024,
+      "test_used_for_selection": false,
+      "input_manifest": {
+        "affected_products.csv": {
+          "sha256": "9f8ea794331634b8d310569fc546b0c903efc923d99a96cd06f2a30f178af058",
+          "bytes": 199371677
+        },
+        "exploit_signals_2024.csv": {
+          "sha256": "c01ef2a7d08fc2f9e883df48273ececc83ab04f4f73ae233c2384e5f19c8d2a8",
+          "bytes": 122020228
+        },
+        "exploit_signals_2025.csv": {
+          "sha256": "1bfecaf12e22c85eb14372c48cc2ce9a1f14a5b016d573584b258558dccd6fdd",
+          "bytes": 138928290
+        },
+        "known_exploited.csv": {
+          "sha256": "53c8a610af93e98399b698666379690c7d1e653d056332b943688ad6b2eeba1f",
+          "bytes": 612723
+        },
+        "references.csv": {
+          "sha256": "94f002746872643c63901dde28a13d427630c1e8d7e5eeeb57c8e6ec01d923e8",
+          "bytes": 144935205
+        },
+        "scoreboard_2026.csv": {
+          "sha256": "cb07b228098ba93927f4e9d3962dfc164b026d8819defc03260cefa74ca3bcd8",
+          "bytes": 3604845
+        },
+        "vulnerabilities.csv": {
+          "sha256": "5fe4fcbd897fbbdafca2685e656b58b1b05ad431cd07b833735c685720d685b6",
+          "bytes": 238187059
+        },
+        "weakness_types.csv": {
+          "sha256": "cf0cd63889ff8e02419450743f01ae17cc2d7d99c495d14137374ea5398b01f6",
+          "bytes": 340034
+        }
+      }
+    },
+    "pool_definition": "All four snapshot flags and any_exploit equal zero; missing monthly observations follow the existing zero-flag tier rule.",
+    "splits": [
+      {
+        "name": "2024_to_2025",
+        "train_label_cutoff": "2024-12-31",
+        "test_label_cutoff": "2025-12-31",
+        "train": {
+          "rows": 28206,
+          "snapshot_min": "2024-01",
+          "snapshot_max": "2024-09",
+          "missing_snapshot_observations": 1252,
+          "positives": 21,
+          "base_rate": 0.0007445224420336099,
+          "missing_snapshot_positive_rows": 3,
+          "fewer_than_90_days": 0
+        },
+        "test": {
+          "rows": 46955,
+          "snapshot_min": "2025-01",
+          "snapshot_max": "2025-12",
+          "missing_snapshot_observations": 4367,
+          "positives": 31,
+          "base_rate": 0.0006602065807688213,
+          "missing_snapshot_positive_rows": 5,
+          "fewer_than_90_days": 12435
+        },
+        "full_test": {
+          "rows": 48039,
+          "snapshot_min": "2025-01",
+          "snapshot_max": "2025-12",
+          "missing_snapshot_observations": 4367,
+          "positives": 55,
+          "base_rate": 0.0011449030995649369,
+          "missing_snapshot_positive_rows": 5,
+          "fewer_than_90_days": 12759
+        },
+        "methods": [
+          {
+            "name": "watch_lightgbm_granite",
+            "pool": 46955,
+            "positives": 31,
+            "budgets": [
+              {
+                "budget": 100,
+                "reviewed": 100,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.06602065807688212,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 250,
+                "reviewed": 250,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.1650516451922053,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 500,
+                "reviewed": 500,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.3301032903844106,
+                "lift_over_random": 0.0
+              }
+            ],
+            "average_precision": 0.001030905347351612
+          },
+          {
+            "name": "EPSS first",
+            "pool": 46955,
+            "positives": 31,
+            "budgets": [
+              {
+                "budget": 100,
+                "reviewed": 100,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.06602065807688212,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 250,
+                "reviewed": 250,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.1650516451922053,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 500,
+                "reviewed": 500,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.3301032903844106,
+                "lift_over_random": 0.0
+              }
+            ],
+            "average_precision": 0.0013490484021406299
+          },
+          {
+            "name": "CVSS first (current, descriptive reference)",
+            "pool": 46955,
+            "positives": 31,
+            "budgets": [
+              {
+                "budget": 100,
+                "reviewed": 100,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.06602065807688212,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 250,
+                "reviewed": 250,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.1650516451922053,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 500,
+                "reviewed": 500,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.3301032903844106,
+                "lift_over_random": 0.0
+              }
+            ],
+            "average_precision": 0.0013651992585119238
+          }
+        ],
+        "random_expectation": [
+          {
+            "budget": 100,
+            "expected_hits": 0.06602065807688212,
+            "expected_precision": 0.0006602065807688213
+          },
+          {
+            "budget": 250,
+            "expected_hits": 0.1650516451922053,
+            "expected_precision": 0.0006602065807688213
+          },
+          {
+            "budget": 500,
+            "expected_hits": 0.3301032903844106,
+            "expected_precision": 0.0006602065807688213
+          }
+        ],
+        "baseline_ties": {
+          "tie_break": "score descending, cve_id ascending",
+          "epss": [
+            {
+              "budget": 100,
+              "cutoff_score": 0.03538,
+              "strictly_above_rows": 99,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 1,
+              "boundary_tie_positives": 0,
+              "slots_from_boundary": 1,
+              "hits_range_from_tie_order": [
+                0,
+                0
+              ],
+              "expected_hits_with_random_boundary_order": 0.0
+            },
+            {
+              "budget": 250,
+              "cutoff_score": 0.01409,
+              "strictly_above_rows": 247,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 9,
+              "boundary_tie_positives": 0,
+              "slots_from_boundary": 3,
+              "hits_range_from_tie_order": [
+                0,
+                0
+              ],
+              "expected_hits_with_random_boundary_order": 0.0
+            },
+            {
+              "budget": 500,
+              "cutoff_score": 0.00791,
+              "strictly_above_rows": 499,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 1,
+              "boundary_tie_positives": 0,
+              "slots_from_boundary": 1,
+              "hits_range_from_tie_order": [
+                0,
+                0
+              ],
+              "expected_hits_with_random_boundary_order": 0.0
+            }
+          ],
+          "cvss": [
+            {
+              "budget": 100,
+              "cutoff_score": 10.0,
+              "strictly_above_rows": 0,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 131,
+              "boundary_tie_positives": 0,
+              "slots_from_boundary": 100,
+              "hits_range_from_tie_order": [
+                0,
+                0
+              ],
+              "expected_hits_with_random_boundary_order": 0.0
+            },
+            {
+              "budget": 250,
+              "cutoff_score": 9.8,
+              "strictly_above_rows": 245,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 4698,
+              "boundary_tie_positives": 9,
+              "slots_from_boundary": 5,
+              "hits_range_from_tie_order": [
+                0,
+                5
+              ],
+              "expected_hits_with_random_boundary_order": 0.009578544061302681
+            },
+            {
+              "budget": 500,
+              "cutoff_score": 9.8,
+              "strictly_above_rows": 245,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 4698,
+              "boundary_tie_positives": 9,
+              "slots_from_boundary": 255,
+              "hits_range_from_tie_order": [
+                0,
+                9
+              ],
+              "expected_hits_with_random_boundary_order": 0.4885057471264368
+            }
+          ],
+          "note": "Current CVSS contains large boundary ties; a different tie order can change the observed count without changing severity scores."
+        },
+        "bootstrap_vs_epss": {
+          "method": "paired month bootstrap against EPSS; fixed fitted model",
+          "iterations": 1000,
+          "seed": 2026,
+          "months": 12,
+          "budgets": [
+            {
+              "budget": 100,
+              "literal": {
+                "delta_hits_95_percentile_interval": [
+                  0.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.0
+              },
+              "workload_fraction": {
+                "delta_hits_95_percentile_interval": [
+                  0.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.0
+              }
+            },
+            {
+              "budget": 250,
+              "literal": {
+                "delta_hits_95_percentile_interval": [
+                  0.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.0
+              },
+              "workload_fraction": {
+                "delta_hits_95_percentile_interval": [
+                  0.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.0
+              }
+            },
+            {
+              "budget": 500,
+              "literal": {
+                "delta_hits_95_percentile_interval": [
+                  0.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.001
+              },
+              "workload_fraction": {
+                "delta_hits_95_percentile_interval": [
+                  0.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.0
+              }
+            }
+          ],
+          "limitation": "Few months and positives; excludes fitting and selection uncertainty. Workload sensitivity scales each budget by resampled/original pool size."
+        },
+        "seed_stability": {
+          "production_seed": 2026,
+          "methods": [
+            {
+              "seed": 2026,
+              "name": "watch_lightgbm_granite",
+              "pool": 46955,
+              "positives": 31,
+              "budgets": [
+                {
+                  "budget": 100,
+                  "reviewed": 100,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.06602065807688212,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 250,
+                  "reviewed": 250,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.1650516451922053,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 500,
+                  "reviewed": 500,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.3301032903844106,
+                  "lift_over_random": 0.0
+                }
+              ],
+              "average_precision": 0.001030905347351612
+            },
+            {
+              "seed": 2027,
+              "name": "watch_lightgbm_granite",
+              "pool": 46955,
+              "positives": 31,
+              "budgets": [
+                {
+                  "budget": 100,
+                  "reviewed": 100,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.06602065807688212,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 250,
+                  "reviewed": 250,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.1650516451922053,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 500,
+                  "reviewed": 500,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.3301032903844106,
+                  "lift_over_random": 0.0
+                }
+              ],
+              "average_precision": 0.0011873620136946578
+            },
+            {
+              "seed": 2028,
+              "name": "watch_lightgbm_granite",
+              "pool": 46955,
+              "positives": 31,
+              "budgets": [
+                {
+                  "budget": 100,
+                  "reviewed": 100,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.06602065807688212,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 250,
+                  "reviewed": 250,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.1650516451922053,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 500,
+                  "reviewed": 500,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.3301032903844106,
+                  "lift_over_random": 0.0
+                }
+              ],
+              "average_precision": 0.0010921324559694935
+            },
+            {
+              "seed": 2029,
+              "name": "watch_lightgbm_granite",
+              "pool": 46955,
+              "positives": 31,
+              "budgets": [
+                {
+                  "budget": 100,
+                  "reviewed": 100,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.06602065807688212,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 250,
+                  "reviewed": 250,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.1650516451922053,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 500,
+                  "reviewed": 500,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.3301032903844106,
+                  "lift_over_random": 0.0
+                }
+              ],
+              "average_precision": 0.0011353966310459975
+            },
+            {
+              "seed": 2030,
+              "name": "watch_lightgbm_granite",
+              "pool": 46955,
+              "positives": 31,
+              "budgets": [
+                {
+                  "budget": 100,
+                  "reviewed": 100,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.06602065807688212,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 250,
+                  "reviewed": 250,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.1650516451922053,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 500,
+                  "reviewed": 500,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.3301032903844106,
+                  "lift_over_random": 0.0
+                }
+              ],
+              "average_precision": 0.0013022679802711181
+            }
+          ],
+          "ranges": [
+            {
+              "budget": 100,
+              "min_hits": 0,
+              "max_hits": 0
+            },
+            {
+              "budget": 250,
+              "min_hits": 0,
+              "max_hits": 0
+            },
+            {
+              "budget": 500,
+              "min_hits": 0,
+              "max_hits": 0
+            }
+          ],
+          "note": "Seeds are diagnostic only; no best-seed or test-year selection."
+        }
+      },
+      {
+        "name": "forward_2025_h2",
+        "train_label_cutoff": "2025-06-30",
+        "test_label_cutoff": "2025-12-31",
+        "train": {
+          "rows": 50694,
+          "snapshot_min": "2024-01",
+          "snapshot_max": "2025-03",
+          "missing_snapshot_observations": 4530,
+          "positives": 55,
+          "base_rate": 0.0010849410186609856,
+          "missing_snapshot_positive_rows": 6,
+          "fewer_than_90_days": 0
+        },
+        "test": {
+          "rows": 11403,
+          "snapshot_min": "2025-07",
+          "snapshot_max": "2025-09",
+          "missing_snapshot_observations": 206,
+          "positives": 8,
+          "base_rate": 0.000701569762343243,
+          "missing_snapshot_positive_rows": 0,
+          "fewer_than_90_days": 0
+        },
+        "full_test": {
+          "rows": 11702,
+          "snapshot_min": "2025-07",
+          "snapshot_max": "2025-09",
+          "missing_snapshot_observations": 206,
+          "positives": 13,
+          "base_rate": 0.001110921210049564,
+          "missing_snapshot_positive_rows": 0,
+          "fewer_than_90_days": 0
+        },
+        "methods": [
+          {
+            "name": "watch_lightgbm_granite",
+            "pool": 11403,
+            "positives": 8,
+            "budgets": [
+              {
+                "budget": 100,
+                "reviewed": 100,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.0701569762343243,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 250,
+                "reviewed": 250,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.17539244058581074,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 500,
+                "reviewed": 500,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.3507848811716215,
+                "lift_over_random": 0.0
+              }
+            ],
+            "average_precision": 0.00141559302971554
+          },
+          {
+            "name": "EPSS first",
+            "pool": 11403,
+            "positives": 8,
+            "budgets": [
+              {
+                "budget": 100,
+                "reviewed": 100,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.0701569762343243,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 250,
+                "reviewed": 250,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.17539244058581074,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 500,
+                "reviewed": 500,
+                "hits": 1,
+                "precision": 0.002,
+                "recall": 0.125,
+                "random_expected_hits": 0.3507848811716215,
+                "lift_over_random": 2.85075
+              }
+            ],
+            "average_precision": 0.0027151728792194664
+          },
+          {
+            "name": "CVSS first (current, descriptive reference)",
+            "pool": 11403,
+            "positives": 8,
+            "budgets": [
+              {
+                "budget": 100,
+                "reviewed": 100,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.0701569762343243,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 250,
+                "reviewed": 250,
+                "hits": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "random_expected_hits": 0.17539244058581074,
+                "lift_over_random": 0.0
+              },
+              {
+                "budget": 500,
+                "reviewed": 500,
+                "hits": 2,
+                "precision": 0.004,
+                "recall": 0.25,
+                "random_expected_hits": 0.3507848811716215,
+                "lift_over_random": 5.7015
+              }
+            ],
+            "average_precision": 0.001858239227042163
+          }
+        ],
+        "random_expectation": [
+          {
+            "budget": 100,
+            "expected_hits": 0.0701569762343243,
+            "expected_precision": 0.000701569762343243
+          },
+          {
+            "budget": 250,
+            "expected_hits": 0.17539244058581074,
+            "expected_precision": 0.000701569762343243
+          },
+          {
+            "budget": 500,
+            "expected_hits": 0.3507848811716215,
+            "expected_precision": 0.000701569762343243
+          }
+        ],
+        "baseline_ties": {
+          "tie_break": "score descending, cve_id ascending",
+          "epss": [
+            {
+              "budget": 100,
+              "cutoff_score": 0.0123,
+              "strictly_above_rows": 96,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 9,
+              "boundary_tie_positives": 0,
+              "slots_from_boundary": 4,
+              "hits_range_from_tie_order": [
+                0,
+                0
+              ],
+              "expected_hits_with_random_boundary_order": 0.0
+            },
+            {
+              "budget": 250,
+              "cutoff_score": 0.00601,
+              "strictly_above_rows": 248,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 2,
+              "boundary_tie_positives": 0,
+              "slots_from_boundary": 2,
+              "hits_range_from_tie_order": [
+                0,
+                0
+              ],
+              "expected_hits_with_random_boundary_order": 0.0
+            },
+            {
+              "budget": 500,
+              "cutoff_score": 0.00298,
+              "strictly_above_rows": 499,
+              "strictly_above_hits": 1,
+              "boundary_tie_rows": 3,
+              "boundary_tie_positives": 1,
+              "slots_from_boundary": 1,
+              "hits_range_from_tie_order": [
+                1,
+                2
+              ],
+              "expected_hits_with_random_boundary_order": 1.3333333333333333
+            }
+          ],
+          "cvss": [
+            {
+              "budget": 100,
+              "cutoff_score": 9.8,
+              "strictly_above_rows": 59,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 1295,
+              "boundary_tie_positives": 3,
+              "slots_from_boundary": 41,
+              "hits_range_from_tie_order": [
+                0,
+                3
+              ],
+              "expected_hits_with_random_boundary_order": 0.09498069498069497
+            },
+            {
+              "budget": 250,
+              "cutoff_score": 9.8,
+              "strictly_above_rows": 59,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 1295,
+              "boundary_tie_positives": 3,
+              "slots_from_boundary": 191,
+              "hits_range_from_tie_order": [
+                0,
+                3
+              ],
+              "expected_hits_with_random_boundary_order": 0.44247104247104246
+            },
+            {
+              "budget": 500,
+              "cutoff_score": 9.8,
+              "strictly_above_rows": 59,
+              "strictly_above_hits": 0,
+              "boundary_tie_rows": 1295,
+              "boundary_tie_positives": 3,
+              "slots_from_boundary": 441,
+              "hits_range_from_tie_order": [
+                0,
+                3
+              ],
+              "expected_hits_with_random_boundary_order": 1.0216216216216216
+            }
+          ],
+          "note": "Current CVSS contains large boundary ties; a different tie order can change the observed count without changing severity scores."
+        },
+        "bootstrap_vs_epss": {
+          "method": "paired month bootstrap against EPSS; fixed fitted model",
+          "iterations": 1000,
+          "seed": 2026,
+          "months": 3,
+          "budgets": [
+            {
+              "budget": 100,
+              "literal": {
+                "delta_hits_95_percentile_interval": [
+                  0.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.0
+              },
+              "workload_fraction": {
+                "delta_hits_95_percentile_interval": [
+                  0.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.0
+              }
+            },
+            {
+              "budget": 250,
+              "literal": {
+                "delta_hits_95_percentile_interval": [
+                  0.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.0
+              },
+              "workload_fraction": {
+                "delta_hits_95_percentile_interval": [
+                  0.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.0
+              }
+            },
+            {
+              "budget": 500,
+              "literal": {
+                "delta_hits_95_percentile_interval": [
+                  -3.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.963
+              },
+              "workload_fraction": {
+                "delta_hits_95_percentile_interval": [
+                  -3.0,
+                  0.0
+                ],
+                "fraction_positive": 0.0,
+                "fraction_negative": 0.963
+              }
+            }
+          ],
+          "limitation": "Few months and positives; excludes fitting and selection uncertainty. Workload sensitivity scales each budget by resampled/original pool size."
+        },
+        "seed_stability": {
+          "production_seed": 2026,
+          "methods": [
+            {
+              "seed": 2026,
+              "name": "watch_lightgbm_granite",
+              "pool": 11403,
+              "positives": 8,
+              "budgets": [
+                {
+                  "budget": 100,
+                  "reviewed": 100,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.0701569762343243,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 250,
+                  "reviewed": 250,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.17539244058581074,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 500,
+                  "reviewed": 500,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.3507848811716215,
+                  "lift_over_random": 0.0
+                }
+              ],
+              "average_precision": 0.00141559302971554
+            },
+            {
+              "seed": 2027,
+              "name": "watch_lightgbm_granite",
+              "pool": 11403,
+              "positives": 8,
+              "budgets": [
+                {
+                  "budget": 100,
+                  "reviewed": 100,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.0701569762343243,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 250,
+                  "reviewed": 250,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.17539244058581074,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 500,
+                  "reviewed": 500,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.3507848811716215,
+                  "lift_over_random": 0.0
+                }
+              ],
+              "average_precision": 0.0010106924630493772
+            },
+            {
+              "seed": 2028,
+              "name": "watch_lightgbm_granite",
+              "pool": 11403,
+              "positives": 8,
+              "budgets": [
+                {
+                  "budget": 100,
+                  "reviewed": 100,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.0701569762343243,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 250,
+                  "reviewed": 250,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.17539244058581074,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 500,
+                  "reviewed": 500,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.3507848811716215,
+                  "lift_over_random": 0.0
+                }
+              ],
+              "average_precision": 0.0010550281530522908
+            },
+            {
+              "seed": 2029,
+              "name": "watch_lightgbm_granite",
+              "pool": 11403,
+              "positives": 8,
+              "budgets": [
+                {
+                  "budget": 100,
+                  "reviewed": 100,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.0701569762343243,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 250,
+                  "reviewed": 250,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.17539244058581074,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 500,
+                  "reviewed": 500,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.3507848811716215,
+                  "lift_over_random": 0.0
+                }
+              ],
+              "average_precision": 0.001041727878887648
+            },
+            {
+              "seed": 2030,
+              "name": "watch_lightgbm_granite",
+              "pool": 11403,
+              "positives": 8,
+              "budgets": [
+                {
+                  "budget": 100,
+                  "reviewed": 100,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.0701569762343243,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 250,
+                  "reviewed": 250,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.17539244058581074,
+                  "lift_over_random": 0.0
+                },
+                {
+                  "budget": 500,
+                  "reviewed": 500,
+                  "hits": 0,
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "random_expected_hits": 0.3507848811716215,
+                  "lift_over_random": 0.0
+                }
+              ],
+              "average_precision": 0.0010109947436233008
+            }
+          ],
+          "ranges": [
+            {
+              "budget": 100,
+              "min_hits": 0,
+              "max_hits": 0
+            },
+            {
+              "budget": 250,
+              "min_hits": 0,
+              "max_hits": 0
+            },
+            {
+              "budget": 500,
+              "min_hits": 0,
+              "max_hits": 0
+            }
+          ],
+          "note": "Seeds are diagnostic only; no best-seed or test-year selection."
+        }
+      }
+    ],
+    "profile": {
+      "no_signal_pool": 46955,
+      "no_signal_positives": 31,
+      "with_signal_pool": 1084,
+      "with_signal_base_rate": 0.02214022140221402,
+      "with_signal_positives": 24,
+      "base_rate": 0.0006602065807688213,
+      "tables": {
+        "vendor_prior_kev": {
+          "risk": "medium: current sanitized text and heuristic identity",
+          "rows": [
+            {
+              "value": "0",
+              "no_signal_pool": 22333,
+              "no_signal_pool_share": 0.47562559897774465,
+              "no_signal_positives": 11,
+              "share_of_no_signal_positives": 0.3548387096774194,
+              "with_signal_positives": 7,
+              "share_of_with_signal_positives": 0.2916666666666667,
+              "no_signal_rate": 0.0004925446648457439,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.7460462818655453,
+              "rate_95_wilson_interval": [
+                0.00027505717121855024,
+                0.0008818476617368843
+              ]
+            },
+            {
+              "value": "1-4",
+              "no_signal_pool": 8873,
+              "no_signal_pool_share": 0.18896816100521777,
+              "no_signal_positives": 8,
+              "share_of_no_signal_positives": 0.25806451612903225,
+              "with_signal_positives": 9,
+              "share_of_with_signal_positives": 0.375,
+              "no_signal_rate": 0.0009016116307900371,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.365650778185361,
+              "rate_95_wilson_interval": [
+                0.00045693190570904904,
+                0.001778277518327536
+              ]
+            },
+            {
+              "value": "20-49",
+              "no_signal_pool": 5887,
+              "no_signal_pool_share": 0.1253753593866468,
+              "no_signal_positives": 5,
+              "share_of_no_signal_positives": 0.16129032258064516,
+              "with_signal_positives": 2,
+              "share_of_with_signal_positives": 0.08333333333333333,
+              "no_signal_rate": 0.0008493290300662477,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.2864595034438921,
+              "rate_95_wilson_interval": [
+                0.0003628300890258097,
+                0.001986851151766677
+              ]
+            },
+            {
+              "value": "5-19",
+              "no_signal_pool": 5128,
+              "no_signal_pool_share": 0.10921094665104887,
+              "no_signal_positives": 5,
+              "share_of_no_signal_positives": 0.16129032258064516,
+              "with_signal_positives": 2,
+              "share_of_with_signal_positives": 0.08333333333333333,
+              "no_signal_rate": 0.0009750390015600624,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.4768695586533138,
+              "rate_95_wilson_interval": [
+                0.0004165418872357988,
+                0.002280657496314933
+              ]
+            },
+            {
+              "value": "50+",
+              "no_signal_pool": 4734,
+              "no_signal_pool_share": 0.10081993397934193,
+              "no_signal_positives": 2,
+              "share_of_no_signal_positives": 0.06451612903225806,
+              "with_signal_positives": 4,
+              "share_of_with_signal_positives": 0.16666666666666666,
+              "no_signal_rate": 0.0004224757076468103,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.6399144145985799,
+              "rate_95_wilson_interval": [
+                0.00011586329841557785,
+                0.0015392363570900006
+              ]
+            }
+          ]
+        },
+        "product_prior_kev": {
+          "risk": "medium: current sanitized text and heuristic identity",
+          "rows": [
+            {
+              "value": "0",
+              "no_signal_pool": 39472,
+              "no_signal_pool_share": 0.8406346501969971,
+              "no_signal_positives": 16,
+              "share_of_no_signal_positives": 0.5161290322580645,
+              "with_signal_positives": 12,
+              "share_of_with_signal_positives": 0.5,
+              "no_signal_rate": 0.00040535062829347385,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.6139754435974214,
+              "rate_95_wilson_interval": [
+                0.00024953171009315126,
+                0.0006584058676075353
+              ]
+            },
+            {
+              "value": "1-4",
+              "no_signal_pool": 4662,
+              "no_signal_pool_share": 0.09928655095304015,
+              "no_signal_positives": 11,
+              "share_of_no_signal_positives": 0.3548387096774194,
+              "with_signal_positives": 11,
+              "share_of_with_signal_positives": 0.4583333333333333,
+              "no_signal_rate": 0.0023595023595023596,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 3.573884944852687,
+              "rate_95_wilson_interval": [
+                0.0013180326811872414,
+                0.004220432233695424
+              ]
+            },
+            {
+              "value": "20-49",
+              "no_signal_pool": 699,
+              "no_signal_pool_share": 0.014886593547013098,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                0.0,
+                0.005465811926897895
+              ]
+            },
+            {
+              "value": "5-19",
+              "no_signal_pool": 1189,
+              "no_signal_pool_share": 0.025322116920455755,
+              "no_signal_positives": 3,
+              "share_of_no_signal_positives": 0.0967741935483871,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.002523128679562658,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 3.821726037060148,
+              "rate_95_wilson_interval": [
+                0.0008584388262687149,
+                0.0073921117916842475
+              ]
+            },
+            {
+              "value": "50+",
+              "no_signal_pool": 933,
+              "no_signal_pool_share": 0.019870088382493878,
+              "no_signal_positives": 1,
+              "share_of_no_signal_positives": 0.03225806451612903,
+              "with_signal_positives": 1,
+              "share_of_with_signal_positives": 0.041666666666666664,
+              "no_signal_rate": 0.0010718113612004287,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.6234484666182623,
+              "rate_95_wilson_interval": [
+                0.00018922121760723935,
+                0.0060461978756524955
+              ]
+            }
+          ]
+        },
+        "cwe_family_current": {
+          "risk": "high: current enrichment, descriptive only",
+          "rows": [
+            {
+              "value": "access control or authentication",
+              "no_signal_pool": 5602,
+              "no_signal_pool_share": 0.11930571824086891,
+              "no_signal_positives": 8,
+              "share_of_no_signal_positives": 0.25806451612903225,
+              "with_signal_positives": 5,
+              "share_of_with_signal_positives": 0.20833333333333334,
+              "no_signal_rate": 0.0014280614066404856,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 2.1630523660904517,
+              "rate_95_wilson_interval": [
+                0.0007237970641236378,
+                0.0028156536402986917
+              ]
+            },
+            {
+              "value": "command or code injection",
+              "no_signal_pool": 1964,
+              "no_signal_pool_share": 0.04182728143967628,
+              "no_signal_positives": 3,
+              "share_of_no_signal_positives": 0.0967741935483871,
+              "with_signal_positives": 2,
+              "share_of_with_signal_positives": 0.08333333333333333,
+              "no_signal_rate": 0.0015274949083503055,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 2.313662045857696,
+              "rate_95_wilson_interval": [
+                0.0005196096742734325,
+                0.004481605870717586
+              ]
+            },
+            {
+              "value": "cross-site scripting",
+              "no_signal_pool": 8103,
+              "no_signal_pool_share": 0.1725694814183793,
+              "no_signal_positives": 1,
+              "share_of_no_signal_positives": 0.03225806451612903,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0001234110823151919,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.18692797968096245,
+              "rate_95_wilson_interval": [
+                2.17848581854151e-05,
+                0.0006987916977941662
+              ]
+            },
+            {
+              "value": "deserialization",
+              "no_signal_pool": 631,
+              "no_signal_pool_share": 0.013438398466616973,
+              "no_signal_positives": 1,
+              "share_of_no_signal_positives": 0.03225806451612903,
+              "with_signal_positives": 3,
+              "share_of_with_signal_positives": 0.125,
+              "no_signal_rate": 0.001584786053882726,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 2.4004396503246253,
+              "rate_95_wilson_interval": [
+                0.00027980125374199843,
+                0.008921864169569894
+              ]
+            },
+            {
+              "value": "file upload",
+              "no_signal_pool": 527,
+              "no_signal_pool_share": 0.01122351187306996,
+              "no_signal_positives": 1,
+              "share_of_no_signal_positives": 0.03225806451612903,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0018975332068311196,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 2.8741507008630713,
+              "rate_95_wilson_interval": [
+                0.00033503115346266137,
+                0.010669381462278079
+              ]
+            },
+            {
+              "value": "information exposure",
+              "no_signal_pool": 1067,
+              "no_signal_pool_share": 0.022723884570333298,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                0.0,
+                0.0035874586867002552
+              ]
+            },
+            {
+              "value": "memory safety",
+              "no_signal_pool": 5512,
+              "no_signal_pool_share": 0.1173889894579917,
+              "no_signal_positives": 3,
+              "share_of_no_signal_positives": 0.0967741935483871,
+              "with_signal_positives": 2,
+              "share_of_with_signal_positives": 0.08333333333333333,
+              "no_signal_rate": 0.0005442670537010159,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.8243890163397162,
+              "rate_95_wilson_interval": [
+                0.00018511343936620215,
+                0.001599129240844194
+              ]
+            },
+            {
+              "value": "other or unassigned",
+              "no_signal_pool": 18459,
+              "no_signal_pool_share": 0.3931210733681184,
+              "no_signal_positives": 10,
+              "share_of_no_signal_positives": 0.3225806451612903,
+              "with_signal_positives": 9,
+              "share_of_with_signal_positives": 0.375,
+              "no_signal_rate": 0.000541741156075627,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.8205630962429376,
+              "rate_95_wilson_interval": [
+                0.0002942954806739307,
+                0.0009970333687270194
+              ]
+            },
+            {
+              "value": "path traversal",
+              "no_signal_pool": 1214,
+              "no_signal_pool_share": 0.025854541582366095,
+              "no_signal_positives": 3,
+              "share_of_no_signal_positives": 0.0967741935483871,
+              "with_signal_positives": 3,
+              "share_of_with_signal_positives": 0.125,
+              "no_signal_rate": 0.002471169686985173,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 3.743024924270606,
+              "rate_95_wilson_interval": [
+                0.0008407536002188343,
+                0.007240428714459858
+              ]
+            },
+            {
+              "value": "sql injection",
+              "no_signal_pool": 3876,
+              "no_signal_pool_share": 0.08254711958257907,
+              "no_signal_positives": 1,
+              "share_of_no_signal_positives": 0.03225806451612903,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.00025799793601651185,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.39078364792436493,
+              "rate_95_wilson_interval": [
+                4.554325113570489e-05,
+                0.0014600852260681064
+              ]
+            }
+          ]
+        },
+        "attack_vector_current": {
+          "risk": "high: current enrichment, descriptive only",
+          "rows": [
+            {
+              "value": "ADJACENT_NETWORK",
+              "no_signal_pool": 922,
+              "no_signal_pool_share": 0.019635821531253327,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 1,
+              "share_of_with_signal_positives": 0.041666666666666664,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                4.336808689942018e-19,
+                0.004149305885585611
+              ]
+            },
+            {
+              "value": "LOCAL",
+              "no_signal_pool": 10487,
+              "no_signal_pool_share": 0.2233414971781493,
+              "no_signal_positives": 4,
+              "share_of_no_signal_positives": 0.12903225806451613,
+              "with_signal_positives": 2,
+              "share_of_with_signal_positives": 0.08333333333333333,
+              "no_signal_rate": 0.0003814246209592829,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.5777352605530042,
+              "rate_95_wilson_interval": [
+                0.00014833586965218906,
+                0.0009804200921192667
+              ]
+            },
+            {
+              "value": "NETWORK",
+              "no_signal_pool": 32465,
+              "no_signal_pool_share": 0.6914066659567671,
+              "no_signal_positives": 27,
+              "share_of_no_signal_positives": 0.8709677419354839,
+              "with_signal_positives": 20,
+              "share_of_with_signal_positives": 0.8333333333333334,
+              "no_signal_rate": 0.000831664869859849,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.259703998847394,
+              "rate_95_wilson_interval": [
+                0.0005716543325410956,
+                0.0012097951171368378
+              ]
+            },
+            {
+              "value": "PHYSICAL",
+              "no_signal_pool": 368,
+              "no_signal_pool_share": 0.0078372910233202,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 1,
+              "share_of_with_signal_positives": 0.041666666666666664,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                0.0,
+                0.010331280846467956
+              ]
+            },
+            {
+              "value": "unassigned",
+              "no_signal_pool": 2713,
+              "no_signal_pool_share": 0.057778724310510066,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                0.0,
+                0.001413994838712717
+              ]
+            }
+          ]
+        },
+        "privileges_required_current": {
+          "risk": "high: current enrichment, descriptive only",
+          "rows": [
+            {
+              "value": "HIGH",
+              "no_signal_pool": 3587,
+              "no_signal_pool_share": 0.07639229049089553,
+              "no_signal_positives": 3,
+              "share_of_no_signal_positives": 0.0967741935483871,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0008363534987454698,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.2668057591481785,
+              "rate_95_wilson_interval": [
+                0.000284470367836171,
+                0.0024562798785684598
+              ]
+            },
+            {
+              "value": "LOW",
+              "no_signal_pool": 19261,
+              "no_signal_pool_share": 0.41020125652220213,
+              "no_signal_positives": 6,
+              "share_of_no_signal_positives": 0.1935483870967742,
+              "with_signal_positives": 4,
+              "share_of_with_signal_positives": 0.16666666666666666,
+              "no_signal_rate": 0.00031151030579928355,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.4718376260904954,
+              "rate_95_wilson_interval": [
+                0.00014277359034597345,
+                0.0006795326776692279
+              ]
+            },
+            {
+              "value": "NONE",
+              "no_signal_pool": 21394,
+              "no_signal_pool_share": 0.4556277286763923,
+              "no_signal_positives": 22,
+              "share_of_no_signal_positives": 0.7096774193548387,
+              "with_signal_positives": 20,
+              "share_of_with_signal_positives": 0.8333333333333334,
+              "no_signal_rate": 0.0010283256987940544,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.5575817157056393,
+              "rate_95_wilson_interval": [
+                0.0006792130737100172,
+                0.0015566012151479768
+              ]
+            },
+            {
+              "value": "unassigned",
+              "no_signal_pool": 2713,
+              "no_signal_pool_share": 0.057778724310510066,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                0.0,
+                0.001413994838712717
+              ]
+            }
+          ]
+        },
+        "user_interaction_current": {
+          "risk": "high: current enrichment, descriptive only",
+          "rows": [
+            {
+              "value": "NONE",
+              "no_signal_pool": 31401,
+              "no_signal_pool_share": 0.668746672345863,
+              "no_signal_positives": 27,
+              "share_of_no_signal_positives": 0.8709677419354839,
+              "with_signal_positives": 22,
+              "share_of_with_signal_positives": 0.9166666666666666,
+              "no_signal_rate": 0.0008598452278589854,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.3023881507780213,
+              "rate_95_wilson_interval": [
+                0.0005910265455896009,
+                0.0012507786364495915
+              ]
+            },
+            {
+              "value": "REQUIRED",
+              "no_signal_pool": 12841,
+              "no_signal_pool_share": 0.2734746033436269,
+              "no_signal_positives": 4,
+              "share_of_no_signal_positives": 0.12903225806451613,
+              "with_signal_positives": 2,
+              "share_of_with_signal_positives": 0.08333333333333333,
+              "no_signal_rate": 0.0003115022194533136,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.4718253778848497,
+              "rate_95_wilson_interval": [
+                0.00012114162834307864,
+                0.0008007537417018115
+              ]
+            },
+            {
+              "value": "unassigned",
+              "no_signal_pool": 2713,
+              "no_signal_pool_share": 0.057778724310510066,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                0.0,
+                0.001413994838712717
+              ]
+            }
+          ]
+        },
+        "cvss_band_current": {
+          "risk": "high: current enrichment, descriptive only",
+          "rows": [
+            {
+              "value": "critical",
+              "no_signal_pool": 5744,
+              "no_signal_pool_share": 0.12232989032051965,
+              "no_signal_positives": 10,
+              "share_of_no_signal_positives": 0.3225806451612903,
+              "with_signal_positives": 13,
+              "share_of_with_signal_positives": 0.5416666666666666,
+              "no_signal_rate": 0.0017409470752089136,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 2.6369732231107914,
+              "rate_95_wilson_interval": [
+                0.0009459346471251775,
+                0.003201987592068053
+              ]
+            },
+            {
+              "value": "high",
+              "no_signal_pool": 15829,
+              "no_signal_pool_share": 0.3371099989351507,
+              "no_signal_positives": 15,
+              "share_of_no_signal_positives": 0.4838709677419355,
+              "with_signal_positives": 10,
+              "share_of_with_signal_positives": 0.4166666666666667,
+              "no_signal_rate": 0.0009476277718112326,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.4353503879160137,
+              "rate_95_wilson_interval": [
+                0.0005743754574644128,
+                0.0015630551349063207
+              ]
+            },
+            {
+              "value": "low",
+              "no_signal_pool": 1106,
+              "no_signal_pool_share": 0.02355446704291343,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                0.0,
+                0.003461394851301303
+              ]
+            },
+            {
+              "value": "medium",
+              "no_signal_pool": 21562,
+              "no_signal_pool_share": 0.45920562240442975,
+              "no_signal_positives": 6,
+              "share_of_no_signal_positives": 0.1935483870967742,
+              "with_signal_positives": 1,
+              "share_of_with_signal_positives": 0.041666666666666664,
+              "no_signal_rate": 0.00027826732214080325,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.4214852293910134,
+              "rate_95_wilson_interval": [
+                0.00012753671079326884,
+                0.0006070323495674453
+              ]
+            },
+            {
+              "value": "none",
+              "no_signal_pool": 1,
+              "no_signal_pool_share": 2.1296986476413588e-05,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                0.0,
+                0.7934567085261071
+              ]
+            },
+            {
+              "value": "unscored",
+              "no_signal_pool": 2713,
+              "no_signal_pool_share": 0.057778724310510066,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                0.0,
+                0.001413994838712717
+              ]
+            }
+          ]
+        },
+        "assigner_type_proxy": {
+          "risk": "medium: current sanitized text and heuristic identity",
+          "rows": [
+            {
+              "value": "other or unresolved assigning organization",
+              "no_signal_pool": 38574,
+              "no_signal_pool_share": 0.8215099563411777,
+              "no_signal_positives": 24,
+              "share_of_no_signal_positives": 0.7741935483870968,
+              "with_signal_positives": 17,
+              "share_of_with_signal_positives": 0.7083333333333334,
+              "no_signal_rate": 0.0006221807435059885,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.9424031229459254,
+              "rate_95_wilson_interval": [
+                0.00041815439910935245,
+                0.0009256636542054809
+              ]
+            },
+            {
+              "value": "recognized vendor psirt or cna",
+              "no_signal_pool": 8381,
+              "no_signal_pool_share": 0.1784900436588223,
+              "no_signal_positives": 7,
+              "share_of_no_signal_positives": 0.22580645161290322,
+              "with_signal_positives": 7,
+              "share_of_with_signal_positives": 0.2916666666666667,
+              "no_signal_rate": 0.0008352225271447321,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.2650927020026095,
+              "rate_95_wilson_interval": [
+                0.0004046411194304683,
+                0.001723198719547527
+              ]
+            }
+          ]
+        },
+        "product_class_description": {
+          "risk": "medium: current sanitized text and heuristic identity",
+          "rows": [
+            {
+              "value": "browser wording",
+              "no_signal_pool": 601,
+              "no_signal_pool_share": 0.012799488872324566,
+              "no_signal_positives": 1,
+              "share_of_no_signal_positives": 0.03225806451612903,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0016638935108153079,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 2.520261929042993,
+              "rate_95_wilson_interval": [
+                0.0002937709114766065,
+                0.009364294935846063
+              ]
+            },
+            {
+              "value": "library or runtime wording",
+              "no_signal_pool": 1089,
+              "no_signal_pool_share": 0.023192418272814395,
+              "no_signal_positives": 0,
+              "share_of_no_signal_positives": 0.0,
+              "with_signal_positives": 2,
+              "share_of_with_signal_positives": 0.08333333333333333,
+              "no_signal_rate": 0.0,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.0,
+              "rate_95_wilson_interval": [
+                0.0,
+                0.0035152395370015195
+              ]
+            },
+            {
+              "value": "mobile wording",
+              "no_signal_pool": 620,
+              "no_signal_pool_share": 0.013204131615376424,
+              "no_signal_positives": 1,
+              "share_of_no_signal_positives": 0.03225806451612903,
+              "with_signal_positives": 0,
+              "share_of_with_signal_positives": 0.0,
+              "no_signal_rate": 0.0016129032258064516,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 2.443028095733611,
+              "rate_95_wilson_interval": [
+                0.00028476645938647384,
+                0.009079148996075296
+              ]
+            },
+            {
+              "value": "operating-system or kernel wording",
+              "no_signal_pool": 7523,
+              "no_signal_pool_share": 0.16021722926205942,
+              "no_signal_positives": 2,
+              "share_of_no_signal_positives": 0.06451612903225806,
+              "with_signal_positives": 2,
+              "share_of_with_signal_positives": 0.08333333333333333,
+              "no_signal_rate": 0.0002658513890735079,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.40267909593376006,
+              "rate_95_wilson_interval": [
+                7.290754143477309e-05,
+                0.0009689105831820647
+              ]
+            },
+            {
+              "value": "perimeter or remote-access wording",
+              "no_signal_pool": 852,
+              "no_signal_pool_share": 0.018145032477904378,
+              "no_signal_positives": 2,
+              "share_of_no_signal_positives": 0.06451612903225806,
+              "with_signal_positives": 2,
+              "share_of_with_signal_positives": 0.08333333333333333,
+              "no_signal_rate": 0.002347417840375587,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 3.5555807966076025,
+              "rate_95_wilson_interval": [
+                0.0006439693740651221,
+                0.00851847376961941
+              ]
+            },
+            {
+              "value": "unclassified wording",
+              "no_signal_pool": 31334,
+              "no_signal_pool_share": 0.6673197742519433,
+              "no_signal_positives": 23,
+              "share_of_no_signal_positives": 0.7419354838709677,
+              "with_signal_positives": 16,
+              "share_of_with_signal_positives": 0.6666666666666666,
+              "no_signal_rate": 0.000734026935597115,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 1.1118140245471784,
+              "rate_95_wilson_interval": [
+                0.0004891883090327304,
+                0.001101272215855493
+              ]
+            },
+            {
+              "value": "web application or cms wording",
+              "no_signal_pool": 4936,
+              "no_signal_pool_share": 0.10512192524757746,
+              "no_signal_positives": 2,
+              "share_of_no_signal_positives": 0.06451612903225806,
+              "with_signal_positives": 2,
+              "share_of_with_signal_positives": 0.08333333333333333,
+              "no_signal_rate": 0.0004051863857374392,
+              "pool_base_rate": 0.0006602065807688213,
+              "lift_over_pool": 0.6137266691064986,
+              "rate_95_wilson_interval": [
+                0.00011112142892670952,
+                0.0014762978923729857
+              ]
+            }
+          ]
+        }
+      },
+      "contrasts": [
+        {
+          "name": "vendor_20_plus",
+          "no_signal_pool": 10621,
+          "pool_share": 0.2261952933659887,
+          "no_signal_positives": 7,
+          "positive_share": 0.22580645161290322,
+          "with_signal_positives": 6,
+          "rate": 0.000659071650503719,
+          "base_rate": 0.0006602065807688213,
+          "lift": 0.9982809467549073,
+          "leak_risk": "medium",
+          "rate_95_wilson_interval": [
+            0.0003192916548525361,
+            0.0013599427913344076
+          ],
+          "action": "Large vendor-wide history did not enrich this no-signal pool; do not assume it is an effective fallback when exploit feeds are quiet."
+        },
+        {
+          "name": "client_or_endpoint_wording",
+          "no_signal_pool": 8744,
+          "pool_share": 0.18622084974976041,
+          "no_signal_positives": 4,
+          "positive_share": 0.12903225806451613,
+          "with_signal_positives": 2,
+          "rate": 0.0004574565416285453,
+          "base_rate": 0.0006602065807688213,
+          "lift": 0.6928990939409143,
+          "leak_risk": "medium",
+          "rate_95_wilson_interval": [
+            0.00017790696571071455,
+            0.001175752661596666
+          ],
+          "action": "Include browser, mobile and operating-system products in watch reviews even when public-tool feeds are quiet; confirm the affected asset from the advisory."
+        },
+        {
+          "name": "local_attack_vector_current",
+          "no_signal_pool": 10487,
+          "pool_share": 0.2233414971781493,
+          "no_signal_positives": 4,
+          "positive_share": 0.12903225806451613,
+          "with_signal_positives": 2,
+          "rate": 0.0003814246209592829,
+          "base_rate": 0.0006602065807688213,
+          "lift": 0.5777352605530042,
+          "leak_risk": "high",
+          "rate_95_wilson_interval": [
+            0.00014833586965218906,
+            0.0009804200921192667
+          ],
+          "action": "Review endpoint and privilege-escalation exposure rather than treating local access requirements as proof of low exploitation interest; these current vector values are descriptive only."
+        },
+        {
+          "name": "product_prior_kev_any",
+          "no_signal_pool": 7483,
+          "pool_share": 0.15936534980300288,
+          "no_signal_positives": 15,
+          "positive_share": 0.4838709677419355,
+          "with_signal_positives": 12,
+          "rate": 0.0020045436322330616,
+          "base_rate": 0.0006602065807688213,
+          "lift": 3.0362369758549486,
+          "leak_risk": "medium",
+          "rate_95_wilson_interval": [
+            0.0012151836254685004,
+            0.003304960089071953
+          ],
+          "action": "Review prior KEV cases for the specific matched product and confirm affected versions and asset exposure; this descriptive association does not validate the watch model or justify replacing the patch queue."
+        }
+      ],
+      "actionable_contrasts": [
+        {
+          "name": "product_prior_kev_any",
+          "no_signal_pool": 7483,
+          "pool_share": 0.15936534980300288,
+          "no_signal_positives": 15,
+          "positive_share": 0.4838709677419355,
+          "with_signal_positives": 12,
+          "rate": 0.0020045436322330616,
+          "base_rate": 0.0006602065807688213,
+          "lift": 3.0362369758549486,
+          "leak_risk": "medium",
+          "rate_95_wilson_interval": [
+            0.0012151836254685004,
+            0.003304960089071953
+          ],
+          "action": "Review prior KEV cases for the specific matched product and confirm affected versions and asset exposure; this descriptive association does not validate the watch model or justify replacing the patch queue."
+        },
+        {
+          "name": "vendor_20_plus",
+          "no_signal_pool": 10621,
+          "pool_share": 0.2261952933659887,
+          "no_signal_positives": 7,
+          "positive_share": 0.22580645161290322,
+          "with_signal_positives": 6,
+          "rate": 0.000659071650503719,
+          "base_rate": 0.0006602065807688213,
+          "lift": 0.9982809467549073,
+          "leak_risk": "medium",
+          "rate_95_wilson_interval": [
+            0.0003192916548525361,
+            0.0013599427913344076
+          ],
+          "action": "Large vendor-wide history did not enrich this no-signal pool; do not assume it is an effective fallback when exploit feeds are quiet."
+        }
+      ],
+      "days_to_kev": {
+        "no_signal_positives": {
+          "n": 31,
+          "publication_to_kev": {
+            "count": 31.0,
+            "mean": 67.25806451612904,
+            "std": 73.28618230013781,
+            "min": 2.0,
+            "25%": 32.0,
+            "50%": 38.0,
+            "75%": 72.0,
+            "max": 322.0
+          },
+          "snapshot_to_kev": {
+            "count": 31.0,
+            "mean": 53.12903225806452,
+            "std": 72.05772775374102,
+            "min": 2.0,
+            "25%": 10.0,
+            "50%": 31.0,
+            "75%": 50.5,
+            "max": 297.0
+          }
+        },
+        "with_signal_positives": {
+          "n": 24,
+          "publication_to_kev": {
+            "count": 24.0,
+            "mean": 72.125,
+            "std": 58.92095847681101,
+            "min": 10.0,
+            "25%": 28.75,
+            "50%": 51.0,
+            "75%": 105.75,
+            "max": 252.0
+          },
+          "snapshot_to_kev": {
+            "count": 24.0,
+            "mean": 55.666666666666664,
+            "std": 59.40770457035721,
+            "min": 1.0,
+            "25%": 12.5,
+            "50%": 35.5,
+            "75%": 80.25,
+            "max": 244.0
+          }
+        }
+      },
+      "definitions": {
+        "cwe_families": {
+          "memory safety": [
+            "119",
+            "120",
+            "121",
+            "122",
+            "125",
+            "190",
+            "416",
+            "787"
+          ],
+          "access control or authentication": [
+            "269",
+            "276",
+            "284",
+            "285",
+            "287",
+            "288",
+            "306",
+            "862",
+            "863"
+          ],
+          "command or code injection": [
+            "77",
+            "78",
+            "94",
+            "95"
+          ],
+          "path traversal": [
+            "22",
+            "23",
+            "36"
+          ],
+          "cross-site scripting": [
+            "79"
+          ],
+          "sql injection": [
+            "89"
+          ],
+          "deserialization": [
+            "502"
+          ],
+          "information exposure": [
+            "200",
+            "209",
+            "532"
+          ],
+          "file upload": [
+            "434"
+          ]
+        },
+        "product_classes": {
+          "browser wording": "\\b(?:chrome|chromium|firefox|safari|web browser|webkit)\\b",
+          "mobile wording": "\\b(?:android|ios|iphone|ipad)\\b",
+          "perimeter or remote-access wording": "\\b(?:vpn|firewall|gateway|router|netscaler|fortios|remote access|file transfer)\\b",
+          "operating-system or kernel wording": "\\b(?:windows|macos|operating system|linux kernel|kernel driver)\\b",
+          "web application or cms wording": "\\b(?:wordpress|joomla|drupal|xwiki|cms|content management|web application)\\b",
+          "library or runtime wording": "\\b(?:library|runtime|framework|sdk)\\b"
+        },
+        "assigner_type": "A match to a prior-KEV vendor PSIRT domain is only a proxy; unresolved domains and UUIDs are not asserted to be non-vendor CNAs."
+      },
+      "limitations": [
+        "Descriptive 2025 contrasts do not select or modify the watch model.",
+        "CWE and vector/score fields are current enrichment with high timing risk; they are excluded from watch features.",
+        "Product classes use the first matching wording category, not verified asset identity; descriptions may have changed.",
+        "The product-level enrichment and absence of vendor-level enrichment were selected after inspecting the complete profile; these are exploratory contrasts, not preregistered causal tests, and they never alter the model.",
+        "Lag measures catalog addition, not the first attack. Late-year non-events remain censored."
+      ]
+    },
+    "mixed_allocations": [
+      {
+        "split": "2024_to_2025",
+        "adopted": false,
+        "allocations": [
+          {
+            "name": "frozen submitted model",
+            "budget": 500,
+            "feasible": true,
+            "exploit_tier_rows": 500,
+            "watch_rows": 0,
+            "hits": 22,
+            "no_signal_hits": 0
+          },
+          {
+            "name": "450 exploit + 50 watch",
+            "budget": 500,
+            "feasible": true,
+            "exploit_tier_rows": 450,
+            "watch_rows": 50,
+            "hits": 21,
+            "no_signal_hits": 0,
+            "delta_vs_frozen": -1
+          },
+          {
+            "name": "400 exploit + 100 watch",
+            "budget": 500,
+            "feasible": true,
+            "exploit_tier_rows": 400,
+            "watch_rows": 100,
+            "hits": 21,
+            "no_signal_hits": 0,
+            "delta_vs_frozen": -1
+          }
+        ]
+      },
+      {
+        "split": "forward_2025_h2",
+        "adopted": false,
+        "allocations": [
+          {
+            "name": "frozen submitted model",
+            "budget": 500,
+            "feasible": true,
+            "exploit_tier_rows": 299,
+            "watch_rows": 201,
+            "hits": 5,
+            "no_signal_hits": 0
+          },
+          {
+            "name": "450 exploit + 50 watch",
+            "budget": 500,
+            "feasible": false,
+            "available_exploit_rows": 299,
+            "reason": "Not enough exploit-tier rows to implement this allocation at the stated 500 budget."
+          },
+          {
+            "name": "400 exploit + 100 watch",
+            "budget": 500,
+            "feasible": false,
+            "available_exploit_rows": 299,
+            "reason": "Not enough exploit-tier rows to implement this allocation at the stated 500 budget."
+          }
+        ]
+      }
+    ],
+    "artifact_path": "artifacts/watch_2026_top100.csv",
+    "final_model": {
+      "training": {
+        "rows": 73521,
+        "snapshot_min": "2024-01",
+        "snapshot_max": "2025-09",
+        "missing_snapshot_observations": 4900,
+        "positives": 76,
+        "base_rate": 0.001033718257368643,
+        "missing_snapshot_positive_rows": 9,
+        "fewer_than_90_days": 0
+      },
+      "target": {
+        "rows": 71025,
+        "snapshot_min": "2026-01",
+        "snapshot_max": "2026-09",
+        "missing_snapshot_observations": 1431
+      },
+      "features_used": [
+        "epss_log",
+        "epss_percentile",
+        "id_year_gap",
+        "days_at_snapshot",
+        "assigner_prior_kev",
+        "assigner_recent_kev",
+        "vendor_prior_kev",
+        "vendor_recent_kev",
+        "text_remote_code",
+        "text_unauthenticated",
+        "text_traversal",
+        "text_deserialization",
+        "text_edge_device",
+        "text_privilege_escalation",
+        "text_memory_corruption",
+        "text_sql_injection",
+        "text_xss",
+        "text_wordpress",
+        "text_denial_service",
+        "text_upload",
+        "text_vendor_prior_kev",
+        "text_product_prior_kev",
+        "text_vendor_recent_kev",
+        "text_product_recent_kev",
+        "description_emb_00",
+        "description_emb_01",
+        "description_emb_02",
+        "description_emb_03",
+        "description_emb_04",
+        "description_emb_05",
+        "description_emb_06",
+        "description_emb_07",
+        "description_emb_08",
+        "description_emb_09",
+        "description_emb_10",
+        "description_emb_11",
+        "description_emb_12",
+        "description_emb_13",
+        "description_emb_14",
+        "description_emb_15",
+        "description_emb_16",
+        "description_emb_17",
+        "description_emb_18",
+        "description_emb_19",
+        "description_emb_20",
+        "description_emb_21",
+        "description_emb_22",
+        "description_emb_23"
+      ],
+      "recipe": {
+        "name": "watch_lightgbm_granite",
+        "algorithm": "lightgbm",
+        "block": "text",
+        "embedding": "description",
+        "no_history": false,
+        "blend": 0.0,
+        "variant": "sparse",
+        "tiered": false
+      },
+      "seed": 2026,
+      "ibm_technology": "ibm-granite/granite-embedding-30m-english revision ae3da2ae1b16814b84c52deccd9aeee77727d044; description embeddings on MPS; train-only PCA",
+      "calibration": "Conditional variable-follow-up estimate; not a calibrated attack probability or guarantee of safety.",
+      "artifact_sha256": "d90d50acf8c70d782a0d0f84d1aacfa32e92eb9fa7985454e1ac162a68e9cbe0",
+      "top100_vendors": {
+        "unmapped": 13,
+        "Oracle": 10,
+        "VMware": 7,
+        "IBM": 6,
+        "Apache": 5,
+        "Citrix": 5,
+        "Google": 4,
+        "SAP": 4,
+        "Liferay": 3,
+        "Android": 3,
+        "VMware Tanzu": 3,
+        "XWiki": 2,
+        "Gladinet": 2,
+        "Zoho": 2,
+        "Mozilla": 2
+      }
+    },
+    "validation_status": "negative: no held-out hits at any tested budget on either split",
+    "protected_artifacts_sha256": {
+      "top500.csv": "d113581f44cde75e92dc6a041e37bdf8eb5a3b9a431a9e172b8db7aab55b8a4b",
+      "scores_2026_top5000.csv": "0ef96f42ad1f54ff6ce04838751562483c4aba1682a440b337f46cade517901e",
+      "model_card.json": "c5e352f8664f8eb71633828f01d36808e72a3c43f8eadef6fced567ecdfad06c",
+      "backtest.json": "86134332b395e7613da1f73c9d677da33a02f2122637b807990d84f1eb33340d"
+    },
+    "limitations": [
+      "Only three training positives and eight validation positives in the inner 2024 split.",
+      "The shared feature family was developed in earlier work that inspected 2025 results. This round freezes the watch recipes before their 2025 evaluation; it does not create a wholly untouched project-wide holdout.",
+      "The two 2025 evaluation sets overlap; the secondary is a later-cutoff refit, not independent replication.",
+      "Random expectation is below one hit at every tested budget; zero observed hits shows no demonstrated gain, not proof that the pool has no learnable signal.",
+      "No flag includes missing snapshot observations; it does not prove exploit code was absent.",
+      "Current sanitized description wording and heuristic identity retain revision/matching risk.",
+      "Current CWE/CVSS data are descriptive only and cannot justify a time-safe predictive gain.",
+      "The main submission is frozen; mixed allocations are comparisons for a separate decision."
+    ],
+    "generator": "pipeline/watch.py",
+    "profile_generator": "pipeline/watch_profile.py"
   }
 }
