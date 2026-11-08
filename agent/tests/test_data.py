@@ -146,3 +146,26 @@ def test_queue_respects_investigation_cutoff(corpus):
         tools.queue(10, {'snapshot_month':'2025-12'})
     corpus.snapshot_month = None
     assert len(tools.queue(10)['items']) == 3
+
+
+def test_on_demand_query_vector_is_persisted_and_reused(corpus):
+    import numpy as np
+    from agent.embeddings import EmbeddingIndex
+    from agent.config import EMBED_MODEL
+    corpus.cache.mkdir(exist_ok=True)
+    class Encoder:
+        calls=0
+        def encode(self,*args,**kwargs):
+            self.calls+=1
+            return np.array([[1.,0.]],dtype=np.float32)
+    encoder=Encoder()
+    def index():
+        idx=EmbeddingIndex.__new__(EmbeddingIndex)
+        idx.settings=corpus;idx.queries={};idx._model=encoder
+        idx.metadata={'model':EMBED_MODEL}
+        idx.kev=[{'cve_id':'CVE-2024-2000','date_added':'2025-01-01'}]
+        idx.vectors=np.array([[1.,0.]])
+        return idx
+    first=index().search('CVE-2026-9999','new description','2025-12-31',1)
+    second=index().search('CVE-2026-9999','new description','2025-12-31',1)
+    assert first==second and encoder.calls==1

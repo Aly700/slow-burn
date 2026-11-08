@@ -25,10 +25,10 @@ def make_server(settings=None):
     read = ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False)
 
     @server.tool(annotations=read)
-    def get_cve(cve_id: str) -> dict:
+    def get_cve(cve_id: str, fixture: str | None = None) -> dict:
         """Read description, CVSS parts, CWE names and month-end signals. Establish this session's snapshot for vendor_history."""
         row = source().get_cve(cve_id)
-        fixture = os.getenv("TRIAGE_FIXTURE")
+        fixture = fixture or os.getenv("TRIAGE_FIXTURE")
         if fixture:
             fixtures = json.loads((Path(__file__).resolve().parents[2] / "evals/injections.json").read_text())
             attack = next((f for f in fixtures if f["id"] == fixture), None)
@@ -74,6 +74,11 @@ def make_server(settings=None):
         except PermissionError as exc:
             return {"allowed": False, "reason": str(exc)}
 
+    if os.getenv('TRIAGE_PREPARE_LIVE') == '1':
+        from .embeddings import EmbeddingIndex
+        EmbeddingIndex.build(settings, source())
+        source().index = EmbeddingIndex(settings, source())
+        source().index._model = EmbeddingIndex.encoder()
     return server
 
 

@@ -2,6 +2,10 @@ from dataclasses import dataclass, field
 import os
 from pathlib import Path
 
+# Live inference uses preloaded local weights and never consults remote metadata.
+os.environ.setdefault('HF_HUB_OFFLINE','1')
+os.environ.setdefault('TRANSFORMERS_OFFLINE','1')
+
 ROOT = Path(__file__).resolve().parents[3]
 MODEL = "mlx-community/granite-4.0-h-small-4bit"
 MODEL_REVISION = "db4baaa911c39582ab9fdcfc9f43a6bbc343d54a"

@@ -27,6 +27,21 @@ Recording rebuilds the content-addressed embedding cache when the ranking pipeli
 
 ## API
 
+Live investigation uses `GET /live/health` and `GET /live/{cve_id}` (Server-Sent Events). The first event identifies a fresh run; tool calls/results, verified or dropped claims, states and the final briefing follow as the loop executes. Every candidate in the 72,670-row supplied scoreboard is addressable, including those outside the published ranking. Missing rank/score stays unknown; new Granite query vectors are generated locally and cached by description hash.
+
+One queue serves both live requests and `POST /runs`. Queued streams identify their wait in a `RECEIVED` event. Disconnects cancel queued/active work; cancellation drains the current native generation before another starts. Live run snapshots go only to `artifacts/cache/live_runs/`. SQLite remains authoritative if refreshing that cache fails after approval. Offline replay envelopes with actual timings are in `artifacts/agent_runs/live-examples/`.
+
+Runtime model loading is local-only and disables remote model metadata checks. Prepare model weights before going offline. A process lock prevents loading a second instruct copy. The service permits the local Vite origins and `https://aly700.github.io`, including Private Network Access preflight; browser-specific local-network permission prompts may still require an operator decision.
+
+For the reproducible offline check, start the API with non-loopback sockets denied:
+
+```sh
+TRIAGE_OFFLINE_AUDIT=1 PYTHONPATH="$PWD/agent/evals/offline_check" uv run --project agent python -m agent.api
+uv run --project agent python agent/evals/live_benchmark.py --approve-demo-ticket
+```
+
+The benchmark uses the already running service, never another instruct model. Its explicit demo flag approves one local ticket and checks wrong-hash rejection and idempotent retry. Results are in `agent/evals/live_metrics.json`. The stream contract, including fixture-mode examples, is in `research/CONTRACTS.md`.
+
 - `POST /runs` with `{"cve_id":"CVE-2026-8037"}` returns HTTP 202 and the durable run, initially `RECEIVED`.
 - `GET /runs/{run_id}` returns the run, briefing hash, verifier result, injection flags and policy state.
 - `POST /runs/{run_id}/approval` with `{"approve":true}` or the web page's `{"approved":true}` issues an internal capability for the exact immutable briefing and calls the MCP write tool. `false` moves to `REJECTED`. An optional `briefing_hash` rejects a decision based on a different displayed proposal.

@@ -2,6 +2,7 @@ import asyncio
 import hashlib
 import json
 import time
+import threading
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -13,6 +14,7 @@ from .safety import sanitized, scan_payload
 from .store import digest
 from .narrative import briefing_options
 from .priority import decide
+from .inference import complete, check_cancel, GenerationCancelled
 
 
 class ToolPlan(BaseModel):
@@ -45,14 +47,18 @@ class Runner:
     def __init__(self, settings, store, model):
         self.settings, self.store, self.model = settings, store, model
 
-    async def run(self, run_id, client):
+    async def run(self, run_id, client, emit=None, cancel_event=None, fixture=None):
         run = self.store.get(run_id)
         cve = run["cve_id"]
         start = time.monotonic()
         deadline = start + self.settings.max_seconds
         calls, trace, spans, metrics = [], [], [], {"model_calls": 0, "tool_calls": 0, "json_repairs": 0, "generation_tokens": 0}
         metrics.update(weights_repo=self.model.name, weights_revision=getattr(self.model, "revision", None))
-        self.store.transition(run_id, "INVESTIGATING")
+        cancel_event = cancel_event or threading.Event()
+
+        async def publish(name, data):
+            if emit is not None:
+                await emit(name, data)
 
         def elapsed():
             return round((time.monotonic() - start) * 1000)
@@ -61,14 +67,16 @@ class Runner:
             self.store.update(run_id, trace=trace, tool_results=calls, injection={"detected": bool(spans), "spans": spans}, metrics=metrics, duration_ms=elapsed())
 
         async def call(name, args, purpose="investigation"):
+            check_cancel(cancel_event)
             if metrics["tool_calls"] >= self.settings.max_tool_calls:
                 raise RuntimeError("tool budget exhausted")
             if time.monotonic() >= deadline:
                 raise TimeoutError("run deadline exceeded")
+            call_id = f"t{len(calls)+1}"
+            await publish('tool_call', {'call_id':call_id, 'tool':name, 'args':{k:v for k,v in args.items() if k!='approval_token'}})
             t = time.monotonic()
             output = await asyncio.wait_for(client.call(name, args), timeout=max(.05, deadline - t))
             metrics["tool_calls"] += 1
-            call_id = f"t{len(calls)+1}"
             calls.append({"call_id": call_id, "tool": name, "input": {k: v for k, v in args.items() if k != "approval_token"}, "output": output})
             found = scan_payload(output)
             spans.extend({**s, "tool": name, "call_id": call_id} for s in found)
@@ -77,6 +85,9 @@ class Runner:
                           "call_id": call_id, "output_summary": json.dumps(output, ensure_ascii=False)[:400],
                           "duration_ms": round((time.monotonic()-t)*1000), "purpose": purpose})
             save()
+            from .live import preview
+            await publish('tool_result', {'call_id':call_id, 'tool':name, 'ms':round((time.monotonic()-t)*1000), 'preview':preview(output)})
+            check_cancel(cancel_event)
             return output
 
         async def generate(schema, payload, max_tokens):
@@ -88,7 +99,7 @@ class Runner:
                 phase_rule = (' This turn only selects tool names. Return an object with exactly one key, tools, whose value is an array of names. Do not supply tool arguments, results, explanations or a briefing.'
                               if payload['phase'] == 'tools' else ' This turn selects briefing values from the supplied evidence and response schema.')
                 messages = [{"role": "system", "content": SYSTEM + phase_rule}, {"role": "user", "content": json.dumps(sanitized(payload), ensure_ascii=False)}]
-                completion = await asyncio.wait_for(asyncio.to_thread(self.model.complete, messages, max_tokens, deadline), timeout=max(.05, deadline-time.monotonic()))
+                completion = await complete(self.model, messages, max_tokens, deadline, cancel_event)
                 metrics["generation_tokens"] += completion.metrics.get("generation_tokens", 0)
                 event = {"t_ms": round((t-start)*1000), "kind": "model", "name": payload["phase"], "input": {"schema": schema.__name__},
                          "output_summary": "JSON response received", "output_sha256": hashlib.sha256(completion.text.encode()).hexdigest(),
@@ -118,9 +129,14 @@ class Runner:
             raise ValueError("structured output invalid after one repair")
 
         try:
-            row = await call("get_cve", {"cve_id": cve})
+            check_cancel(cancel_event)
+            self.store.transition(run_id, "INVESTIGATING")
+            await publish('state', {'state':'INVESTIGATING'})
+            row = await call("get_cve", {"cve_id": cve, **({'fixture':fixture} if fixture else {})})
+            if run.get('list') == 'live' and not row.get('in_scoreboard_2026'):
+                raise ValueError('CVE is not in the supplied 2026 scoreboard')
             score = await call("explain_score", {"cve_id": cve})
-            decision = decide(score, row["signals"], list_name=run.get('list','top500'))
+            decision = decide(score, row["signals"], list_name='watch' if run.get('list')=='watch' else 'top500')
             metrics["decision_source"] = "deterministic_policy"
             trace.append({"t_ms": elapsed(), "kind": "policy", "name": "triage_priority",
                           "input": decision["inputs"], "output_summary": canonical(decision), "duration_ms": 0})
@@ -180,6 +196,12 @@ class Runner:
             self.store.update(run_id, verifier=report)
             trace.append({"t_ms": elapsed(), "kind": "verifier", "name": "exact_evidence", "input": {"claims": len(chosen_ids)},
                           "output_summary": f"{len(verified)} verified; {len(report['dropped'])} dropped", "duration_ms": 0})
+            for claim in verified:
+                await publish('claim', {'id':claim['id'], 'text':claim['text'], 'evidence':claim['evidence'], 'verified':True, 'reason':'Exact source evidence verified'})
+            selected_by_id = {c['id']:c for c in selected}
+            for rejected in report['dropped']:
+                candidate = selected_by_id.get(rejected['id'], {})
+                await publish('claim', {'id':rejected['id'], 'text':candidate.get('text', f"Unsupported evidence selection: {rejected['id']}"), 'evidence':candidate.get('evidence', []), 'verified':False, 'reason':rejected['why']})
             if not verified:
                 raise ValueError("no verified claims survived")
             # Only canonical evidence-card text can become a factual claim.
@@ -206,12 +228,16 @@ class Runner:
             self.store.update(run_id, policy={"write_requested": True, "write_allowed": False, "reason": "no human approval for this briefing hash"},
                               injection={"detected": bool(spans), "spans": spans, "write_probe": blocked},
                               metrics={**metrics, "selected_categories": sorted({c["category"] for c in verified}), "confidence_meaning": "briefing evidence confidence, not exploitation probability", "headline_and_action_verified": True})
+            check_cancel(cancel_event)
             self.store.propose(run_id, briefing)
+            await publish('state', {'state':'VERIFIED'})
+            await publish('state', {'state':'WAITING_APPROVAL'})
         except Exception as exc:
             save()
             current = self.store.get(run_id)
             if current["state"] not in {"FAILED", "REJECTED", "TICKET_FILED"}:
                 self.store.transition(run_id, "FAILED")
-            code = "timeout" if isinstance(exc, (TimeoutError, asyncio.TimeoutError)) else "investigation_failed"
+            code = "cancelled" if isinstance(exc, GenerationCancelled) else "timeout" if isinstance(exc, (TimeoutError, asyncio.TimeoutError)) else "investigation_failed"
             self.store.update(run_id, error={"code": code, "message": str(exc)[:500]}, duration_ms=elapsed())
+            await publish("state", {"state":"FAILED"})
         return self.store.get(run_id)

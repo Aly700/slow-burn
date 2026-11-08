@@ -62,7 +62,7 @@ class Store:
         db.execute("INSERT OR REPLACE INTO runs VALUES (?,?)", (run["run_id"], canonical(run)))
 
     def create(self, cve_id, model, list_name='top500'):
-        if list_name not in {'top500','watch'}:
+        if list_name not in {'top500','watch','live'}:
             raise ValueError('unsupported ranking list')
         run = {"run_id": "run_" + uuid.uuid4().hex, "cve_id": cve_id, "list":list_name, "state": "RECEIVED",
                "states_seen": ["RECEIVED"], "model": model, "started_at": now(), "duration_ms": 0,

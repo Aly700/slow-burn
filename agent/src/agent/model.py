@@ -12,6 +12,7 @@ class Completion:
 
 
 class Granite:
+    supports_cancellation = True
     def __init__(self, name=MODEL):
         self.name = name
         self.source_name = IBM_MODEL if name == MODEL else name
@@ -19,20 +20,40 @@ class Granite:
         self._model = None
         self._lock = threading.Lock()
         self.load_seconds = None
+        self._lease = None
 
     def warmup(self):
         with self._lock:
             if self._model is None:
                 from mlx_lm import load
+                from huggingface_hub import snapshot_download
+                from pathlib import Path
+                import fcntl
+                import tempfile
+                self._lease = open(Path(tempfile.gettempdir())/'before-the-breach-granite.lock','a')
+                try:
+                    fcntl.flock(self._lease,fcntl.LOCK_EX|fcntl.LOCK_NB)
+                except BlockingIOError:
+                    self._lease.close()
+                    self._lease = None
+                    raise RuntimeError('Granite is already loaded by another local process; stop it before starting a second copy.') from None
                 start = time.monotonic()
-                self._model, self._tokenizer = load(self.name, revision=self.revision)
+                try:
+                    path = self.name if Path(self.name).exists() else snapshot_download(self.name, revision=self.revision, local_files_only=True)
+                    self._model, self._tokenizer = load(path)
+                except BaseException:
+                    self._lease.close()
+                    self._lease = None
+                    raise
                 self.load_seconds = time.monotonic() - start
 
-    def complete(self, messages, max_tokens, deadline):
+    def complete(self, messages, max_tokens, deadline, cancel_event=None):
         from mlx_lm import stream_generate
         from mlx_lm.sample_utils import make_sampler
         self.warmup()
         with self._lock:
+            from .inference import check_cancel
+            if cancel_event is not None: check_cancel(cancel_event)
             if time.monotonic() >= deadline:
                 raise TimeoutError("model deadline exceeded")
             prompt = self._tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
@@ -41,6 +62,7 @@ class Granite:
                                          sampler=make_sampler(temp=0), prefill_step_size=512):
                 if time.monotonic() >= deadline:
                     raise TimeoutError("model deadline exceeded")
+                if cancel_event is not None: check_cancel(cancel_event)
                 parts.append(token.text)
                 last = token
             metrics = {"prompt_tokens": last.prompt_tokens, "generation_tokens": last.generation_tokens,
