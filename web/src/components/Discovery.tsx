@@ -202,7 +202,7 @@ export function Discovery({ findings }: { findings?: Findings | null }) {
           {list(findings?.story).map((story, i) => (
             <article key={i}>
               <h3>{story.title}</h3>
-              <p>{story.sentence}</p>
+              <p>{story.sentence?.replaceAll("—", "–")}</p>
               {story.numbers && (
                 <details className="story-counts">
                   <summary>Inspect supporting counts</summary>

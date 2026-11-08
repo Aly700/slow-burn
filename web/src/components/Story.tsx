@@ -103,7 +103,7 @@ export function Timing({ findings }: { findings?: Findings | null }) {
               role="img"
               aria-label={`${Math.round(fraction * 100)} percent first month, ${number(later)} later entries`}
             >
-              <rect width="600" height="52" fill="var(--line-bright)" />
+              <rect width="600" height="52" fill="var(--accent-dim)" />
               <rect width={600 * fraction} height="52" fill="var(--accent)" />
               {Array.from({ length: 29 }, (_, i) => (
                 <line
@@ -236,7 +236,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
                   Across <strong>{number(item.n)}</strong> vulnerabilities in
                   the eligible 2025 cohort
                   {item.share_of_pool != null
-                    ? ` — ${percent(item.share_of_pool)} of the queue`
+                    ? ` – ${percent(item.share_of_pool)} of the queue`
                     : ""}
                   .
                 </p>

@@ -379,7 +379,7 @@ main {
   background: var(--line);
 }
 .bar-track > div {
-  background: var(--known);
+  background: var(--accent-dim);
   height: 100%;
 }
 .caption {
@@ -637,7 +637,7 @@ main {
   flex: 1;
 }
 .signal-bar-track > div {
-  background: var(--known);
+  background: var(--accent-dim);
   height: 100%;
 }
 .signal-bar-track > .risk-bar {

@@ -365,7 +365,7 @@ export function Queue({
                     )}
                   </span>
                 </td>
-                <td className="mono snapshot">{row.snapshot_month || "—"}</td>
+                <td className="mono snapshot">{row.snapshot_month || "–"}</td>
                 <td className="score-cell mono">
                   {ranking ? number(row.score, 4) : percent(row.score, 2)}
                 </td>

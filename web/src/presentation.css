@@ -434,7 +434,7 @@
 .present-baselines i {
   height: 100%;
   display: block;
-  background: var(--known);
+  background: var(--accent-dim);
 }
 .slide-bottom-note {
   border-top: 1px solid var(--line);

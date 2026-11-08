@@ -300,7 +300,7 @@ export function GraniteMap({
       ctx.globalAlpha = 1;
       if (drawOptions.current.labels) {
         const occupied: LabelBox[] = [];
-        ctx.font = '11px "IBM Plex Sans", sans-serif';
+        ctx.font = `${theme.labelSize} "IBM Plex Sans", sans-serif`;
         ctx.textBaseline = "middle";
         const limit = width < 500 ? 4 : view.zoom < 2 ? 8 : 12;
         const usedLabels = new Set<string>();

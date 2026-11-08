@@ -9,6 +9,9 @@ import "./styles.css";
 import "./presentation.css";
 import App from "./App";
 import "./system.css";
+document.querySelector('meta[name="theme-color"]')?.setAttribute(
+  "content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim(),
+);
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
