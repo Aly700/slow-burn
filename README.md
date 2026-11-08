@@ -39,6 +39,8 @@ The 2026 result is scored by the organisers after submission.
 
 ![Briefing](docs/img/briefing.png)
 
+![Granite map](docs/img/map.png)
+
 ## Run it
 
 The track data is not redistributed here. Put the organisers' `data/` folder (from `data.zip`) at the repo root.
