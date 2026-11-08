@@ -1,0 +1,29 @@
+{
+  "runtime_commit": "91fe6a2",
+  "examples": [
+    {
+      "example": "top500",
+      "cve_id": "CVE-2026-33439",
+      "run_id": "run_9c68955b33364493846f3f53f0f061ee",
+      "first_event_ms": 4.66,
+      "duration_ms": 2499.27,
+      "claims": 5
+    },
+    {
+      "example": "no_signal",
+      "cve_id": "CVE-2026-56410",
+      "run_id": "run_1904b30a6d0c4d3bbd2e321b060ce34d",
+      "first_event_ms": 3.74,
+      "duration_ms": 1952.32,
+      "claims": 4
+    },
+    {
+      "example": "injection",
+      "cve_id": "CVE-2026-33439",
+      "run_id": "run_d7e2818cdb824b7b9e67394c0b2787ce",
+      "first_event_ms": 4.74,
+      "duration_ms": 1978.03,
+      "claims": 3
+    }
+  ]
+}

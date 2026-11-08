@@ -1580,167 +1580,169 @@
     {
       "cve_id": "CVE-2026-48313",
       "headline_before": "Prioritize remediation for ColdFusion.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for ColdFusion.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected ColdFusion endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected ColdFusion endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-65694",
       "headline_before": "Prioritize remediation for Microweber CMS.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for Microweber CMS.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected Microweber CMS endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected Microweber CMS endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-61560",
       "headline_before": "Prioritize remediation for a Model Context Protocol server.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for a Model Context Protocol server.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate a Model Context Protocol server in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate a Model Context Protocol server in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-6875",
       "headline_before": "Prioritize remediation for ServiceNow.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for ServiceNow.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected ServiceNow endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected ServiceNow endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-18963",
       "headline_before": "Prioritize remediation for Red Hat.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for Red Hat.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected Red Hat service in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected Red Hat service in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-8037",
       "headline_before": "Prioritize remediation for Progress ADC Products.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for Progress ADC Products.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected Progress ADC Products endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected Progress ADC Products endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-58231",
       "headline_before": "Prioritize remediation for SAP Commerce Cloud.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for SAP Commerce Cloud.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
-      "recorded_claims_removed": [],
+      "recorded_claims_removed": [
+        "By the end of August 2026, public material was available as a GitHub proof of concept. This is a readiness signal, not confirmation of attacks."
+      ],
       "recorded_claims_added": [],
       "action_before": "Locate the affected SAP Commerce Cloud endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected SAP Commerce Cloud endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-90817",
       "headline_before": "Prioritize remediation for Securifera.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for Securifera.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected Securifera service in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected Securifera service in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-20251",
       "headline_before": "Prioritize remediation for Splunk Enterprise.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for Splunk Enterprise.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected Splunk Enterprise endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected Splunk Enterprise endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-71362",
       "headline_before": "Prioritize remediation for Adobe Commerce.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for Adobe Commerce.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected Adobe Commerce endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected Adobe Commerce endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-39808",
       "headline_before": "Prioritize remediation for FortiSandbox.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for FortiSandbox.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected FortiSandbox endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected FortiSandbox endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-42533",
       "headline_before": "Prioritize remediation for NGINX Plus.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for NGINX Plus.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected NGINX Plus endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected NGINX Plus endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-21858",
       "headline_before": "Prioritize remediation for n8n.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for n8n.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Confirm the installed n8n version and apply the appropriate vendor fix described in the supplied record: “This issue is fixed in version 1.121.0.” Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected n8n endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-76639",
       "headline_before": "Prioritize remediation for Unitree G1 EDU firmware.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for Unitree G1 EDU firmware.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected Unitree G1 EDU firmware endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected Unitree G1 EDU firmware endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     },
     {
       "cve_id": "CVE-2026-28326",
       "headline_before": "Prioritize remediation for SolarWinds Access Rights Manager.",
-      "headline_after": null,
-      "rerecorded": false,
+      "headline_after": "Prioritize remediation for SolarWinds Access Rights Manager.",
+      "rerecorded": true,
       "old_claims_no_longer_available": [],
       "recorded_claims_removed": [],
       "recorded_claims_added": [],
       "action_before": "Locate the affected SolarWinds Access Rights Manager endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process.",
-      "action_after": null
+      "action_after": "Locate the affected SolarWinds Access Rights Manager endpoint in inventory; if exposed, isolate it from untrusted networks until vendor-supported remediation is validated. Use the emergency change process."
     }
   ]
 }
