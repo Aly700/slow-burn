@@ -3,6 +3,10 @@ import type { Data, Score } from "../types";
 import { list, number, percent, reasonLabel, compactReasonLabel } from "../lib";
 import { Icon } from "./Icon";
 import { SectionHeading } from "./Story";
+import { StackFilter } from "./StackFilter";
+import { loadStack, matchesStack, saveStack } from "../stack";
+import type { StackChoice } from "../stack";
+import { downloadFile, queueCsv, ticketDrafts } from "../exports";
 
 export function Queue({
   data,
@@ -12,6 +16,14 @@ export function Queue({
   onOpen: (score: Score) => void;
 }) {
   const [query, setQuery] = useState("");
+  const [stack, setStack] = useState<StackChoice[]>(loadStack);
+  const [persisted, setPersisted] = useState(true);
+  const [exportNotice, setExportNotice] = useState("");
+  const exportMenu = useRef<HTMLDetailsElement>(null);
+  const [exportUp, setExportUp] = useState(false);
+  useEffect(() => {
+    setPersisted(saveStack(stack));
+  }, [stack]);
   const [filter, setFilter] = useState("all");
   const [month, setMonth] = useState("all");
   const [selected, setSelected] = useState(0);
@@ -29,6 +41,7 @@ export function Queue({
         const text =
           `${row.cve_id} ${row.assigner ?? ""} ${row.vendor_identity ?? ""} ${row.description ?? ""} ${list(row.reasons).map(reasonLabel).join(" ")}`.toLowerCase();
         return (
+          matchesStack(row, stack) &&
           text.includes(query.toLowerCase()) &&
           (month === "all" || row.snapshot_month === month) &&
           (filter === "all" ||
@@ -39,7 +52,7 @@ export function Queue({
                 : row.rank <= 500))
         );
       }),
-    [scores, query, month, filter, runIds],
+    [scores, query, month, filter, runIds, stack],
   );
   const pageSize = 10;
   const pages = Math.ceil(rows.length / pageSize);
@@ -98,6 +111,24 @@ export function Queue({
       keyboardMove.current = false;
     }
   }, [selected, page]);
+  function exportRows(format: "csv" | "json") {
+    const runs = list(data.runs);
+    const contents =
+      format === "csv"
+        ? queueCsv(rows, runs)
+        : JSON.stringify(ticketDrafts(rows, runs), null, 2) + "\n";
+    downloadFile(
+      `slow-burn-queue.${format}`,
+      contents,
+      format === "csv"
+        ? "text/csv;charset=utf-8"
+        : "application/json;charset=utf-8",
+    );
+    if (exportMenu.current) exportMenu.current.open = false;
+    setExportNotice(
+      `Prepared ${number(rows.length)} ${format === "csv" ? "queue rows" : "ticket drafts"} for download. Pending briefings are labelled in the export.`,
+    );
+  }
   const ranking = data.meta?.score_mode === "ranking";
   return (
     <section
@@ -112,16 +143,22 @@ export function Queue({
         detail="2026 candidates · evidence at each snapshot"
       />
       <div className="queue-intro">
-        <p>
-          Spend the next patch on the right vulnerability.
-          <br />
-          <span>Select a row to inspect its evidence and proposed action.</span>
-        </p>
+        <p>Select a row to inspect its evidence and proposed action.</p>
         <div className="queue-count">
           <strong>{number(scores.length)}</strong>
           <span>ranked candidates shown</span>
         </div>
       </div>
+      <StackFilter
+        scores={scores}
+        choices={stack}
+        persisted={persisted}
+        onChange={(choices) => {
+          setStack(choices);
+          reset();
+          setExportNotice("");
+        }}
+      />
       <div className="queue-toolbar">
         <label className="search">
           <Icon name="search" />
@@ -205,6 +242,51 @@ export function Queue({
           briefings <Icon name="arrow" size={13} />
         </button>
       </div>
+      <div className="queue-export-row">
+        <span>
+          <strong>{number(rows.length)}</strong> matching CVEs · exports include
+          every matching page
+        </span>
+        <details
+          className={`queue-export ${exportUp ? "opens-up" : ""}`}
+          ref={exportMenu}
+          onToggle={(event) => {
+            if (event.currentTarget.open)
+              setExportUp(
+                window.innerHeight -
+                  event.currentTarget.getBoundingClientRect().bottom <
+                  200,
+              );
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.currentTarget.open = false;
+              event.currentTarget.querySelector("summary")?.focus();
+            }
+          }}
+        >
+          <summary aria-label="Export filtered queue">
+            Export <Icon name="down" size={14} />
+          </summary>
+          <div className="export-options">
+            <button disabled={!rows.length} onClick={() => exportRows("csv")}>
+              Download CSV <span>{number(rows.length)} rows</span>
+            </button>
+            <button disabled={!rows.length} onClick={() => exportRows("json")}>
+              Download JSON tickets <span>{number(rows.length)} drafts</span>
+            </button>
+            <p>
+              Ticket drafts carry available evidence. Exporting does not file or
+              approve a ticket.
+            </p>
+          </div>
+        </details>
+      </div>
+      {exportNotice && (
+        <p className="export-notice" role="status">
+          {exportNotice}
+        </p>
+      )}
       <div className="table-scroll">
         <table>
           <thead>
@@ -251,6 +333,12 @@ export function Queue({
                     {row.vendor_identity && row.vendor_identity !== "unmapped"
                       ? row.vendor_identity
                       : row.assigner || "Assigner unavailable"}
+                    {row.product_identity && (
+                      <span className="product-name">
+                        {" "}
+                        · {row.product_identity}
+                      </span>
+                    )}
                   </span>
                 </td>
                 <td className="mono snapshot">{row.snapshot_month || "—"}</td>
@@ -300,7 +388,7 @@ export function Queue({
             </h3>
             <p>
               {scores.length
-                ? "Try another CVE, assigner, or snapshot month."
+                ? "Try another stack item, CVE, or snapshot month."
                 : "The page will use the ranking artifact after the next data sync."}
             </p>
             {scores.length > 0 && (
@@ -310,6 +398,7 @@ export function Queue({
                   setQuery("");
                   setFilter("all");
                   setMonth("all");
+                  setStack([]);
                   reset();
                 }}
               >

@@ -11,13 +11,30 @@ export function useApproval(
   onUpdate: (run: Run, notice: string) => void,
 ) {
   const [currentRun, setCurrentRun] = useState(run);
-  const [notice, setNotice] = useState(initialNotice);
+  const [notice, setNotice] = useState(
+    initialNotice ||
+      (!localViewer(window.location.hostname)
+        ? "Offline copy. Approval is simulated locally; no ticket will be created."
+        : ""),
+  );
   const [busy, setBusy] = useState(false);
-  const [simulation, setSimulation] = useState(fixture || initialNotice.startsWith("Replay") || !localViewer(window.location.hostname));
+  const [simulation, setSimulation] = useState(
+    fixture ||
+      !!run?.fixture ||
+      initialNotice.startsWith("Replay") ||
+      !localViewer(window.location.hostname),
+  );
   function replaceRun(next: Run | undefined, replay = false) {
     setCurrentRun(next);
-    setSimulation(replay || fixture || !localViewer(window.location.hostname));
-    const message = replay ? "Replay of a recorded run. Approval is simulated locally; no ticket will be created." : "";
+    setSimulation(
+      replay ||
+        fixture ||
+        !!next?.fixture ||
+        !localViewer(window.location.hostname),
+    );
+    const message = replay
+      ? "Replay of a recorded run. Approval is simulated locally; no ticket will be created."
+      : "";
     setNotice(message);
     if (next) onUpdate(next, message);
   }

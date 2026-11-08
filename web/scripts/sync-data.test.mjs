@@ -63,11 +63,26 @@ test("sync handles absent inputs, then replaces fixtures with recorded runs with
       "rank,cve_id,score,epss,reasons\n1,CVE-2026-2,0.2,,[]\n",
     );
     await mkdir(path.join(root, "artifacts/agent_runs/eval"));
-    await writeFile(path.join(root, "artifacts/agent_runs/eval/review.json"), JSON.stringify({
-      run_id: "verifier-example", cve_id: "CVE-2025-3",
-      verifier: { dropped: [{ id: "unsupported", text: "Unsupported example", why: "No evidence" }] },
-    }));
-    await writeFile(path.join(root, "artifacts/replay_2025.json"), JSON.stringify({ start: "2025-01-01", end: "2025-12-31", methods: [] }));
+    await writeFile(
+      path.join(root, "artifacts/agent_runs/eval/review.json"),
+      JSON.stringify({
+        run_id: "verifier-example",
+        cve_id: "CVE-2025-3",
+        verifier: {
+          dropped: [
+            {
+              id: "unsupported",
+              text: "Unsupported example",
+              why: "No evidence",
+            },
+          ],
+        },
+      }),
+    );
+    await writeFile(
+      path.join(root, "artifacts/replay_2025.json"),
+      JSON.stringify({ start: "2025-01-01", end: "2025-12-31", methods: [] }),
+    );
     sync();
     const result = await bundle();
     assert.equal(result.replay_2025.start, "2025-01-01");

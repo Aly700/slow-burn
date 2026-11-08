@@ -18,6 +18,7 @@ export interface Score {
   cwe_ids?: string;
   assigner?: string;
   vendor_identity?: string;
+  product_identity?: string;
   description?: string;
   reasons?: Reason[];
 }
@@ -112,6 +113,7 @@ export interface Run {
   run_id: string;
   list?: "top500" | "watch" | "live";
   briefing_hash?: string;
+  fixture?: string | null;
   snapshot_month?: string;
   cve_id: string;
   state: string;
@@ -209,7 +211,12 @@ export interface ReplayData {
   positives?: number;
   start: string;
   end: string;
-  methods?: { key: string; name: string; hits?: number | null; items?: ReplayItem[] }[];
+  methods?: {
+    key: string;
+    name: string;
+    hits?: number | null;
+    items?: ReplayItem[];
+  }[];
   later_exploited?: ReplayPositive[];
 }
 
@@ -220,6 +227,7 @@ export interface LiveEvent {
 }
 export interface LiveRecording {
   cve_id: string;
+  fixture?: string | null;
   events: LiveEvent[];
 }
 export interface LiveTool {
@@ -239,9 +247,12 @@ export interface LiveClaim {
   reason?: string;
 }
 export interface Investigation {
-  mode: 'live' | 'replay';
+  mode: "live" | "replay";
   illustrative?: boolean;
-  status: 'idle' | 'running' | 'complete' | 'error' | 'cancelled';
+  fixture?: string | null;
+  queued?: boolean;
+  queue_position?: number;
+  status: "idle" | "running" | "complete" | "error" | "cancelled";
   cve_id: string;
   run_id?: string;
   model?: string;

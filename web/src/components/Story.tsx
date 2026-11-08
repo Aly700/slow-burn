@@ -24,11 +24,30 @@ export function SectionHeading({
 }
 
 export function Hero({ data }: { data: Data }) {
-  return <section id="overview" className="hero replay-hero">
-    <div className="replay-intro"><h1>Severity isn’t a forecast.</h1><p>Same fix budget. A year of consequences.<br /><strong>Watch what each ranking catches.</strong></p></div>
-    <Replay data={data.replay_2025} />
-    <div className="benchmark-strip"><div><span className="status-dot" /><strong>2026 benchmark</strong><span>Result pending judging</span></div><a className="text-link" href="#queue">Explore your fix-first queue <Icon name="arrow" size={16} /></a><span className="mono">Snapshot-bound ranking</span></div>
-  </section>;
+  return (
+    <section id="overview" className="hero replay-hero">
+      <div className="replay-intro">
+        <h1>Severity isn’t a forecast.</h1>
+        <p>
+          Same fix budget. A year of consequences.
+          <br />
+          <strong>Watch what each ranking catches.</strong>
+        </p>
+      </div>
+      <Replay data={data.replay_2025} />
+      <div className="benchmark-strip">
+        <div>
+          <span className="status-dot" />
+          <strong>2026 benchmark</strong>
+          <span>Result pending judging</span>
+        </div>
+        <a className="text-link" href="#queue">
+          Explore your fix-first queue <Icon name="arrow" size={16} />
+        </a>
+        <span className="mono">Snapshot-bound ranking</span>
+      </div>
+    </section>
+  );
 }
 
 export function Timing({ findings }: { findings?: Findings | null }) {

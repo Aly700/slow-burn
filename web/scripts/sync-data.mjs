@@ -87,16 +87,34 @@ async function findVerifierExample(directory) {
 const verifierExample = useFixtures ? null : await findVerifierExample(runDir);
 const liveExamples = [];
 const liveDir = path.join(runDir, "live-examples");
-for (const name of (await files(liveDir)).filter(name => /\.jsonl?$/.test(name)).sort()) {
+for (const name of (await files(liveDir))
+  .filter((name) => /\.jsonl?$/.test(name))
+  .sort()) {
   try {
     const raw = await readFile(path.join(liveDir, name), "utf8");
-    const source = name.endsWith(".jsonl") ? raw.trim().split("\n").filter(Boolean).map(line => JSON.parse(line)) : JSON.parse(raw);
+    const source = name.endsWith(".jsonl")
+      ? raw
+          .trim()
+          .split("\n")
+          .filter(Boolean)
+          .map((line) => JSON.parse(line))
+      : JSON.parse(raw);
     const recording = normalizeRecording(source);
-    if (!recording) { warnings.push(`${name}: incomplete live recording; using trace fallback`); continue; }
+    if (!recording) {
+      warnings.push(`${name}: incomplete live recording; using trace fallback`);
+      continue;
+    }
     liveExamples.push(recording);
-    await mkdir(path.join(dest, "agent_runs/live-examples"), { recursive: true });
-    await write(`agent_runs/live-examples/${name.replace(/\.jsonl$/, ".json")}`, recording);
-  } catch { warnings.push(`${name}: unreadable live recording; using trace fallback`); }
+    await mkdir(path.join(dest, "agent_runs/live-examples"), {
+      recursive: true,
+    });
+    await write(
+      `agent_runs/live-examples/${name.replace(/\.jsonl$/, ".json")}`,
+      recording,
+    );
+  } catch {
+    warnings.push(`${name}: unreadable live recording; using trace fallback`);
+  }
 }
 const bundle = {
   ...artifacts,

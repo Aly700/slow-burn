@@ -151,7 +151,25 @@ export default function App() {
         <Timing findings={data.findings} />
         <Signals findings={data.findings} />
         <Discovery findings={data.findings} />
-        <Queue data={data} onOpen={setSelected} />
+        <Queue
+          data={{
+            ...data,
+            runs: [
+              ...list(data.runs).map(
+                (run) => decisions[run.cve_id]?.run ?? run,
+              ),
+              ...Object.values(decisions)
+                .filter(
+                  ({ run }) =>
+                    !list(data.runs).some(
+                      (recorded) => recorded.cve_id === run.cve_id,
+                    ),
+                )
+                .map(({ run }) => run),
+            ],
+          }}
+          onOpen={setSelected}
+        />
         <AgentSection data={data} run={featured} onOpen={openFeatured} />
         <Methods data={data} />
       </main>
