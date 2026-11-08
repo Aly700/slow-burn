@@ -1,3 +1,4 @@
+import { ReadingDetails } from "./ReadingDetails";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import type { Score } from "../types";
@@ -161,7 +162,7 @@ export function StackFilter({
         Matches any selected identity; custom text searches descriptions too.
         Confirm affected versions before patching.
       </p>
-      {secondaryList}
+      {secondaryList && <ReadingDetails label="Previously attacked products" collapsed={!choices.length}>{secondaryList}</ReadingDetails>}
     </div>
   );
 }

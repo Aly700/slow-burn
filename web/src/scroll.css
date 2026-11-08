@@ -81,3 +81,80 @@ main .methods-grid { padding-top: 16px; }
   main .methods .attack-reason { font-size: var(--type-base); margin-block: 20px; }
   main .methods .attack-family-groups { gap: 20px; }
 }
+
+main .signals-section, main .deeper-discovery, main .analyst-section,
+main .agent-section, main .methods { padding-block: 48px; }
+main .clock-bar { height: 64px; }
+main .timing .section-takeaway { margin-top: 12px; padding-top: 12px; }
+main .reading-details + .reading-details { margin-top: 0; }
+main .map-field { height: 520px; }
+main .map-section { padding-block: 64px; }
+main .stack-filter { padding: 20px 24px 0; }
+main .stack-filter > .reading-details { margin-top: 16px; }
+main .stack-filter > .reading-details .product-watch { margin: 0; border: 0; padding-top: 0; }
+main .queue-preview { border-top: var(--border); }
+main .queue-preview > button {
+  display: grid;
+  grid-template-columns: 52px 1fr 140px 20px;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  text-align: left;
+  padding: 20px 16px;
+  border: 0;
+  border-bottom: var(--border);
+  background: none;
+  color: var(--text);
+  font-size: var(--type-body);
+}
+main .queue-preview > button:hover { background: var(--surface); }
+main .preview-rank { color: var(--subtle); }
+main .preview-identity { display: grid; gap: 6px; }
+main .preview-identity > span { color: var(--muted); }
+main .preview-score { text-align: right; font-size: var(--type-lead); }
+main .preview-score small { display: block; color: var(--muted); font: var(--type-label)/1.5 var(--sans); }
+main .queue-ledger { margin-top: 0; }
+main .queue-ledger > summary { padding-block: 16px; }
+main .queue-ledger .table-scroll { margin-top: 8px; }
+main .analyst-workspace { grid-template-columns: 1fr 1.25fr; }
+main .methods .attack-boundaries { margin-top: 14px; }
+main .methods .attack-boundaries > div { padding-block: 14px; }
+main .methods .attack-heldout-note { margin-top: 8px; }
+main .methods .attack-reason { margin-block: 18px; }
+main .methods .attack-results > h3 { margin-bottom: 18px; }
+main .methods .attack-results { padding-bottom: 0; }
+@media (max-width: 700px) {
+  main .signals-section, main .deeper-discovery, main .analyst-section,
+  main .agent-section, main .methods { padding-block: 40px; }
+  main .clock-bar { height: 40px; }
+  main .map-section { padding-block: 48px; }
+  main .map-field { height: 440px; }
+  main .stack-filter { padding: 16px 16px 0; }
+  main .stack-heading { display: flex; flex-direction: column; gap: 18px; }
+  main .stack-impact { order: -1; text-align: left; }
+  main .stack-impact > strong { font-size: var(--type-heading); }
+  main .stack-input-row { margin-top: 20px; }
+  main .queue-preview > button { grid-template-columns: 28px 1fr 66px; gap: 12px; padding: 16px 0; }
+  main .queue-preview > button > svg { display: none; }
+  main .preview-identity { min-width: 0; }
+  main .preview-identity > strong { font-size: var(--type-body); }
+  main .preview-score { font-size: var(--type-base); }
+  main .table-scroll { overflow: visible; }
+  main .queue-ledger table, main .queue-ledger tbody { display: block; width: 100%; }
+  main .queue-ledger thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  main .queue-ledger tr { display: grid; grid-template-columns: 1fr 1fr; position: relative; padding: 16px 0; border-bottom: var(--border); }
+  main .queue-ledger td { display: block; padding: 8px 12px; border: 0; }
+  main .queue-ledger td:nth-child(2), main .queue-ledger td:nth-child(5) { grid-column: 1 / -1; }
+  main .queue-ledger td:nth-child(2) { grid-row: 1; padding-right: 66px; }
+  main .queue-ledger .rank { grid-row: 2; }
+  main .queue-ledger .snapshot { grid-row: 2; }
+  main .queue-ledger .score-cell { text-align: left; }
+  main .queue-ledger td[data-label]::before { content: attr(data-label); display: block; font: var(--type-label)/1.5 var(--sans); color: var(--muted); margin-bottom: 3px; }
+  main .queue-ledger .row-action { position: absolute; right: 0; top: 18px; }
+  main .queue-ledger .assigner { max-width: none; white-space: normal; overflow: visible; }
+  main .queue-ledger .product-name { display: inline; }
+  main .analyst-workspace { grid-template-columns: 1fr; }
+  main .analyst-health { flex-wrap: wrap; gap: 8px; }
+  main .analyst-lead { font-size: var(--type-base); }
+  main .methods .attack-boundaries > div { padding: 12px 8px; }
+}

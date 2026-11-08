@@ -198,7 +198,7 @@ export function Analyst({
           {suggested.length > 4 && (
             <ReadingDetails label={`More tested questions (${suggested.length - 4})`}>
               <div className="question-chips">
-              {suggested.slice(4).map((r) => (
+              {suggested.slice(4, 6).map((r) => (
               <button
                 key={r.id}
                 onClick={() => ask(r.question)}
@@ -209,6 +209,19 @@ export function Analyst({
                 <Icon name="arrow" size={16} />
               </button>
               ))}
+              <ReadingDetails label={`More tested questions (${suggested.length - 6})`}>
+              {suggested.slice(6).map((r) => (
+              <button
+                key={r.id}
+                onClick={() => ask(r.question)}
+                disabled={running || live.health === "checking"}
+                aria-pressed={session.question === r.question}
+              >
+                <span>{r.question}</span>
+                <Icon name="arrow" size={16} />
+              </button>
+              ))}
+              </ReadingDetails>
               </div>
             </ReadingDetails>
           )}

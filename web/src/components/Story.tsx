@@ -201,7 +201,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
                 </div>
               );
             };
-  const featuredSignals = signals.filter(signal => /^(any exploit|exploitdb|metasploit|nuclei|poc_github)|^Vendor has earlier|^Current description mentions|^WordPress wording/i.test(signal.name ?? ""));
+  const featuredSignals = signals.filter(signal => /^(any[_ ]exploit|exploitdb|metasploit|nuclei|poc_github)|^Vendor has earlier|^Current description mentions|^WordPress wording/i.test(signal.name ?? ""));
   return (
     <section id="signals" className="story-section signals-section">
       <SectionHeading
