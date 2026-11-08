@@ -313,6 +313,7 @@ def run():
                   m['hits'] == 0 for split in evaluated for m in split['methods'][0]['budgets']) else 'held-out results reported; exploratory watch queue',
               'protected_artifacts_sha256': PROTECTED,
               'limitations': ['Only three training positives and eight validation positives in the inner 2024 split.',
+                             'The shared feature family was developed in earlier work that inspected 2025 results. This round freezes the watch recipes before their 2025 evaluation; it does not create a wholly untouched project-wide holdout.',
                              'The two 2025 evaluation sets overlap; the secondary is a later-cutoff refit, not independent replication.',
                              'Random expectation is below one hit at every tested budget; zero observed hits shows no demonstrated gain, not proof that the pool has no learnable signal.',
                              'No flag includes missing snapshot observations; it does not prove exploit code was absent.',
