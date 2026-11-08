@@ -269,9 +269,10 @@ export function EvalComparison({ data, reading = false }: { data: Data; reading?
           </div>
         ))}
       </div>
+      {reading && <p className="caption reading-caution">Small, balanced historical evaluation.</p>}
       <ReadingDetails label="Evaluation limits" collapsed={reading}>
       <p className="caption">
-        Small, balanced historical evaluation. The revision reuses the same
+        {!reading && <>Small, balanced historical evaluation. </>}The revision reuses the same
         cases after earlier results were known; this is not an unseen validation
         or the ranking backtest.
       </p>

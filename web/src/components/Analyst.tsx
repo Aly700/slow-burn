@@ -209,7 +209,8 @@ export function Analyst({
                 <Icon name="arrow" size={16} />
               </button>
               ))}
-              <ReadingDetails label={`More tested questions (${suggested.length - 6})`}>
+              <div className="question-chips">
+                <h4 className="more-question-label">More tested questions ({suggested.length - 6})</h4>
               {suggested.slice(6).map((r) => (
               <button
                 key={r.id}
@@ -221,7 +222,7 @@ export function Analyst({
                 <Icon name="arrow" size={16} />
               </button>
               ))}
-              </ReadingDetails>
+              </div>
               </div>
             </ReadingDetails>
           )}

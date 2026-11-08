@@ -825,6 +825,7 @@ export function GraniteMap({
           </div>
         )}
       </div>
+      {!appendix && <p className="caption reading-caution">Similarity, not a risk score.</p>}
       {!appendix && <ReadingDetails label="About this view">{guidance}</ReadingDetails>}
       <ReadingDetails label="Explore a region" collapsed={!appendix}>
       <div className="map-under">

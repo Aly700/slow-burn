@@ -85,6 +85,7 @@ export function Timing({ findings }: { findings?: Findings | null }) {
           {fraction != null ? (
             <svg
               className="clock-bar"
+              preserveAspectRatio="none"
               viewBox="0 0 600 52"
               role="img"
               aria-label={`${Math.round(fraction * 100)} percent first month, ${number(later)} later entries`}
@@ -133,6 +134,7 @@ export function Timing({ findings }: { findings?: Findings | null }) {
           )}
         </div>
       </div>
+      <p className="caption reading-caution">KEV inclusion is an observed proxy, not the date of the first attack.</p>
       <ReadingDetails label="How we measured">
         <div className="timing-copy">
           <h3>
@@ -145,8 +147,7 @@ export function Timing({ findings }: { findings?: Findings | null }) {
             prioritisation can buy a security team time to act.
           </p>
           <p className="caption">
-            KEV inclusion is an observed proxy, not the date of the first
-            attack. A calendar-month boundary can be just a few days away.
+            A calendar-month boundary can be just a few days away.
           </p>
         </div>
       </ReadingDetails>
