@@ -240,6 +240,7 @@ export function Signals({ findings }: { findings?: Findings | null }) {
                   {number(item.hits)}
                   <span>later KEV entries</span>
                 </div>
+                <ReadingDetails label="WordPress context and limits">
                 <p>
                   Across <strong>{number(item.n)}</strong> vulnerabilities in
                   the eligible 2025 cohort
@@ -248,23 +249,18 @@ export function Signals({ findings }: { findings?: Findings | null }) {
                     : ""}
                   .
                 </p>
+                  <p>Reduce queue noise; retain an exposure check.</p>
+                  <div className="aside-bottom"><Icon name="shield" /><span>Fewer distractions.<br /><strong>More attention where it counts.</strong></span></div>
+                </ReadingDetails>
               </div>
             ))
           ) : (
             <p>Deprioritisation analysis pending.</p>
           )}
           <p className="caption">
-            No observed KEV entry does not mean no attacks. Reduce queue noise;
-            retain an exposure check.
+            No observed KEV entry does not mean no attacks.
           </p>
-          <div className="aside-bottom">
-            <Icon name="shield" />
-            <span>
-              Fewer distractions.
-              <br />
-              <strong>More attention where it counts.</strong>
-            </span>
-          </div>
+
         </aside>
       </div>
     </section>

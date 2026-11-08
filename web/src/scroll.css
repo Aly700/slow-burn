@@ -158,3 +158,45 @@ main .methods .attack-results { padding-bottom: 0; }
   main .analyst-lead { font-size: var(--type-base); }
   main .methods .attack-boundaries > div { padding: 12px 8px; }
 }
+
+main .map-guidance { position: static; width: auto; max-width: 70ch; padding: 0; border: 0; background: none; }
+main .deprioritize .reading-details { margin-top: 16px; }
+main .deprioritize .reading-details p { margin-top: 0; }
+main .deprioritize .aside-bottom { margin-top: 18px; }
+main .deprioritize .caption { margin-top: 12px; }
+main .deprioritize h3 { font-size: var(--type-lead); }
+main .deprioritize-number { margin-top: 16px; }
+main .discovery-blind-grid { padding-top: 8px; padding-bottom: 16px; }
+main .methods > .reading-details { margin-top: 0; }
+main .methods .validation-details { margin-top: 8px; }
+main .methods .attack-survival > p { font-size: var(--type-lead); }
+@media (max-width: 700px) {
+  main .signal-row { padding-block: 12px; row-gap: 8px; }
+  main .signal-row .risk-label { font-size: var(--type-label); }
+  main .signal-row .signal-count { align-self: center; }
+  main .signal-count > span { display: inline; margin: 0; }
+  main .signals-chart > .chart-head { grid-template-columns: 1fr auto; gap: 8px; padding-bottom: 12px; }
+  main .signals-chart > .chart-head > span:first-child { grid-column: 1 / -1; }
+  main .signals-chart > .chart-head > span:last-child { text-align: right; }
+  main .deprioritize { padding: 20px; }
+  main .deprioritize > .eyebrow { margin-bottom: 16px; }
+  main .deprioritize > div { display: grid; grid-template-columns: 68px 1fr; column-gap: 16px; align-items: center; }
+  main .deprioritize-number { grid-row: 1; grid-column: 1; margin: 0; flex-direction: column; align-items: start; gap: 4px; }
+  main .deprioritize-number span { font-size: var(--type-label); }
+  main .deprioritize h3 { grid-row: 1; grid-column: 2; }
+  main .deprioritize .reading-details { grid-column: 1 / -1; }
+  main .map-field { height: 400px; }
+  main .map-toolbar { padding: 10px 12px; }
+  main .map-stories button { min-height: 44px; padding: 10px; font-size: var(--type-body); }
+  main .map-controls button { min-width: 44px; min-height: 44px; }
+  main .reading-details > summary { min-height: 44px; }
+  main .blind-spot > p:not(.caption) { font-size: var(--type-base); }
+  main .discovery-blind-grid .blind-spot h3 { font-size: var(--type-lead); }
+  main .blind-number { margin-bottom: 8px; }
+  main .history-share { grid-template-columns: 132px 1fr 42px; gap: 12px; }
+  main .watch-takeaway { font-size: var(--type-base); }
+  main .attack-boundaries > div { gap: 10px; }
+  main .methods-grid { grid-template-columns: 1fr; gap: 24px; }
+  main .methods-grid > div + div { border-left: 0; border-top: var(--border); padding: 20px 0 0; }
+  main .reading-evidence { overflow-wrap: anywhere; }
+}

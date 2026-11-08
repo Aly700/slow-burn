@@ -695,6 +695,16 @@ export function GraniteMap({
         .sort((a, b) => b.rows - a.rows)
         .slice(0, 20)
     : [];
+  const guidance = (
+        <div className="map-guidance" ref={caption} aria-live="polite">
+          <span className="eyebrow">{story?.title ?? "Explore the field"}</span>
+          <p>
+            {story?.caption ??
+              "Drag to follow similar descriptions. Choose a guided view to return to its evidence."}
+          </p>
+          <small>Similarity, not a risk score.</small>
+        </div>
+  );
   return (
     <div className={`granite-map ${appendix ? "map-appendix" : ""}`} ref={root}>
       <SectionHeading
@@ -776,14 +786,7 @@ export function GraniteMap({
             )}
           </div>
         )}
-        <div className="map-guidance" ref={caption} aria-live="polite">
-          <span className="eyebrow">{story?.title ?? "Explore the field"}</span>
-          <p>
-            {story?.caption ??
-              "Drag to follow similar descriptions. Choose a guided view to return to its evidence."}
-          </p>
-          <small>Similarity, not a risk score.</small>
-        </div>
+        {appendix && guidance}
         <div className="map-controls">
           <button
             disabled={!map}
@@ -822,6 +825,7 @@ export function GraniteMap({
           </div>
         )}
       </div>
+      {!appendix && <ReadingDetails label="About this view">{guidance}</ReadingDetails>}
       <ReadingDetails label="Explore a region" collapsed={!appendix}>
       <div className="map-under">
         <label>
