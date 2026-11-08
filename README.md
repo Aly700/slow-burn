@@ -4,6 +4,8 @@ Severity says how bad an attack could be, not whether one is coming. Slow Burn r
 
 Built in 24 hours for the IBM **Before the Breach** track at Sheridan Datathon 2026.
 
+**Live page: [aly700.github.io/slow-burn](https://aly700.github.io/slow-burn/)** (press `p` for the presentation). Live Granite investigation runs when the agent API is running on the same machine; otherwise the page replays recorded runs and says so.
+
 ![Slow Burn](docs/img/cover.png)
 
 ## What we found
