@@ -10,6 +10,25 @@ import pandas as pd
 
 
 class TemporalChecks(unittest.TestCase):
+    def test_watch_pool_requires_every_flag_to_be_zero(self):
+        from pipeline.watch import no_signal
+        f = pd.DataFrame({'any_exploit': [0, 1, 0], 'exploitdb': [0, 0, 0],
+                          'metasploit': [0, 0, 0], 'nuclei': [0, 0, 1], 'poc_github': [0, 0, 0]})
+        self.assertEqual(no_signal(f).index.tolist(), [0])
+
+    def test_watch_selection_refuses_test_year_rows(self):
+        from pipeline.watch import validation_choice
+        with self.assertRaisesRegex(ValueError, 'only 2024'):
+            validation_choice(pd.DataFrame({'published': ['2025-01-01']}), [])
+
+    def test_watch_metrics_clip_budget_to_pool_and_report_random(self):
+        from pipeline.watch import metrics
+        f = pd.DataFrame({'cve_id': ['a', 'b', 'c'], 'label': [1, 0, 0]})
+        m = metrics(f, np.array([.9, .2, .1]), 'small')
+        self.assertEqual(m['budgets'][0]['reviewed'], 3)
+        self.assertEqual(m['budgets'][0]['random_expected_hits'], 1.)
+        self.assertEqual(m['budgets'][0]['lift_over_random'], 1.)
+
     def test_selection_uses_margin_then_granite_within_one_point(self):
         from pipeline.models import Recipe, select_recipe
         recipes = [Recipe('plain', 'lightgbm'), Recipe('granite', 'lightgbm', embedding='description'),
