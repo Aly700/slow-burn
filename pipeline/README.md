@@ -14,6 +14,9 @@ The first run downloads the pinned IBM Granite embedding weights. Subsequent run
 | Artifact or stage | One command |
 |---|---|
 | Every contract artifact, from the supplied data | `uv run python -I pipeline/run.py --all` |
+| Watch list, blind-spot findings and root README bullet | `uv run python -I pipeline/watch.py` |
+| Reproduce the committed 2024-only watch choice | `uv run python -I pipeline/watch.py --select-only` |
+| Round-three local report | `uv run python -I pipeline/watch_report.py` |
 | Cached cohorts and input hashes | `uv run python -I pipeline/data.py` |
 | IBM identity and sanitized-description embeddings | `uv run python -I pipeline/embed.py` |
 | Main forward splits and ablations | `uv run python -I pipeline/evaluate.py` |
@@ -77,3 +80,15 @@ Reasons are signed logistic terms or LightGBM `pred_contrib` values in log-odds 
 The public naming policy also applies to sourced descriptions. Matching records use a neutral technical-feature summary in the display CSV and are marked `description_source=technical feature summary`. The publication filter stores digests of prohibited terms so those terms are absent from source files. It runs only after prediction: model inputs, scores and the submitted ordering are unchanged. The model card records the number of summaries.
 
 Before each local milestone commit, regenerate the touched artifacts, run the temporal and contract checks, and verify no input data/cache is staged. Commit subjects start with lowercase `model:`. No push is part of this workflow.
+
+## Blind-spot watch queue
+
+`watch_registry.py` declares four recipes before dedicated 2025 scoring; `WATCH_PLAN.md` states the rejected alternative and timing assumptions. The committed `watch_selection.json` contains only the 2024 validation comparison. The watch pool requires all four tool flags and `any_exploit` to be zero, using the original tier rule's treatment of missing monthly observations. Missing observations are reported separately and do not establish the absence of public code.
+
+The internal split trains January–March 2024 snapshots with labels known by June 30 and validates July–September with outcomes through December 31. It contains only three training positives and eight validation positives. The rule selects by summed validation hits at 100/250/500, then average precision and simplicity. The four candidates are logistic and small LightGBM, with or without the pinned Granite description encoder. Current CWE/CVSS fields remain excluded from prediction; their profile tables are marked as current, high-risk descriptive metadata. Granite was available before 2025 scoring; internal 2024 validation is retrospective development, not a claim that this encoder was deployed mid-2024. No 2023 snapshots can be reconstructed from the supplied monthly files.
+
+Only the committed winner is evaluated on the two existing 2025 splits after filtering training and test rows to the no-signal pool. The primary uses all 2025 publication months, including censored late rows; the secondary uses July–September with at least 90 days follow-up. Training always has at least 90 days. Results include EPSS/current-CVSS references, random expectation, lift and paired month bootstrap at 100/250/500. LightGBM gets five seed diagnostics; production remains seed 2026. Neither recipe nor seed changes after observing 2025 results.
+
+`watch_2026_top100.csv` is trained on mature no-signal 2024+2025 rows. Its conditional scores are not directly calibrated against scores from the full-pool model. The submitted ranking, score export, model card and main backtest are frozen by SHA-256. Mixed allocations are reported at the same 500-review budget without adoption; allocations with too few available exploit-tier rows are explicitly infeasible. Profile contrasts are exploratory, do not select the model, and include counts, base rates and revision/matching risks.
+
+`run.py --all` regenerates the original pipeline followed by the watch queue. `findings.py` preserves the watch block and story when rebuilding the original findings; rerun `watch.py` or the full command to refresh the watch evidence. The check suite validates watch membership, 100 unique rows, score ordering, reason reconstruction and unchanged submission hashes. Every narrative watch number comes from `watch.py` or `watch_profile.py`.

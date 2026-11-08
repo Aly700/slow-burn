@@ -197,7 +197,14 @@ def run():
                 'note': 'CWE and CVSS in the display CSV are current descriptive metadata and do not enter the strict model.'}
             target_lookup = rows.set_index('cve_id').index.get_indexer(selected.cve_id)
             findings['top500_profile_2026']['vendors_from_assigner'] = history.loc[target_lookup, 'vendor_identity'].replace('', 'unmapped').value_counts().head(20).to_dict()
-    write_json(ARTIFACTS / 'findings.json', findings)
+    output_path = ARTIFACTS / 'findings.json'
+    if output_path.exists():
+        previous = json.loads(output_path.read_text())
+        titles = {entry['title'] for entry in findings['story']}
+        extra_stories = [entry for entry in previous.get('story', []) if entry['title'] not in titles]
+        findings['story'] = extra_stories + findings['story']
+        findings = {**previous, **findings}
+    write_json(output_path, findings)
     print('Findings:', len(linked), 'first month:', int(early_mask.sum()), 'later:', len(later),
           'median snapshot lag:', lag_snapshot.median(), flush=True)
     return findings

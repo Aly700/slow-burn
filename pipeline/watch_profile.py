@@ -79,11 +79,13 @@ def profile(rows, history):
     clients = categories.product_class_description.isin(['browser wording', 'mobile wording', 'operating-system or kernel wording'])
     definitions = [
         ('vendor_20_plus', h.text_vendor_prior_kev.ge(20), 'medium',
-         'Use prior vendor KEV history as a watch-review trigger for products actually deployed; this is a catalog association, not a causal vendor effect.'),
+         'Large vendor-wide history did not enrich this no-signal pool; do not assume it is an effective fallback when exploit feeds are quiet.'),
         ('client_or_endpoint_wording', clients, 'medium',
          'Include browser, mobile and operating-system products in watch reviews even when public-tool feeds are quiet; confirm the affected asset from the advisory.'),
         ('local_attack_vector_current', rows.attack_vector.eq('LOCAL'), 'high',
          'Review endpoint and privilege-escalation exposure rather than treating local access requirements as proof of low exploitation interest; these current vector values are descriptive only.'),
+        ('product_prior_kev_any', h.text_product_prior_kev.gt(0), 'medium',
+         'Review prior KEV cases for the specific matched product and confirm affected versions and asset exposure; this descriptive association does not validate the watch model or justify replacing the patch queue.'),
     ]
     contrasts = []
     for name, mask, risk, action in definitions:
@@ -95,7 +97,11 @@ def profile(rows, history):
                           'rate': hits/n if n else 0., 'base_rate': base,
                           'lift': hits/n/base if n else None, 'leak_risk': risk,
                           'rate_95_wilson_interval': rate_interval(hits, n), 'action': action})
-    actionable = [c for c in contrasts if c['no_signal_positives'] >= 5 and c['rate'] > base][:2]
+    product = next(c for c in contrasts if c['name'] == 'product_prior_kev_any')
+    vendor = next(c for c in contrasts if c['name'] == 'vendor_20_plus')
+    actionable = ([product] if product['no_signal_positives'] >= 5 and product['rate'] > base else [])
+    if vendor['no_signal_positives'] >= 5 and abs(vendor['lift'] - 1) < .2:
+        actionable.append(vendor)
     lag = {}
     for name, mask in [('no_signal_positives', blind & positive), ('with_signal_positives', ~blind & positive)]:
         part = rows.loc[mask]
@@ -104,6 +110,7 @@ def profile(rows, history):
         lag[name] = {'n': len(part), 'publication_to_kev': published.describe(percentiles=[.25, .5, .75]).to_dict(),
                      'snapshot_to_kev': snapshot.describe(percentiles=[.25, .5, .75]).to_dict()}
     return {'no_signal_pool': n_blind, 'no_signal_positives': p_blind,
+            'with_signal_pool': int((~blind).sum()), 'with_signal_base_rate': n_signal_positive/int((~blind).sum()),
             'with_signal_positives': n_signal_positive, 'base_rate': base,
             'tables': tables, 'contrasts': contrasts, 'actionable_contrasts': actionable,
             'days_to_kev': lag,
@@ -113,5 +120,5 @@ def profile(rows, history):
             'limitations': ['Descriptive 2025 contrasts do not select or modify the watch model.',
                            'CWE and vector/score fields are current enrichment with high timing risk; they are excluded from watch features.',
                            'Product classes use the first matching wording category, not verified asset identity; descriptions may have changed.',
-                           'Actionable contrasts follow the displayed fixed priority, requiring at least five no-signal positives and a rate above the pool base rate; they are exploratory.',
+                           'The product-level enrichment and absence of vendor-level enrichment were selected after inspecting the complete profile; these are exploratory contrasts, not preregistered causal tests, and they never alter the model.',
                            'Lag measures catalog addition, not the first attack. Late-year non-events remain censored.']}

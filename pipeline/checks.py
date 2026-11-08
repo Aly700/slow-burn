@@ -29,6 +29,16 @@ class TemporalChecks(unittest.TestCase):
         self.assertEqual(m['budgets'][0]['random_expected_hits'], 1.)
         self.assertEqual(m['budgets'][0]['lift_over_random'], 1.)
 
+    def test_watch_baseline_reports_boundary_tie_uncertainty(self):
+        from pipeline.watch import baseline_ties
+        f = pd.DataFrame({'cve_id': [f'item-{i:03}' for i in range(150)],
+                          'label': [0] * 50 + [1] * 10 + [0] * 90})
+        scores = np.array([10.] * 50 + [9.8] * 100)
+        at100 = baseline_ties(f, scores)[0]
+        self.assertEqual(at100['slots_from_boundary'], 50)
+        self.assertEqual(at100['hits_range_from_tie_order'], [0, 10])
+        self.assertEqual(at100['expected_hits_with_random_boundary_order'], 5.)
+
     def test_selection_uses_margin_then_granite_within_one_point(self):
         from pipeline.models import Recipe, select_recipe
         recipes = [Recipe('plain', 'lightgbm'), Recipe('granite', 'lightgbm', embedding='description'),
@@ -237,7 +247,7 @@ class TemporalChecks(unittest.TestCase):
                 np.testing.assert_array_equal(ranked_indices(ids, probability), expected)
 
 
-def artifact_checks():
+def artifact_checks(include_watch=True):
     import json
     from pipeline.data import ARTIFACTS, DATA
     expected = ['rank', 'cve_id', 'published', 'snapshot_month', 'score', 'epss', 'any_exploit',
@@ -297,9 +307,13 @@ def artifact_checks():
     findings = json.loads((ARTIFACTS / 'findings.json').read_text())
     chosen = next(m for m in b['methods'] if m['name'] == card['model'])
     assert findings['headline']['ours_hits_top500_2025_backtest'] == chosen['hits_at_500']
-    assert len(findings['story']) == 3
+    assert len(findings['story']) >= 3
     assert all({'title', 'sentence', 'numbers'} <= entry.keys() for entry in findings['story'])
-    assert findings['story'][2]['numbers']['selected_hits'] == chosen['hits_at_500']
+    ranking_story = next(entry for entry in findings['story'] if entry['title'] == 'Learning to order the public-tool tier')
+    assert ranking_story['numbers']['selected_hits'] == chosen['hits_at_500']
+    if include_watch and 'blind_spot' in findings:
+        from pipeline.watch import watch_checks
+        watch_checks()
     for name in ['backtest', 'findings']:
         json.loads((ARTIFACTS / f'{name}.json').read_text())
     print('Artifact contracts: passed (500 / 5000 rows, probabilities, reasons, membership, column order)')
