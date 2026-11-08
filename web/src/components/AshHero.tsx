@@ -36,17 +36,26 @@ export function AshHero() {
     return () => { clearTimeout(timer); controller.abort(); observer?.disconnect(); };
   }, []);
   const base = `${import.meta.env.BASE_URL}hero/`;
-  return <section id="overview" className="ash-hero" aria-labelledby="ash-title">
+  return <section id="overview" className="ash-hero" aria-labelledby="ash-title" onPointerMove={event => {
+    if (event.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const box = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty('--field-x', `${((event.clientX - box.left) / box.width - 0.5) * 6}px`);
+    event.currentTarget.style.setProperty('--field-y', `${((event.clientY - box.top) / box.height - 0.5) * 4}px`);
+  }} onPointerLeave={event => {
+    event.currentTarget.style.setProperty('--field-x', '0px');
+    event.currentTarget.style.setProperty('--field-y', '0px');
+  }}>
     <div className="ash-field" ref={field} aria-hidden="true">
       <picture className="ash-poster">
-        <source media="(max-width: 700px)" type="image/avif" srcSet={`${base}phone-1x.avif 1x, ${base}phone-2x.avif 2x`} />
-        <source media="(max-width: 700px)" type="image/webp" srcSet={`${base}phone-1x.webp 1x, ${base}phone-2x.webp 2x`} />
-        <source type="image/avif" srcSet={`${base}desktop-1x.avif 1x, ${base}desktop-2x.avif 2x`} />
-        <img src={`${base}desktop-1x.webp`} srcSet={`${base}desktop-1x.webp 1x, ${base}desktop-2x.webp 2x`} alt="" width="1440" height="824" fetchPriority="high" />
+        <source media="(max-width: 700px)" type="image/avif" srcSet={`${base}phone-1x.avif 390w, ${base}phone-2x.avif 780w`} sizes="100vw" />
+        <source media="(max-width: 700px)" type="image/webp" srcSet={`${base}phone-1x.webp 390w, ${base}phone-2x.webp 780w`} sizes="100vw" />
+        <source type="image/avif" srcSet={`${base}desktop-1x.avif 1440w, ${base}desktop-2x.avif 2880w`} sizes="100vw" />
+        <img src={`${base}desktop-1x.webp`} srcSet={`${base}desktop-1x.webp 1440w, ${base}desktop-2x.webp 2880w`} sizes="100vw" alt="" width="1440" height="824" fetchPriority="high" />
       </picture>
       <canvas ref={canvas} />
     </div>
-    <div className="ash-top"><span>IBM Granite / description map</span><span>72,987 descriptions</span></div>
+    <div className="ash-top"><span>IBM Granite description map</span><span>72,987 descriptions</span></div>
+    <p className="sr-only">The field shows description similarity, with 500 ranking picks and 317 past-exploited CVEs marked. The 2026 benchmark result is pending judging.</p>
     <div className="ash-copy">
       <h1 id="ash-title">Ranking vulnerabilities by likelihood of exploitation</h1>
       <p>In 2025, our top 500 held <strong>22 of the 55</strong> later-exploited CVEs, against 5 for CVSS and 10 for EPSS.</p>

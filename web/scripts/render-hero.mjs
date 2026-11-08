@@ -14,7 +14,7 @@ const variants = [['desktop', 1440, 824], ['phone', 390, 784]];
 const names = variants.flatMap(([name]) => [1, 2].flatMap(d => ['avif', 'webp'].map(ext => `${name}-${d}x.${ext}`)));
 try {
   const manifest = JSON.parse(await readFile(new URL('manifest.json', out)));
-  if (manifest.inputHash === hash && await Promise.all(names.map(async name => {
+  if (!process.argv.includes('--force') && manifest.inputHash === hash && await Promise.all(names.map(async name => {
     const bytes = await readFile(new URL(name, out));
     return manifest.files[name]?.sha256 === createHash('sha256').update(bytes).digest('hex');
   })).then(v => v.every(Boolean))) {
